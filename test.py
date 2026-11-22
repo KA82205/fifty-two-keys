@@ -48,6 +48,7 @@ TOOK_OFFICE = {1952: 0, 1956: 1, 1960: 0, 1964: 1, 1968: 0, 1972: 1, 1976: 0, 19
                2000: 0, 2004: 1, 2008: 0, 2012: 1, 2016: 0, 2020: 0, 2024: 0}      # did the party in office keep the White House
 
 
+TILT = 0.05                                             # the tilt by party reported beside the call: a round number inside the span that scores best
 BANDS = [(0, 0.4, 'clear loss'), (0.4, 0.5, 'likely loss'), (0.5, 0.6, 'toss-up'), (0.6, 0.7, 'lean win'), (0.7, 1.01, 'clear win')]
 
 
@@ -203,6 +204,23 @@ def main():
     sr = out['sure']
     print(f"  against the national vote: correlation {sr['r_vote']}; share = {sr['line'][0]} + {sr['line'][1]} x index, {sr['at_half']} at one half;"
           f" typical miss with the election left out {sr['miss']} points; largest {sr['largest']}")
+
+    # A TILT BY PARTY: tried after the results, reported beside the call, not part of it. The line moves x toward the Republicans:
+    # in office they need more than one half less x, the Democrats more than one half plus x.
+    def tilt_miss(rs, x):
+        return [r['year'] for r in rs if (r['idx'] > 0.5 + (x if r['party'] == 'D' else -x)) != won[r['year']]]
+    grid = [i / 100 for i in range(0, 21)]
+    by_x = {x: len(rows) - len(tilt_miss(rows, x)) for x in grid}
+    top = max(by_x.values()); span = [x for x in grid if by_x[x] == top]
+    pick = lambda rs: min(grid, key=lambda x: (len(tilt_miss(rs, x)), x))
+    fwd = [not tilt_miss([r], pick([q for q in rows if q['year'] < r['year']])) for r in rows if r['year'] >= 1980]
+    out_one = [not tilt_miss([r], pick([q for q in rows if q is not r])) for r in rows]
+    out['tilt'] = {'x': TILT, 'right': by_x[TILT], 'misses': tilt_miss(rows, TILT), 'changed': [y for y in call_miss if y not in tilt_miss(rows, TILT)],
+                   'span': [min(span), max(span)], 'best': top, 'forward': {'right': sum(fwd), 'n': len(fwd)}, 'left_out': sum(out_one)}
+    tl = out['tilt']
+    print(f"A TILT BY PARTY (tried after the results; shown beside the call, not part of it): {100 * TILT:.0f} points toward the Republicans gives {tl['right']} of {len(rows)},"
+          f" misses {tl['misses']}; the same for any tilt from {100 * tl['span'][0]:.0f} to {100 * tl['span'][1]:.0f} points;"
+          f" tilt chosen from earlier elections only, 1980 on: {tl['forward']['right']} of {tl['forward']['n']}; each election left out: {tl['left_out']} of {len(rows)}")
 
     print('\n' + '-' * 30 + ' CHECKS FOR OVERFITTING: NONE OF THESE CHANGES THE MODEL ' + '-' * 30)
     model_right = out['call']['right']

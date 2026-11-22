@@ -182,6 +182,28 @@
    ]
   ]
  },
+ "tilt": {
+  "x": 0.05,
+  "right": 17,
+  "misses": [
+   2000,
+   2016
+  ],
+  "changed": [
+   1952,
+   2024
+  ],
+  "span": [
+   0.04,
+   0.08
+  ],
+  "best": 17,
+  "forward": {
+   "right": 10,
+   "n": 12
+  },
+  "left_out": 17
+ },
  "tried": {
   "own_group": {
    "right": 16,

@@ -541,6 +541,7 @@ footer a{color:var(--board-ink)}
     <div class="sc" id="sc"></div>
     <p class="body-p" id="sure-ec"></p>
     <p class="body-p" style="margin-top:10px" id="sure-pv"></p>
+    <p class="body-p" style="margin-top:10px" id="sure-tilt"></p>
     <p class="note" style="margin-top:12px;max-width:74ch">The ranges in the ranking above are every ten points, round numbers that were not tuned. They describe the record and change nothing in the model: the call is still made at one half.</p>
   </div>
 
@@ -753,10 +754,17 @@ const DATA = /*DATA*/null;
     $('sure-pv').innerHTML = '<b>The national vote.</b> The count tracks the vote more closely than it tracks the winner (correlation ' + SURE.r_vote.toFixed(2) + '). Every ten points of keys is worth about ' + (SURE.line[1] / 10).toFixed(1) +
       ' points of the two-party vote, and half the keys lines up with ' + SURE.at_half.toFixed(1) + '% of the vote, though the line at one half was never fitted. Read as a call on who wins the most votes, the keys are right in ' + SURE.vote_right + ' of ' + R.n +
       ': they had 2000 and 2016 right on the vote and wrong on the Electoral College. Estimating each election\'s vote from the other ' + (R.n - 1) + ', the typical miss is ' + SURE.miss.toFixed(1) + ' points; the largest are 1972 and 1952.';
+    const TL = DATA.tilt;
+    if (TL) {
+      const pts = Math.round(100 * TL.x);
+      $('sure-tilt').innerHTML = '<b>A tilt by party, tried and not adopted.</b> Move the line ' + word(pts) + ' points toward the Republicans, so that in office they need ' + TL.line + '% of the keys and the Democrats need ' + (100 - TL.line) +
+        '%, and the record rises to ' + TL.right + ' of ' + R.n + '. It turns ' + TL.changed.join(' and ') + ' into correct calls and leaves ' + TL.misses.join(' and ') + ' wrong, so it is not the Electoral College at work: the Democrats lost the national vote in both of the years it fixes. ' +
+        'It rests on those two elections and was found after the results, so the call is still made at one half. On the tilted line the 2028 call is still a loss, ' + Math.round(100 * RUN.likely) + '% against ' + TL.line + '%, and the keys would say the Republicans win in about ' + Math.round(100 * TL.over) + '% of runs instead of ' + Math.round(100 * RUN.above) + '%.';
+    }
     if (SURE.run && RUN) {
       const pc = x => Math.round(100 * x) + '%', sh = SURE.run.shares;
       $('run-sure').innerHTML = '<b>How sure is that?</b> ' + (l => l.slice(0, -1).join(', ') + ' and ' + l[l.length - 1])(SURE.bands.map((b, i) => [b, sh[i]]).filter(p => p[1] >= 0.005).map((p, i) => pc(p[1]) + (i ? ' in ' : ' of runs end in the ') + p[0].label + (i ? '' : ' range'))) +
-        '. Weighting each range by how parties in office have done there since ' + E[0].y + ' puts the Republicans\' chance of winning near <b>' + pc(SURE.run.chance) + '</b>, lower than the share of runs above one half, because a count just over the line has won only about half the time. ' +
+        '. ' +
         'The average count corresponds to about ' + SURE.run.vote.toFixed(0) + '% of the two-party vote, give or take ' + SURE.miss.toFixed(1) + ' points before the uncertainty in the keys themselves. These rest on ' + R.n + ' elections, so read them as rough.';
     }
   })();
@@ -782,7 +790,7 @@ const DATA = /*DATA*/null;
     const now = Rn ? S.bands.find(b => Rn.likely >= b.lo && Rn.likely < b.hi) : null, wins = Rn && Rn.likely > 0.5;
     $('gauge').innerHTML = (Rn ? '<div class="gz-head"><div><span class="gz-kick">The 2028 prediction, as things stand</span><strong>' + now.label.charAt(0).toUpperCase() + now.label.slice(1) + '</strong></div><p>The keys say the Republicans <b>' + (wins ? 'win' : 'lose') +
       '</b> the 2028 election. If every open key lands the way it leans, ' + Rn.likely_for + ' of ' + K.length + ' go their way, which scores <b>' + pc(Rn.likely) + '</b> group by group. Parties in office in that range have ' +
-      (now.won === 0 ? 'lost all ' + word(now.n) + ' times' : now.won === now.n ? 'won all ' + word(now.n) + ' times' : 'won ' + word(now.won) + ' times in ' + word(now.n)) + ' since ' + E[0].y + '.</p><div class="gz-odds"><strong>' + pc(Rn.above) + '</strong><span>chance the keys end up saying the Republicans win: the share of ' + Rn.runs + ' runs that finish above one half.' + (S.run ? ' Weighted by how each range has turned out, nearer ' + pc(S.run.chance) + '.' : '') + '</span></div></div>' : '') +
+      (now.won === 0 ? 'lost all ' + word(now.n) + ' times' : now.won === now.n ? 'won all ' + word(now.n) + ' times' : 'won ' + word(now.won) + ' times in ' + word(now.n)) + ' since ' + E[0].y + '.</p><div class="gz-odds"><strong>' + pc(Rn.above) + '</strong><span>chance the keys end up saying the Republicans win: the share of ' + Rn.runs + ' runs that finish above one half.' + '</span></div></div>' : '') +
       '<div class="gz-plot"><div class="gz-dots">' + dots + (Rn ? '<div class="gz-now" style="left:' + (100 * Rn.likely).toFixed(1) + '%"><span>2028</span></div><div class="gz-iqr" style="left:' + (100 * Rn.p25).toFixed(1) + '%;width:' + (100 * (Rn.p75 - Rn.p25)).toFixed(1) + '%"></div>' : '') +
       '</div><div class="gz-track">' + segs + '</div><div class="gz-edges">' + edges + '</div><div class="gz-labs">' + labs + '</div></div><ul class="gz-list">' + list + '</ul>' +
       '<p class="gz-cap"><span><i class="gz-d won"></i>An election the party in office won</span><span><i class="gz-d"></i>One it lost</span>' + (Rn ? '<span><i class="gz-bar"></i>Half of the ' + Rn.runs + ' runs of 2028 end here</span>' : '') + '</p>';
