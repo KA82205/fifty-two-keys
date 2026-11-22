@@ -332,8 +332,12 @@ h2{font-size:clamp(1.8rem,3.6vw,2.5rem);letter-spacing:-.01em}
 .emblem line.o{stroke:#4f7a69}
 .emblem use{fill:var(--brass)}
 .gauge{margin-top:44px;padding:26px 30px 22px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11)}
-.gz-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 26px;align-items:center}
-.gz-head strong{font:800 clamp(2.8rem,6vw,3.9rem)/1 var(--display);color:var(--brass);letter-spacing:-.01em}
+.gz-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 36px;align-items:center}
+.gz-head strong{display:block;font:800 clamp(2.5rem,5.4vw,3.6rem)/1 var(--display);color:var(--brass);letter-spacing:-.01em;white-space:nowrap}
+.gz-kick{display:block;font-size:.92rem;color:var(--board-muted);margin-bottom:8px}
+.gz-head p b{color:var(--brass);font-weight:700}
+.gz-labs small.r{color:var(--board-ink)}
+.gz-list em{font-style:normal;color:var(--board-ink);margin-left:auto;padding-left:10px;white-space:nowrap}
 .gz-head p{margin:0;max-width:56ch;font-size:1.1rem}
 .gz-plot{margin-top:18px}
 .gz-dots{position:relative;height:74px}
@@ -358,6 +362,9 @@ h2{font-size:clamp(1.8rem,3.6vw,2.5rem);letter-spacing:-.01em}
 .gz-list li{display:flex;align-items:center;gap:8px;padding:3px 0}
 .gz-list i{width:14px;height:10px;flex:none}
 .gz-list b{color:var(--board-ink);font-weight:600}
+.gz-list span{flex:1;min-width:0}
+.gz-list small{display:block;font-size:.8rem}
+.gz-list li{padding:5px 0}
 .gz-cap{display:flex;flex-wrap:wrap;gap:6px 22px;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.11);max-width:none;font-size:.84rem;color:var(--board-muted)}
 .gz-cap span{display:inline-flex;align-items:center;gap:8px}
 .gz-cap .gz-d{position:static;margin:0}
@@ -758,16 +765,19 @@ const DATA = /*DATA*/null;
     E.slice().sort((a, b) => a.i - b.i).forEach(e => { let r = 0; while (lanes[r] !== undefined && 100 * e.i - lanes[r] < 2.6) r++; lanes[r] = 100 * e.i;
       dots += '<i class="gz-d' + (e.w ? ' won' : '') + '" style="left:' + (100 * e.i).toFixed(1) + '%;bottom:' + (6 + 15 * r) + 'px" title="' + e.y + ' ' + esc(e.c) + ': ' + (100 * e.i).toFixed(1) + '% of keys, ' + (e.w ? 'won' : 'lost') + '"></i>'; });
     const w = b => (100 * (Math.min(b.hi, 1) - b.lo)).toFixed(0);
+    const share = i => { const v = S.run ? S.run.shares[i] : null; return v === null ? '' : v < 0.005 ? 'under 1% of runs' : pc(v) + ' of runs'; };
     const segs = S.bands.map((b, i) => '<i class="s' + i + '" style="flex:' + w(b) + '"></i>').join('');
-    const labs = S.bands.map((b, i) => '<span style="flex:' + w(b) + '"><b>' + b.label.charAt(0).toUpperCase() + b.label.slice(1) + '</b><small>won ' + b.won + ' of ' + b.n + '</small></span>').join('');
-    const list = S.bands.map((b, i) => '<li><i class="s' + i + '"></i><b>' + b.label.charAt(0).toUpperCase() + b.label.slice(1) + '</b> ' + (b.lo === 0 ? 'under ' + pc(b.hi) : b.hi > 1 ? pc(b.lo) + ' and up' : pc(b.lo) + ' to ' + pc(b.hi)) + ', won ' + b.won + ' of ' + b.n + '</li>').join('');
+    const labs = S.bands.map((b, i) => '<span style="flex:' + w(b) + '"><b>' + b.label.charAt(0).toUpperCase() + b.label.slice(1) + '</b><small>won ' + b.won + ' of ' + b.n + '</small>' + (S.run ? '<small class="r">' + share(i) + '</small>' : '') + '</span>').join('');
+    const list = S.bands.map((b, i) => '<li><i class="s' + i + '"></i><span><b>' + b.label.charAt(0).toUpperCase() + b.label.slice(1) + '</b><small>' + (b.lo === 0 ? 'under ' + pc(b.hi) : b.hi > 1 ? pc(b.lo) + ' and up' : pc(b.lo) + ' to ' + pc(b.hi)) + ', won ' + b.won + ' of ' + b.n + '</small></span>' + (S.run ? '<em>' + share(i) + '</em>' : '') + '</li>').join('');
     const edges = [0, 40, 50, 60, 70, 100].map(v => '<span' + (v === 50 ? ' class="mid"' : '') + ' style="left:' + v + '%">' + v + '%</span>').join('');
     const low = S.bands.filter(b => b.hi <= 0.5), lost = low.reduce((a, b) => a + b.n - b.won, 0), lowN = low.reduce((a, b) => a + b.n, 0);
-    $('gauge').innerHTML = (Rn ? '<div class="gz-head"><strong>' + pc(Rn.mean) + '</strong><p>of the keys favor the Republicans in the 2028 run ahead, on today\'s outlook. ' +
-      (lost === lowN ? 'Under 50%, the party in office has lost all ' + word(lowN) + ' times since ' + E[0].y + '.' : '') + '</p></div>' : '') +
-      '<div class="gz-plot"><div class="gz-dots">' + dots + (Rn ? '<div class="gz-now" style="left:' + (100 * Rn.mean).toFixed(1) + '%"><span>2028</span></div><div class="gz-iqr" style="left:' + (100 * Rn.p25).toFixed(1) + '%;width:' + (100 * (Rn.p75 - Rn.p25)).toFixed(1) + '%"></div>' : '') +
+    const now = Rn ? S.bands.find(b => Rn.likely >= b.lo && Rn.likely < b.hi) : null, wins = Rn && Rn.likely > 0.5;
+    $('gauge').innerHTML = (Rn ? '<div class="gz-head"><div><span class="gz-kick">The 2028 prediction, as things stand</span><strong>' + now.label.charAt(0).toUpperCase() + now.label.slice(1) + '</strong></div><p>The keys say the Republicans <b>' + (wins ? 'win' : 'lose') +
+      '</b> the 2028 election. If every open key lands the way it leans, ' + Rn.likely_for + ' of ' + K.length + ' go their way, which scores <b>' + pc(Rn.likely) + '</b> group by group. Parties in office in that range have ' +
+      (now.won === 0 ? 'lost all ' + word(now.n) + ' times' : now.won === now.n ? 'won all ' + word(now.n) + ' times' : 'won ' + word(now.won) + ' times in ' + word(now.n)) + ' since ' + E[0].y + '.</p></div>' : '') +
+      '<div class="gz-plot"><div class="gz-dots">' + dots + (Rn ? '<div class="gz-now" style="left:' + (100 * Rn.likely).toFixed(1) + '%"><span>2028</span></div><div class="gz-iqr" style="left:' + (100 * Rn.p25).toFixed(1) + '%;width:' + (100 * (Rn.p75 - Rn.p25)).toFixed(1) + '%"></div>' : '') +
       '</div><div class="gz-track">' + segs + '</div><div class="gz-edges">' + edges + '</div><div class="gz-labs">' + labs + '</div></div><ul class="gz-list">' + list + '</ul>' +
-      '<p class="gz-cap"><span><i class="gz-d won"></i>An election the party in office won</span><span><i class="gz-d"></i>One it lost</span>' + (Rn ? '<span><i class="gz-bar"></i>Half of the 2028 runs</span>' : '') + '</p>';
+      '<p class="gz-cap"><span><i class="gz-d won"></i>An election the party in office won</span><span><i class="gz-d"></i>One it lost</span>' + (Rn ? '<span><i class="gz-bar"></i>Half of the ' + Rn.runs + ' runs of 2028 end here</span>' : '') + '</p>';
   })();
 
   // next to the other two models

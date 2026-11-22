@@ -63,6 +63,9 @@ under HOW SURE. It changes nothing in the model: the call is still made at one h
   the vote right and the Electoral College wrong.
 - Estimating each election's vote from the other 18, the typical miss is 2.5 points. The largest are 1972 (7.8 above the line)
   and 1952 (6.9 below).
+- The 2028 prediction at the top of the page is stated the same way: the call (win or lose) and its range. Until the keys are
+  scored it uses the count with every open key landing the way it leans, now 27 of 52 and 42.0% group by group, which is a
+  likely loss. Beside each range it shows the share of the run-ahead runs that end there.
 - For 2028 the page weights the run ahead by this record: the share of runs ending in each range, times how often the party in
   office won there. That gives the Republicans about a 7% chance, against 20% of runs ending above one half, because a count just
   over the line has won only about half the time. It rests on 19 elections and is rough.

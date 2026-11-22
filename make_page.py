@@ -248,7 +248,7 @@ def main():
         assert chance_win < above, 'the page says the record makes a win less likely than the share of runs above one half'
         payload['sure']['run'] = {'shares': [round(x, 3) for x in shares], 'chance': round(chance_win, 3), 'vote': round(sure['line'][0] + sure['line'][1] * ix['mean'], 1)}
         payload['run'] = {'mean': ix['mean'], 'median': ix['median'], 'p25': ix['p25'], 'p75': ix['p75'], 'above': above, 'odds': odds, 'runs': f"{run['runs']:,}",
-                          'hist': run['hist'], 'hmax': max(b['share'] for b in run['hist']), 'groups': run['groups'], 'likely': run['likely']['index'],
+                          'hist': run['hist'], 'hmax': max(b['share'] for b in run['hist']), 'groups': run['groups'], 'likely': run['likely']['index'], 'likely_for': run['likely']['in_favor'],
                           'stretches': run['stretches']['n'], 'recession': run['recession_share'], 'n_econ': len(GROUPS['A']) + len(GROUPS['B']),
                           'take': ("To finish above one half the Republicans would need most things outside Congress to break their way at once: no recession, "
                                    "approval rising through 2028 and a smooth nomination. With party strength at 0 of 6 and approval near 38%, a normal economy is not enough. "
