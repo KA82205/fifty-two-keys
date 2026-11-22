@@ -1,0 +1,41 @@
+congress,start_year,senate_d,senate_r,house_d,house_r,note
+80,1947,45,51,188,246,
+81,1949,54,42,262,171,
+82,1951,48,47,235,199,
+83,1953,47,48,213,221,
+84,1955,48,47,232,203,
+85,1957,49,47,234,201,
+86,1959,64,34,284,153,
+87,1961,64,36,262,175,
+88,1963,67,33,258,176,
+89,1965,68,32,295,140,
+90,1967,64,36,247,187,
+91,1969,58,42,243,192,
+92,1971,54,44,255,180,
+93,1973,56,42,243,192,
+94,1975,61,37,291,144,
+95,1977,61,38,292,143,
+96,1979,58,41,277,157,
+97,1981,46,53,242,192,
+98,1983,46,54,269,165,
+99,1985,47,53,253,181,
+100,1987,55,45,258,177,
+101,1989,55,45,260,175,
+102,1991,56,44,267,167,
+103,1993,57,43,258,176,
+104,1995,47,53,204,230,
+105,1997,45,55,206,227,
+106,1999,45,55,211,223,
+107,2001,50,50,212,221,Senate tied; Republicans organized it with the vice president
+108,2003,48,51,205,229,
+109,2005,44,55,202,232,
+110,2007,51,49,233,202,Senate Democrats counted with the two independents who caucused with them
+111,2009,57,41,257,178,Senate counts at the start of the Congress; independents counted with Democrats
+112,2011,53,47,193,242,Senate Democrats counted with two independents
+113,2013,55,45,201,234,Senate Democrats counted with two independents
+114,2015,46,54,188,247,Senate Democrats counted with two independents
+115,2017,48,52,194,241,Senate Democrats counted with two independents
+116,2019,47,53,235,200,Senate Democrats counted with two independents
+117,2021,50,50,222,213,Senate tied; Democrats organized it with the vice president
+118,2023,51,49,213,222,Senate Democrats counted with three independents
+119,2025,47,53,215,220,Senate Democrats counted with two independents

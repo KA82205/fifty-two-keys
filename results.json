@@ -1,0 +1,1184 @@
+{
+ "elections": [
+  1952,
+  1956,
+  1960,
+  1964,
+  1968,
+  1972,
+  1976,
+  1980,
+  1984,
+  1988,
+  1992,
+  1996,
+  2000,
+  2004,
+  2008,
+  2012,
+  2016,
+  2020,
+  2024
+ ],
+ "n_keys": 52,
+ "groups": {
+  "A": 18,
+  "B": 15,
+  "C": 6,
+  "D": 6,
+  "E": 7
+ },
+ "call": {
+  "n": 19,
+  "right": 15,
+  "misses": [
+   1952,
+   2000,
+   2016,
+   2024
+  ],
+  "said_win": {
+   "n": 12,
+   "right": 8
+  },
+  "said_lose": {
+   "n": 7,
+   "right": 7
+  },
+  "since_1984": {
+   "right": 8,
+   "n": 11
+  },
+  "split": [
+   2000,
+   2016
+  ],
+  "closest": [
+   [
+    1968,
+    0.004
+   ],
+   [
+    1988,
+    0.023
+   ],
+   [
+    2024,
+    0.032
+   ],
+   [
+    1952,
+    0.039
+   ]
+  ],
+  "close": {
+   "years": [
+    1968,
+    1988,
+    2024,
+    1952
+   ],
+   "right": 2
+  },
+  "clear": {
+   "n": 15,
+   "right": 13
+  }
+ },
+ "verdict": {
+  "right": 17,
+  "misses": [
+   1952,
+   2024
+  ]
+ },
+ "tried": {
+  "own_group": {
+   "right": 16,
+   "n": 19,
+   "misses": [
+    2000,
+    2016,
+    2024
+   ],
+   "changed": [
+    1952
+   ]
+  },
+  "nominee": {
+   "right": 16,
+   "n": 19,
+   "misses": [
+    1952,
+    2000,
+    2016
+   ],
+   "changed": [
+    2024
+   ]
+  },
+  "both": {
+   "right": 17,
+   "n": 19,
+   "misses": [
+    2000,
+    2016
+   ],
+   "changed": [
+    1952,
+    2024
+   ]
+  },
+  "deal_breakers": {
+   "right": 18,
+   "n": 19,
+   "misses": [
+    2000
+   ],
+   "changed": [
+    1952,
+    2016,
+    2024
+   ]
+  },
+  "rescored": [
+   1968,
+   2024
+  ]
+ },
+ "picked_from_earlier": {
+  "right": 8,
+  "n": 11,
+  "picks": {
+   "1984": "own_group",
+   "1988": "own_group",
+   "1992": "own_group",
+   "1996": "own_group",
+   "2000": "own_group",
+   "2004": "own_group",
+   "2008": "own_group",
+   "2012": "own_group",
+   "2016": "own_group",
+   "2020": "own_group",
+   "2024": "own_group"
+  },
+  "model": {
+   "right": 8,
+   "n": 11
+  }
+ },
+ "regroupings": {
+  "n": 1346,
+  "right": {
+   "12": 4,
+   "13": 654,
+   "14": 566,
+   "15": 83,
+   "16": 39
+  },
+  "better": 39,
+  "worse": 1224,
+  "from_E": {
+   "n": 35,
+   "better": 35
+  }
+ },
+ "one_key": {
+  "left_out": {
+   "min": 13,
+   "max": 15,
+   "lower": [
+    "A12",
+    "A16",
+    "B02",
+    "B10",
+    "B13",
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "D01",
+    "D04",
+    "D05",
+    "D06",
+    "E01",
+    "E02",
+    "E03",
+    "E04",
+    "E06",
+    "E07"
+   ],
+   "higher": []
+  },
+  "flipped": {
+   "1968": 19,
+   "1988": 8,
+   "2024": 3
+  },
+  "flipped_keys": {
+   "1968": [
+    "A12",
+    "A16",
+    "B02",
+    "B10",
+    "B13",
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "D01",
+    "D05",
+    "D06",
+    "E01",
+    "E02",
+    "E03",
+    "E04",
+    "E06",
+    "E07"
+   ],
+   "1988": [
+    "C02",
+    "C06",
+    "D01",
+    "D04",
+    "E03",
+    "E04",
+    "E05",
+    "E06"
+   ],
+   "2024": [
+    "D03",
+    "D04",
+    "D06"
+   ]
+  }
+ },
+ "without_his_ratings": {
+  "right": 13,
+  "n": 19,
+  "misses": [
+   1952,
+   1968,
+   1988,
+   2000,
+   2016,
+   2024
+  ],
+  "changed": [
+   1968,
+   1988
+  ],
+  "also_without_early_b01": {
+   "right": 13,
+   "n": 19,
+   "misses": [
+    1952,
+    1968,
+    1988,
+    2000,
+    2016,
+    2024
+   ],
+   "changed": [
+    1968,
+    1988
+   ]
+  },
+  "third_party_flip_changes": [
+   1968,
+   1988
+  ]
+ },
+ "one_group_out": {
+  "A": {
+   "right": 16,
+   "n": 19,
+   "misses": [
+    1988,
+    2000,
+    2016
+   ]
+  },
+  "B": {
+   "right": 16,
+   "n": 19,
+   "misses": [
+    1976,
+    2000,
+    2016
+   ]
+  },
+  "C": {
+   "right": 14,
+   "n": 19,
+   "misses": [
+    1952,
+    1968,
+    2000,
+    2016,
+    2024
+   ]
+  },
+  "D": {
+   "right": 15,
+   "n": 19,
+   "misses": [
+    1952,
+    2000,
+    2016,
+    2024
+   ]
+  },
+  "E": {
+   "right": 15,
+   "n": 19,
+   "misses": [
+    1952,
+    1968,
+    2000,
+    2016
+   ]
+  }
+ },
+ "deal_breakers_tried": {
+  "keys": [
+   "C06_disapproval_under_50",
+   "E05_office_won_primary"
+  ],
+  "lookalikes_by_1980": 20,
+  "tested_after": 19,
+  "broke_after": 12,
+  "walk_forward": {
+   "right": 7,
+   "n": 11
+  }
+ },
+ "keys, equal groups": {
+  "loo": {
+   "n": 19,
+   "winners": 16,
+   "mae": 2.52,
+   "misses": [
+    1952,
+    1968,
+    2024
+   ]
+  },
+  "ahead": {
+   "n": 12,
+   "winners": 11,
+   "mae": 2.39,
+   "misses": [
+    2024
+   ]
+  },
+  "loo_pred": {
+   "1952": 51.61,
+   "1956": 54.44,
+   "1960": 47.97,
+   "1964": 58.29,
+   "1968": 50.21,
+   "1972": 53.96,
+   "1976": 48.19,
+   "1980": 45.87,
+   "1984": 58.32,
+   "1988": 50.67,
+   "1992": 45.55,
+   "1996": 55.88,
+   "2000": 54.7,
+   "2004": 52.99,
+   "2008": 43.88,
+   "2012": 55.5,
+   "2016": 53.27,
+   "2020": 47.18,
+   "2024": 51.16
+  },
+  "ahead_pred": {
+   "1980": 44.19,
+   "1984": 61.98,
+   "1988": 51.32,
+   "1992": 45.11,
+   "1996": 57.74,
+   "2000": 55.66,
+   "2004": 53.48,
+   "2008": 43.85,
+   "2012": 55.8,
+   "2016": 53.36,
+   "2020": 47.31,
+   "2024": 51.16
+  }
+ },
+ "keys, plain count": {
+  "loo": {
+   "n": 19,
+   "winners": 16,
+   "mae": 2.94,
+   "misses": [
+    1952,
+    1968,
+    2024
+   ]
+  },
+  "ahead": {
+   "n": 12,
+   "winners": 11,
+   "mae": 2.22,
+   "misses": [
+    2024
+   ]
+  },
+  "loo_pred": {
+   "1952": 52.36,
+   "1956": 53.38,
+   "1960": 47.05,
+   "1964": 57.41,
+   "1968": 52.54,
+   "1972": 53.05,
+   "1976": 49.47,
+   "1980": 45.16,
+   "1984": 55.9,
+   "1988": 51.76,
+   "1992": 46.64,
+   "1996": 56.08,
+   "2000": 54.18,
+   "2004": 52.34,
+   "2008": 44.09,
+   "2012": 54.97,
+   "2016": 54.11,
+   "2020": 46.42,
+   "2024": 52.45
+  },
+  "ahead_pred": {
+   "1980": 43.5,
+   "1984": 58.61,
+   "1988": 52.92,
+   "1992": 46.14,
+   "1996": 58.29,
+   "2000": 55.21,
+   "2004": 52.84,
+   "2008": 43.73,
+   "2012": 55.51,
+   "2016": 54.3,
+   "2020": 46.57,
+   "2024": 52.45
+  }
+ },
+ "net approval alone": {
+  "loo": {
+   "n": 19,
+   "winners": 17,
+   "mae": 2.47,
+   "misses": [
+    1960,
+    1976
+   ]
+  },
+  "ahead": {
+   "n": 12,
+   "winners": 12,
+   "mae": 1.84,
+   "misses": []
+  },
+  "loo_pred": {
+   "1952": 47.05,
+   "1956": 60.78,
+   "1960": 56.63,
+   "1964": 60.35,
+   "1968": 49.88,
+   "1972": 54.13,
+   "1976": 51.99,
+   "1980": 46.86,
+   "1984": 53.57,
+   "1988": 52.23,
+   "1992": 48.41,
+   "1996": 52.51,
+   "2000": 53.67,
+   "2004": 50.82,
+   "2008": 44.03,
+   "2012": 51.13,
+   "2016": 51.69,
+   "2020": 47.92,
+   "2024": 47.58
+  },
+  "ahead_pred": {
+   "1980": 45.33,
+   "1984": 53.05,
+   "1988": 51.96,
+   "1992": 47.74,
+   "1996": 52.38,
+   "2000": 53.48,
+   "2004": 50.36,
+   "2008": 43.49,
+   "2012": 51.05,
+   "2016": 51.6,
+   "2020": 47.75,
+   "2024": 47.58
+  }
+ },
+ "keys averaged with net approval (the forecast)": {
+  "loo": {
+   "n": 19,
+   "winners": 16,
+   "mae": 1.93,
+   "misses": [
+    1960,
+    1968,
+    1976
+   ]
+  },
+  "ahead": {
+   "n": 12,
+   "winners": 12,
+   "mae": 1.24,
+   "misses": []
+  },
+  "loo_pred": {
+   "1952": 49.33,
+   "1956": 57.61,
+   "1960": 52.3,
+   "1964": 59.32,
+   "1968": 50.04,
+   "1972": 54.05,
+   "1976": 50.09,
+   "1980": 46.36,
+   "1984": 55.94,
+   "1988": 51.45,
+   "1992": 46.98,
+   "1996": 54.2,
+   "2000": 54.19,
+   "2004": 51.91,
+   "2008": 43.95,
+   "2012": 53.31,
+   "2016": 52.48,
+   "2020": 47.55,
+   "2024": 49.37
+  },
+  "ahead_pred": {
+   "1980": 44.76,
+   "1984": 57.52,
+   "1988": 51.64,
+   "1992": 46.42,
+   "1996": 55.06,
+   "2000": 54.57,
+   "2004": 51.92,
+   "2008": 43.67,
+   "2012": 53.42,
+   "2016": 52.48,
+   "2020": 47.53,
+   "2024": 49.37
+  }
+ },
+ "keys_line": [
+  38.07,
+  24.42
+ ],
+ "approval_line": [
+  51.009,
+  0.163
+ ],
+ "blend_sd": 2.68,
+ "electoral": {
+  "forecast, each election left out": {
+   "right": 14,
+   "n": 18,
+   "misses": [
+    1960,
+    1968,
+    2000,
+    2016
+   ],
+   "office_ev": {
+    "1956": 468,
+    "1960": 397,
+    "1964": 526,
+    "1968": 298,
+    "1972": 446,
+    "1976": 265,
+    "1980": 95,
+    "1984": 453,
+    "1988": 367,
+    "1992": 177,
+    "1996": 384,
+    "2000": 367,
+    "2004": 338,
+    "2008": 142,
+    "2012": 343,
+    "2016": 332,
+    "2020": 230,
+    "2024": 226
+   }
+  },
+  "forecast, from earlier elections only": {
+   "right": 10,
+   "n": 12,
+   "misses": [
+    2000,
+    2016
+   ],
+   "office_ev": {
+    "1980": 78,
+    "1984": 513,
+    "1988": 367,
+    "1992": 156,
+    "1996": 417,
+    "2000": 379,
+    "2004": 338,
+    "2008": 133,
+    "2012": 343,
+    "2016": 332,
+    "2020": 230,
+    "2024": 226
+   }
+  },
+  "the actual national vote (tests the state step alone)": {
+   "right": 15,
+   "n": 18,
+   "misses": [
+    1968,
+    2000,
+    2016
+   ],
+   "office_ev": {
+    "1956": 468,
+    "1960": 259,
+    "1964": 533,
+    "1968": 292,
+    "1972": 510,
+    "1976": 215,
+    "1980": 78,
+    "1984": 519,
+    "1988": 412,
+    "1992": 156,
+    "1996": 384,
+    "2000": 286,
+    "2004": 317,
+    "2008": 183,
+    "2012": 303,
+    "2016": 303,
+    "2020": 230,
+    "2024": 226
+   }
+  }
+ },
+ "state_step": {
+  "slope_all": -0.18,
+  "slope_by_election": {
+   "1980": -0.95,
+   "1984": 1.44,
+   "1988": -3.77,
+   "1992": 0.06,
+   "1996": 1.86,
+   "2000": -7.76,
+   "2004": -1.45,
+   "2008": 3.03,
+   "2012": -7.03,
+   "2016": 11.74,
+   "2020": -0.27,
+   "2024": -0.31
+  },
+  "by_election": {
+   "1980": {
+    "b_loo": -0.11,
+    "miss_plain": 3.51,
+    "miss_adjusted_loo": 3.5
+   },
+   "1984": {
+    "b_loo": -0.23,
+    "miss_plain": 4.02,
+    "miss_adjusted_loo": 4.02,
+    "b_ahead": -0.95,
+    "miss_adjusted_ahead": 4.03
+   },
+   "1988": {
+    "b_loo": -0.15,
+    "miss_plain": 2.67,
+    "miss_adjusted_loo": 2.67,
+    "b_ahead": -0.38,
+    "miss_adjusted_ahead": 2.66
+   },
+   "1992": {
+    "b_loo": -0.19,
+    "miss_plain": 2.97,
+    "miss_adjusted_loo": 2.97,
+    "b_ahead": -0.62,
+    "miss_adjusted_ahead": 2.96
+   },
+   "1996": {
+    "b_loo": -0.2,
+    "miss_plain": 2.63,
+    "miss_adjusted_loo": 2.63,
+    "b_ahead": -0.58,
+    "miss_adjusted_ahead": 2.63
+   },
+   "2000": {
+    "b_loo": -0.15,
+    "miss_plain": 2.59,
+    "miss_adjusted_loo": 2.59,
+    "b_ahead": -0.44,
+    "miss_adjusted_ahead": 2.6
+   },
+   "2004": {
+    "b_loo": -0.17,
+    "miss_plain": 1.96,
+    "miss_adjusted_loo": 1.95,
+    "b_ahead": -0.69,
+    "miss_adjusted_ahead": 1.95
+   },
+   "2008": {
+    "b_loo": -0.25,
+    "miss_plain": 2.74,
+    "miss_adjusted_loo": 2.74,
+    "b_ahead": -0.73,
+    "miss_adjusted_ahead": 2.74
+   },
+   "2012": {
+    "b_loo": -0.13,
+    "miss_plain": 1.71,
+    "miss_adjusted_loo": 1.71,
+    "b_ahead": -0.29,
+    "miss_adjusted_ahead": 1.71
+   },
+   "2016": {
+    "b_loo": -0.32,
+    "miss_plain": 2.97,
+    "miss_adjusted_loo": 2.98,
+    "b_ahead": -0.57,
+    "miss_adjusted_ahead": 2.99
+   },
+   "2020": {
+    "b_loo": 0.17,
+    "miss_plain": 1.35,
+    "miss_adjusted_loo": 1.37,
+    "b_ahead": 0.18,
+    "miss_adjusted_ahead": 1.37
+   },
+   "2024": {
+    "b_loo": -0.18,
+    "miss_plain": 1.27,
+    "miss_adjusted_loo": 1.27,
+    "b_ahead": -0.18,
+    "miss_adjusted_ahead": 1.27
+   }
+  },
+  "calls": {
+   "loo": {
+    "plain": 10,
+    "adjusted": 10,
+    "n": 12
+   },
+   "ahead": {
+    "plain": 9,
+    "adjusted": 9,
+    "n": 11
+   },
+   "actual_loo": {
+    "plain": 10,
+    "adjusted": 10,
+    "n": 12
+   },
+   "actual_ahead": {
+    "plain": 9,
+    "adjusted": 9,
+    "n": 11
+   }
+  },
+  "state_miss": {
+   "loo": {
+    "plain": 2.532,
+    "adjusted": 2.534,
+    "adjusted_better_in": 8,
+    "n": 12
+   },
+   "ahead": {
+    "plain": 2.443,
+    "adjusted": 2.448,
+    "adjusted_better_in": 7,
+    "n": 11
+   }
+  },
+  "adopted": false
+ },
+ "lichtman": {
+  "national": {
+   "right": 17,
+   "n": 19,
+   "misses": [
+    2016,
+    2024
+   ]
+  },
+  "national_since_1984": {
+   "right": 9,
+   "n": 11
+  },
+  "office": {
+   "right": 17,
+   "n": 19,
+   "misses": [
+    2000,
+    2024
+   ]
+  },
+  "count_line": {
+   "n": 19,
+   "winners": 17,
+   "mae": 3.1,
+   "misses": [
+    1992,
+    2024
+   ]
+  },
+  "count_line_with_approval": {
+   "n": 19,
+   "winners": 17,
+   "mae": 2.17,
+   "misses": [
+    1960,
+    2024
+   ]
+  },
+  "ours_since_1984": {
+   "right": 10,
+   "n": 11
+  },
+  "office_since_1984": {
+   "right": 9,
+   "n": 11
+  },
+  "ours_office_since_1984": {
+   "right": 8,
+   "n": 11
+  }
+ },
+ "one_key_from_the_line": {
+  "his": {
+   "years": [
+    1992,
+    1996,
+    2000,
+    2016
+   ],
+   "right": 3,
+   "rest": {
+    "n": 15,
+    "right": 14
+   }
+  },
+  "these": {
+   "years": [
+    1968,
+    1988,
+    2024
+   ],
+   "right": 2,
+   "rest": {
+    "n": 16,
+    "right": 13
+   }
+  }
+ },
+ "primary_model": {
+  "right": 15,
+  "n": 19,
+  "misses": [
+   1960,
+   2000,
+   2020,
+   2024
+  ],
+  "in_advance": {
+   "right": 5,
+   "n": 8
+  }
+ },
+ "missed_but_called_by_either": [
+  1952,
+  2016
+ ],
+ "called_but_missed_by_both": [],
+ "each_key": {
+  "A01_gdp_q2_growing": {
+   "n": 19,
+   "true": 16,
+   "agree": 13
+  },
+  "A02_gdp_pc_up_year": {
+   "n": 19,
+   "true": 16,
+   "agree": 13
+  },
+  "A03_indpro_up_year": {
+   "n": 19,
+   "true": 13,
+   "agree": 14
+  },
+  "A04_spending_pc_up_year": {
+   "n": 17,
+   "true": 14,
+   "agree": 12
+  },
+  "A05_unemp_down_year": {
+   "n": 19,
+   "true": 12,
+   "agree": 15
+  },
+  "A06_jobs_up_year": {
+   "n": 19,
+   "true": 16,
+   "agree": 13
+  },
+  "A07_factory_jobs_up_year": {
+   "n": 19,
+   "true": 10,
+   "agree": 15
+  },
+  "A08_claims_down_year": {
+   "n": 17,
+   "true": 13,
+   "agree": 13
+  },
+  "A09_no_recession_signal": {
+   "n": 19,
+   "true": 15,
+   "agree": 14
+  },
+  "A10_income_pc_up_year": {
+   "n": 19,
+   "true": 18,
+   "agree": 11
+  },
+  "A11_wages_up_year": {
+   "n": 19,
+   "true": 11,
+   "agree": 8
+  },
+  "A12_inflation_down_year": {
+   "n": 19,
+   "true": 9,
+   "agree": 8
+  },
+  "A13_oil_down_year": {
+   "n": 19,
+   "true": 11,
+   "agree": 12
+  },
+  "A14_stocks_up_year": {
+   "n": 19,
+   "true": 15,
+   "agree": 10
+  },
+  "A15_stocks_up_this_year": {
+   "n": 19,
+   "true": 13,
+   "agree": 12
+  },
+  "A16_sentiment_up_year": {
+   "n": 18,
+   "true": 8,
+   "agree": 12
+  },
+  "A17_housing_up_year": {
+   "n": 17,
+   "true": 10,
+   "agree": 12
+  },
+  "A18_states_growing": {
+   "n": 12,
+   "true": 10,
+   "agree": 9
+  },
+  "B01_lt_growth": {
+   "n": 19,
+   "true": 10,
+   "agree": 13
+  },
+  "B02_indpro_beats_prev": {
+   "n": 19,
+   "true": 9,
+   "agree": 10
+  },
+  "B03_spending_beats_prev": {
+   "n": 15,
+   "true": 7,
+   "agree": 10
+  },
+  "B04_unemp_below_start": {
+   "n": 19,
+   "true": 9,
+   "agree": 12
+  },
+  "B05_jobs_beat_prev": {
+   "n": 19,
+   "true": 9,
+   "agree": 8
+  },
+  "B06_factory_jobs_above_start": {
+   "n": 19,
+   "true": 7,
+   "agree": 8
+  },
+  "B07_claims_below_start": {
+   "n": 16,
+   "true": 9,
+   "agree": 12
+  },
+  "B08_income_beats_prev": {
+   "n": 18,
+   "true": 8,
+   "agree": 10
+  },
+  "B09_wages_above_start": {
+   "n": 19,
+   "true": 13,
+   "agree": 12
+  },
+  "B10_inflation_below_prev": {
+   "n": 18,
+   "true": 9,
+   "agree": 17
+  },
+  "B11_oil_below_start": {
+   "n": 19,
+   "true": 10,
+   "agree": 11
+  },
+  "B12_real_stocks_above_start": {
+   "n": 19,
+   "true": 13,
+   "agree": 10
+  },
+  "B13_sentiment_above_start": {
+   "n": 18,
+   "true": 10,
+   "agree": 14
+  },
+  "B14_housing_above_start": {
+   "n": 16,
+   "true": 9,
+   "agree": 14
+  },
+  "B15_states_beat_prev": {
+   "n": 11,
+   "true": 5,
+   "agree": 7
+  },
+  "C01_approval_50": {
+   "n": 19,
+   "true": 8,
+   "agree": 15
+  },
+  "C02_approval_net_positive": {
+   "n": 19,
+   "true": 11,
+   "agree": 16
+  },
+  "C03_approval_up_year": {
+   "n": 19,
+   "true": 10,
+   "agree": 15
+  },
+  "C04_approval_above_midterm": {
+   "n": 19,
+   "true": 8,
+   "agree": 15
+  },
+  "C05_approval_up_this_year": {
+   "n": 19,
+   "true": 6,
+   "agree": 13
+  },
+  "C06_disapproval_under_50": {
+   "n": 19,
+   "true": 13,
+   "agree": 16
+  },
+  "D01_mandate": {
+   "n": 19,
+   "true": 6,
+   "agree": 13
+  },
+  "D02_holds_house": {
+   "n": 19,
+   "true": 5,
+   "agree": 8
+  },
+  "D03_holds_senate": {
+   "n": 19,
+   "true": 9,
+   "agree": 8
+  },
+  "D04_prev_majority": {
+   "n": 19,
+   "true": 12,
+   "agree": 7
+  },
+  "D05_kept_house_seats": {
+   "n": 19,
+   "true": 2,
+   "agree": 11
+  },
+  "D06_kept_senate_seats": {
+   "n": 19,
+   "true": 7,
+   "agree": 12
+  },
+  "E01_sitting_president": {
+   "n": 19,
+   "true": 11,
+   "agree": 12
+  },
+  "E02_first_term_party": {
+   "n": 19,
+   "true": 10,
+   "agree": 13
+  },
+  "E03_no_third_party": {
+   "n": 19,
+   "true": 15,
+   "agree": 12
+  },
+  "E04_no_contest": {
+   "n": 19,
+   "true": 14,
+   "agree": 13
+  },
+  "E05_office_won_primary": {
+   "n": 19,
+   "true": 17,
+   "agree": 10
+  },
+  "E06_primary_stronger": {
+   "n": 19,
+   "true": 16,
+   "agree": 13
+  },
+  "E07_challenger_lost_primary": {
+   "n": 19,
+   "true": 9,
+   "agree": 12
+  }
+ },
+ "halves_call": {
+  "p10": 13,
+  "median": 14,
+  "p90": 16,
+  "min": 11,
+  "max": 18
+ },
+ "halves": {
+  "verdict_p10": 15,
+  "verdict_median": 16,
+  "verdict_p90": 18,
+  "mae_p10": 2.36,
+  "mae_median": 2.79,
+  "mae_p90": 3.25
+ },
+ "lock": {
+  "matches": true,
+  "entries_changed": 0,
+  "first": []
+ }
+}

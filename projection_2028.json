@@ -1,0 +1,473 @@
+{
+ "as_of": "November 22, 2026",
+ "runs": 200000,
+ "stretches": {
+  "n": 117,
+  "with_recession": 39,
+  "first": 1964,
+  "last": 2025
+ },
+ "recession_share": 0.3,
+ "index": {
+  "mean": 0.395,
+  "median": 0.406,
+  "p5": 0.197,
+  "p25": 0.306,
+  "p75": 0.483,
+  "p95": 0.57,
+  "above_half": 0.2
+ },
+ "calm": {
+  "mean": 0.449,
+  "above_half": 0.284
+ },
+ "hist": [
+  {
+   "lo": 0,
+   "share": 0.0
+  },
+  {
+   "lo": 5,
+   "share": 0.0018
+  },
+  {
+   "lo": 10,
+   "share": 0.0117
+  },
+  {
+   "lo": 15,
+   "share": 0.0433
+  },
+  {
+   "lo": 20,
+   "share": 0.0691
+  },
+  {
+   "lo": 25,
+   "share": 0.1141
+  },
+  {
+   "lo": 30,
+   "share": 0.1036
+  },
+  {
+   "lo": 35,
+   "share": 0.1369
+  },
+  {
+   "lo": 40,
+   "share": 0.1612
+  },
+  {
+   "lo": 45,
+   "share": 0.1587
+  },
+  {
+   "lo": 50,
+   "share": 0.1195
+  },
+  {
+   "lo": 55,
+   "share": 0.0568
+  },
+  {
+   "lo": 60,
+   "share": 0.0198
+  },
+  {
+   "lo": 65,
+   "share": 0.0027
+  },
+  {
+   "lo": 70,
+   "share": 0.0008
+  },
+  {
+   "lo": 75,
+   "share": 0.0
+  },
+  {
+   "lo": 80,
+   "share": 0.0
+  },
+  {
+   "lo": 85,
+   "share": 0.0
+  },
+  {
+   "lo": 90,
+   "share": 0.0
+  },
+  {
+   "lo": 95,
+   "share": 0.0
+  }
+ ],
+ "groups": {
+  "A": {
+   "mean": 0.636,
+   "p10": 0.222,
+   "p90": 0.944,
+   "likely": 14,
+   "n": 18
+  },
+  "B": {
+   "mean": 0.467,
+   "p10": 0.2,
+   "p90": 0.8,
+   "likely": 7,
+   "n": 15
+  },
+  "C": {
+   "mean": 0.182,
+   "p10": 0.0,
+   "p90": 0.5,
+   "likely": 0,
+   "n": 6
+  },
+  "D": {
+   "mean": 0.0,
+   "p10": 0.0,
+   "p90": 0.0,
+   "likely": 0,
+   "n": 6
+  },
+  "E": {
+   "mean": 0.689,
+   "p10": 0.429,
+   "p90": 0.857,
+   "likely": 6,
+   "n": 7
+  }
+ },
+ "likely": {
+  "in_favor": 27,
+  "index": 0.42
+ },
+ "keys": {
+  "A01": {
+   "p": 0.67,
+   "note": "Forecasters expect growth of about 2.1% a year in spring 2028. It was 3.4% last quarter."
+  },
+  "A02": {
+   "p": 0.656,
+   "note": "Forecast growth is about 2% a year, and the population is growing about 0.25%."
+  },
+  "A03": {
+   "p": 0.565,
+   "note": "Up 2.1% in the past year."
+  },
+  "A04": {
+   "p": 0.772,
+   "note": "Real spending is up 2.5% in the past year, ahead of the population."
+  },
+  "A05": {
+   "p": 0.395,
+   "note": "It is 4.1% now. Forecasters expect about 4.2% through 2028, and a tie counts as no."
+  },
+  "A06": {
+   "p": 0.586,
+   "note": "Forecasters expect about 50,000 new jobs a month, a slow pace that a weak year could turn negative."
+  },
+  "A07": {
+   "p": 0.4,
+   "note": "Factory jobs have risen 101,000 since December after falling through 2025."
+  },
+  "A08": {
+   "p": 0.407,
+   "note": "Claims are about 201,000 a week, already low."
+  },
+  "A09": {
+   "p": 0.695,
+   "note": "No signal now. It would take a rise of about half a point in unemployment."
+  },
+  "A10": {
+   "p": 0.763,
+   "note": "Up 1.0% in the past year, held back by the jump in prices."
+  },
+  "A11": {
+   "p": 0.847,
+   "note": "Pay is rising 4.4% a year and inflation is forecast to slow to about 2.4%."
+  },
+  "A12": {
+   "p": 0.721,
+   "note": "Inflation is 3.7% now. This year's oil shock lifts the mid-2027 figure that mid-2028 is compared with."
+  },
+  "A13": {
+   "p": 0.737,
+   "note": "About $84 a barrel now. Futures and forecasts point to about $80 in mid-2027 and $70 in mid-2028."
+  },
+  "A14": {
+   "p": 0.696,
+   "note": "The S&P 500 was higher than a year before in about seven years of ten, and lower in recessions."
+  },
+  "A15": {
+   "p": 0.636,
+   "note": "Higher than six months before in about two years of three."
+  },
+  "A16": {
+   "p": 0.627,
+   "note": "The index is 51.5, near its record low, which leaves room to recover."
+  },
+  "A17": {
+   "p": 0.413,
+   "note": "Starts are running near 1.29 million a year, with borrowing costs high."
+  },
+  "A18": {
+   "p": 0.854,
+   "note": "State economies are growing in 49 of 51 now. This key has failed only in sharp downturns (1980, 2020)."
+  },
+  "B01": {
+   "p": 0.367,
+   "note": "So far this term: 1.98% a year. The bar, the average of the last two terms, is 1.98%."
+  },
+  "B02": {
+   "p": 0.612,
+   "note": "Up 3.3% since January 2025, against 0.3% a year last term."
+  },
+  "B03": {
+   "p": 0.162,
+   "note": "It would take real spending growth of 3.4% a year from here."
+  },
+  "B04": {
+   "p": 0.367,
+   "note": "It was 4.0% in January 2025 and is 4.1% now."
+  },
+  "B05": {
+   "p": 0.0,
+   "note": "Out of reach: jobs grew 2.6% a year last term and 0.4% a year so far in this one."
+  },
+  "B06": {
+   "p": 0.4,
+   "note": "12.68 million now against 12.67 million in January 2025."
+  },
+  "B07": {
+   "p": 0.536,
+   "note": "About 201,000 a week now against 221,000 at the start of the term."
+  },
+  "B08": {
+   "p": 0.399,
+   "note": "So far this term: 1.1% a year. Last term: 1.5%."
+  },
+  "B09": {
+   "p": 0.891,
+   "note": "Pay after inflation is 1.7% above its January 2025 level."
+  },
+  "B10": {
+   "p": 0.954,
+   "note": "Inflation has averaged 3.3% a year this term against 5.0% last term."
+  },
+  "B11": {
+   "p": 0.707,
+   "note": "Oil is about $84 now. January 2025's price is $80 in today's dollars, and forecasts have oil below that by 2028."
+  },
+  "B12": {
+   "p": 0.763,
+   "note": "After November's fall the S&P 500 is 9% above its start-of-term level, after inflation."
+  },
+  "B13": {
+   "p": 0.09,
+   "note": "The index is 51.5. It was 71.7 in January 2025."
+  },
+  "B14": {
+   "p": 0.199,
+   "note": "Starts average 1.29 million against 1.40 million at the start of the term."
+  },
+  "B15": {
+   "p": 0.565,
+   "note": "So far this term, growth is above its 2024 pace in states holding 414 electoral votes."
+  },
+  "C01": {
+   "p": 0.009,
+   "note": "38% approve now, in the RealClearPolitics average."
+  },
+  "C02": {
+   "p": 0.013,
+   "note": "38% approve and 60% disapprove now."
+  },
+  "C03": {
+   "p": 0.436,
+   "note": "Approval has fallen in each year of this term. It rose in the last year for 3 of the 7 presidents who were not running again."
+  },
+  "C04": {
+   "p": 0.339,
+   "note": "Approval averaged 38.5% around the midterms, its low for the term. It was higher by June in 8 of 19 cycles."
+  },
+  "C05": {
+   "p": 0.276,
+   "note": "It rose from January to June of the election year in 6 of 19 cycles."
+  },
+  "C06": {
+   "p": 0.021,
+   "note": "60% disapprove now."
+  },
+  "E03": {
+   "p": 0.881,
+   "note": "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections."
+  },
+  "E04": {
+   "p": 0.75,
+   "note": "Rubio (35%) and Vance (34%) are level in national polls, which points to a real contest."
+  },
+  "E05": {
+   "p": 0.681,
+   "note": "Vance leads Rubio in New Hampshire polls, 39% to 27%, and the nomination is open."
+  },
+  "E06": {
+   "p": 0.884,
+   "note": "Two candidates dominate the Republican race, and the Democratic field is split five ways."
+  },
+  "E07": {
+   "p": 0.627,
+   "note": "The Democratic field is split, and New Hampshire is in dispute with the national party over its date."
+  }
+ },
+ "outlook": {
+  "recession_share": 0.3,
+  "unemployment": 4.2,
+  "jobs_a_month": [
+   90,
+   90,
+   65,
+   65,
+   65,
+   49,
+   49,
+   49,
+   51,
+   51,
+   51,
+   51,
+   51,
+   51,
+   50,
+   50,
+   50,
+   50,
+   50,
+   50
+  ],
+  "gdp": [
+   2.3,
+   2.1,
+   2.2,
+   2.2,
+   2.1,
+   2.1,
+   2.1
+  ],
+  "income": [
+   2.0,
+   2.0,
+   2.0,
+   2.0,
+   2.0,
+   2.0,
+   2.0
+  ],
+  "cpi_quarters": [
+   4.0,
+   2.6,
+   2.4,
+   2.4,
+   2.4,
+   2.3,
+   2.3,
+   2.3
+  ],
+  "population": 0.25,
+  "industrial_production": 1.0,
+  "spending": 2.2,
+  "hourly_pay": 3.8,
+  "factory_jobs": 0.0,
+  "oil": [
+   [
+    1,
+    84.0
+   ],
+   [
+    8,
+    80.0
+   ],
+   [
+    14,
+    72.0
+   ],
+   [
+    20,
+    70.0
+   ]
+  ],
+  "sentiment": [
+   [
+    1,
+    51.5
+   ],
+   [
+    8,
+    57.0
+   ],
+   [
+    20,
+    60.0
+   ]
+  ],
+  "housing_starts": 1300.0,
+  "claims": 205000.0,
+  "sp500_now": 6910.39
+ },
+ "politics": {
+  "surge": 0.03,
+  "net_given_surge": 0.6,
+  "fifty_given_net": 0.7,
+  "slump_in_recession": 0.5,
+  "no_third_candidate": 0.88,
+  "nominee_wins_nh": 0.68,
+  "two_thirds_if_won": 0.82,
+  "two_thirds_if_lost": 0.6,
+  "dem_on_ballot": 0.85,
+  "dem_nominee_wins_nh": 0.42,
+  "dem_write_in_win": 0.1
+ },
+ "polls": {
+  "approve": 37.9,
+  "disapprove": 59.8,
+  "approve_midterm": 38.5,
+  "rubio": 35.4,
+  "vance": 34.0,
+  "nh_vance": 39.0,
+  "nh_rubio": 27.3
+ },
+ "if": [
+  {
+   "what": "recession in 20% of runs",
+   "mean": 0.413,
+   "above_half": 0.227
+  },
+  {
+   "what": "recession in 40% of runs",
+   "mean": 0.377,
+   "above_half": 0.17
+  },
+  {
+   "what": "a rougher nomination season",
+   "mean": 0.38,
+   "above_half": 0.158
+  },
+  {
+   "what": "a smoother nomination season",
+   "mean": 0.405,
+   "above_half": 0.223
+  },
+  {
+   "what": "no chance that disapproval falls below half",
+   "mean": 0.392,
+   "above_half": 0.187
+  },
+  {
+   "what": "an 8% chance that it does",
+   "mean": 0.398,
+   "above_half": 0.216
+  }
+ ]
+}
