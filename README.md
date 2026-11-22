@@ -40,6 +40,33 @@ All four misses are calls that the Democrats, in office each time, would win.
   July) and the party nominated someone who had not run in the primaries. A strong economy carried the
   count just over the line both times, to 53.9% and 53.2%.
 
+## How sure a call is
+
+The call is yes or no. The count behind it says how much to trust it. This is a description of the record, printed by `test.py`
+under HOW SURE. It changes nothing in the model: the call is still made at one half.
+
+| Share of keys in favor | Label | Elections | Party in office won | Its average share of the two-party vote |
+|---|---|---|---|---|
+| under 40% | clear loss | 1980, 1992, 2008, 2020 | 0 of 4 | 46.3% |
+| 40% to 50% | likely loss | 1960, 1968, 1976 | 0 of 3 | 49.5% |
+| 50% to 60% | toss-up | 1952, 1988, 2024 | 1 of 3 | 49.3% |
+| 60% to 70% | lean win | 1956, 1972, 2000, 2004, 2016 | 3 of 5 | 54.4% |
+| 70% and up | clear win | 1964, 1984, 1996, 2012 | 4 of 4 | 56.8% |
+
+- The ranges are every ten points: round numbers, not tuned. The labels only name what happened in each range.
+- Under one half the party in office lost all 7 times and at 70% or more it won all 4. From 50% to 70% it won 4 of 8, so a call
+  to win in that range is closer to a coin flip than the bare call suggests.
+- Against the national vote the count does better than against the winner. The correlation between the index and the party's
+  share of the two-party vote is 0.82; the line is share = 38.07 + 24.42 x index, which is 50.3 at one half, though the line at
+  one half was never fitted. Ten points of keys is worth about 2.4 points of vote.
+- Read as a call on who wins the most votes, the keys are right in 17 of 19 (misses 1952 and 2024). In 2000 and 2016 they had
+  the vote right and the Electoral College wrong.
+- Estimating each election's vote from the other 18, the typical miss is 2.5 points. The largest are 1972 (7.8 above the line)
+  and 1952 (6.9 below).
+- For 2028 the page weights the run ahead by this record: the share of runs ending in each range, times how often the party in
+  office won there. That gives the Republicans about a 7% chance, against 20% of runs ending above one half, because a count just
+  over the line has won only about half the time. It rests on 19 elections and is rough.
+
 ## Guarding against overfitting
 
 The model has 52 keys and 19 elections to check them on, which would be a recipe for overfitting if anything
@@ -122,6 +149,9 @@ Changes to the model made after its keys were first scored.
 One change of a different kind is kept. The model first scored the national vote (17 of 19 on that basis)
 and now scores who won the election (15 of 19). That changed the question, not the keys, and it lowered the
 record.
+
+Also on November 22, 2026, the page and `test.py` began reporting how sure each call is (see "How sure a call is"). That
+adds labels to the record. No key, index or call changed, and the locked copy still matches.
 
 ## Next to Lichtman's 13 Keys and the Primary Model
 

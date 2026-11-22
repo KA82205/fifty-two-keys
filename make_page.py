@@ -178,7 +178,7 @@ def main():
         for ks in GROUPS.values():
             vals = [r[k] for k in ks if r[k] is not None]; gs.append(sum(vals) / len(vals))
         # w: the party in office won the election; sp: it won the most votes nationwide and lost the Electoral College
-        elections.append({'y': y, 'p': r['inc_party'], 'c': NOMINEES[y][0], 'o': NOMINEES[y][1], 'w': bool(TOOK_OFFICE[y]), 'sp': y in call['split'],
+        elections.append({'y': y, 'p': r['inc_party'], 'c': NOMINEES[y][0], 'o': NOMINEES[y][1], 'w': bool(TOOK_OFFICE[y]), 'sp': y in call['split'], 'v': round(float(r['inc_share']), 1),
                           'k': ''.join('?' if r[k] is None else ('T' if r[k] else '.') for k in ALL), 'i': round(sum(gs) / len(gs), 3),
                           'd': [detail(k[:3], v) if r[k] is not None else '' for k in ALL]})
     run_path = os.path.join(HERE, 'projection_2028.json')
@@ -223,6 +223,14 @@ def main():
     assert len(call['close']['years']) == 4, 'the fine print says four calls were close'
     ok = res['one_key']['left_out']
     payload['rec'] = call
+    sure = res['sure']                                   # how sure: the record at each level of the count
+    assert [b['label'] for b in sure['bands']] == ['clear loss', 'likely loss', 'toss-up', 'lean win', 'clear win'] and all(b['n'] for b in sure['bands'])
+    assert all(b['won'] == 0 for b in sure['bands'][:2]) and sure['bands'][-1]['won'] == sure['bands'][-1]['n'], 'the page says no party under one half won and every party at 70% or more did'
+    mid = [b for b in sure['bands'] if 0.5 <= b['lo'] < 0.7]
+    assert (sum(b['won'] for b in mid), sum(b['n'] for b in mid)) == (4, 8), 'the page says four of eight between 50% and 70%'
+    assert res['verdict']['misses'] == [1952, 2024] and abs(sure['at_half'] - 50) < 1, 'the page says the vote call misses 1952 and 2024 and that one half of the keys is about half of the vote'
+    assert [y for _, y in sure['largest']] == [1972, 1952]
+    payload['sure'] = dict(sure, vote_right=res['verdict']['right'])
     payload['lich'] = {'office': lich['office'], 'office_since_1984': lich['office_since_1984']}
     payload['pm'] = pm
     # they: called by both of the other models and missed here; we: missed by both and called here
@@ -234,6 +242,11 @@ def main():
         odds = min(((abs(above - a / b), f'{a} in {b}') for a, b in ((1, 2), (2, 5), (1, 3), (1, 4), (1, 5), (1, 6), (1, 8), (1, 10), (1, 20), (1, 50))))[1]
         assert ix['median'] < 0.5 and ix['mean'] < 0.5 and run['likely']['index'] < 0.5, 'the page says the keys would say the Republicans lose on today\'s outlook'
         assert run['groups']['D']['mean'] == 0 and run['calm']['above_half'] > above
+        shares = [sum(h['share'] for h in run['hist'] if round(100 * b['lo']) <= h['lo'] < round(100 * min(b['hi'], 1))) for b in sure['bands']]
+        assert abs(sum(shares) - 1) < 0.01
+        chance_win = sum(sh * b['won'] / b['n'] for sh, b in zip(shares, sure['bands']))
+        assert chance_win < above, 'the page says the record makes a win less likely than the share of runs above one half'
+        payload['sure']['run'] = {'shares': [round(x, 3) for x in shares], 'chance': round(chance_win, 3), 'vote': round(sure['line'][0] + sure['line'][1] * ix['mean'], 1)}
         payload['run'] = {'mean': ix['mean'], 'median': ix['median'], 'p25': ix['p25'], 'p75': ix['p75'], 'above': above, 'odds': odds, 'runs': f"{run['runs']:,}",
                           'hist': run['hist'], 'hmax': max(b['share'] for b in run['hist']), 'groups': run['groups'], 'likely': run['likely']['index'],
                           'stretches': run['stretches']['n'], 'recession': run['recession_share'], 'n_econ': len(GROUPS['A']) + len(GROUPS['B']),

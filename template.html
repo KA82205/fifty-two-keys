@@ -161,6 +161,19 @@ section{padding:72px 0 0;scroll-margin-top:56px}
 .rk-plot{position:relative;height:100%}
 .rk-bar{position:absolute;left:0;top:6px;bottom:6px;border-radius:0 3px 3px 0;border:1.5px solid var(--ink);border-left-width:0}
 .rk-bar.won{background:var(--brass-ink);border-color:var(--brass-ink)}
+.rk-band i{font-style:normal;font-weight:400;color:var(--muted);margin-left:8px}
+.sc{margin-top:10px;max-width:760px}
+.sc svg{display:block;width:100%;height:auto;overflow:visible}
+.sc-s{display:none !important}
+.sc-g{stroke:var(--line);stroke-width:1}
+.sc-g.mid{stroke:var(--ink);stroke-opacity:.5;stroke-width:1.5}
+.sc-fit{stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5}
+.sc-t{fill:var(--muted);font:400 12px var(--text)}
+.sc-y{fill:var(--ink);font:500 12px var(--text);font-variant-numeric:tabular-nums}
+.sc-d{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
+.sc-d.won{fill:var(--brass-ink);stroke:var(--brass-ink)}
+.sc-sw{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--ink);flex:none}
+.sc-sw.won{background:var(--brass-ink);border-color:var(--brass-ink)}
 .rk-n{text-align:right}
 .rk-res{text-align:right;color:var(--muted)}
 .rk-flag{color:var(--miss);font-weight:600;font-size:.82rem;text-align:right;white-space:nowrap}
@@ -262,6 +275,7 @@ footer b{color:var(--ink);font-weight:600}
   .board{padding:20px 18px 18px;border-radius:12px}
   .hooks{--kw:17px;--kh:37.4px;--rg:12px;gap:var(--rg) 8px}
   .rk{--rl:126px;--rr:106px;font-size:.84rem}
+  .sc .sc-w{display:none}.sc .sc-s{display:block !important}
   .rk-head,.rk-row{grid-template-columns:var(--rl) 1fr 52px 54px}
   .rk .hide-s,.rk-axis .minor{display:none}
   .rk-band{font-size:.9rem}
@@ -348,6 +362,7 @@ footer b{color:var(--ink);font-weight:600}
         <p id="run-take"></p>
       </div>
     </div>
+    <p id="run-sure" style="max-width:74ch;margin:6px 0 14px"></p>
     <p class="note" style="margin-top:6px">The chance for each open key is shown on the key board above and in the list of keys below. Sources and method are in the fine print.</p>
   </div>
 </section>
@@ -357,7 +372,7 @@ footer b{color:var(--ink);font-weight:600}
   <ol class="steps">
     <li><h3>Ask {{count}} questions</h3><p>Each key is a yes-or-no question about the party in the White House, such as whether unemployment is lower than a year ago. A fixed rule answers it from public figures. Yes means it favors that party.</p></li>
     <li><h3>Score five groups</h3><p>The keys fall into five groups: the economy now, the economy this term, approval, party strength, and incumbency and nominations. A group's score is the share of its keys that say yes. The five scores are averaged, so every group counts the same.</p></li>
-    <li><h3>Read the result</h3><p>If the average is above 50%, the keys say the party in office wins the election. At 50% or below, they say it loses. That is the whole model: the count decides, and nothing is fitted to past results.</p></li>
+    <li><h3>Read the result</h3><p>If the average is above 50%, the keys say the party in office wins the election. At 50% or below, they say it loses. That is the whole model: the count decides, and nothing is fitted to past results. How far the average sits from 50% says how sure the call is: under 50% or above 70% has been a clear call, and between them the party in office has won about half the time.</p></li>
   </ol>
   <p class="define"><b>Winning the election</b> means winning the Electoral College, and with it the presidency. The keys make one call each time: the party in office wins, or it loses.</p>
 </section>
@@ -380,6 +395,19 @@ footer b{color:var(--ink);font-weight:600}
     <p class="body-p"><b>The four misses are 1952, 2000, 2016 and 2024.</b> Each time the keys said the Democrats, the party in office, would win, and they lost.</p>
     <p class="body-p" style="margin-top:10px"><b>2000 and 2016.</b> The Democrats won the most votes nationwide and lost the Electoral College: by 537 votes in Florida in 2000, after the Supreme Court stopped the recount, and by about 78,000 votes across three states in 2016. The keys read the country as a whole, so they cannot see a split like that coming.</p>
     <p class="body-p" style="margin-top:10px"><b>1952 and 2024.</b> Both times an unpopular president left the race in the election year, Truman in March and Biden in July, and the Democrats nominated someone who had not run in the primaries. Both times a strong economy carried the count just over the line, to {{I1952}}% and {{I2024}}%.</p>
+  </div>
+
+  <div class="sub">
+    <h3>How sure is a call?</h3>
+    <p>The call is yes or no, but the count behind it says more. Each dot is an election: the further right, the more keys favored the party in office; the higher, the more of the vote it won.</p>
+    <div class="rk-key">
+      <span><i class="sc-sw won"></i>The party in office won the election</span>
+      <span><i class="sc-sw"></i>It lost</span>
+    </div>
+    <div class="sc" id="sc"></div>
+    <p class="body-p" id="sure-ec"></p>
+    <p class="body-p" style="margin-top:10px" id="sure-pv"></p>
+    <p class="note" style="margin-top:12px;max-width:74ch">The ranges in the ranking above are every ten points, round numbers that were not tuned. They describe the record and change nothing in the model: the call is still made at one half.</p>
   </div>
 
   <div class="sub">
@@ -549,14 +577,50 @@ const DATA = /*DATA*/null;
   const ticks = [25, 50, 75];
   let rk = '<div class="rk-head"><span>Election, candidate</span><span class="rk-axis">' + ticks.map(t => '<span' + (t === 50 ? '' : ' class="minor"') + ' style="left:' + t + '%">' + t + '%</span>').join('') +
     '</span><span class="rk-n">In favor</span><span class="rk-n hide-s">Result</span><span></span></div><div class="rk-body"><div class="rk-grid">' + ticks.map(t => '<i' + (t === 50 ? ' class="mid"' : '') + ' style="left:' + t + '%"></i>').join('') + '</div>';
+  const SURE = DATA.sure, capit = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const bandOf = i => SURE.bands.find(b => i >= b.lo && i < b.hi);
+  const rangeOf = b => b.lo === 0 ? 'under ' + Math.round(100 * b.hi) + '%' : b.hi > 1 ? Math.round(100 * b.lo) + '% and up' : Math.round(100 * b.lo) + '% to ' + Math.round(100 * b.hi) + '%';
   let band = null;
   E.slice().sort((a, b) => b.i - a.i).forEach(e => {
-    const said = e.i > 0.5, miss = said !== e.w, pct = (e.i * 100).toFixed(1);
-    if (said !== band) { band = said; rk += '<div class="rk-band">' + (said ? 'More than half in favor: the keys said the party in office would win' : 'Half or fewer in favor: the keys said it would lose') + '</div>'; }
+    const said = e.i > 0.5, miss = said !== e.w, pct = (e.i * 100).toFixed(1), b = bandOf(e.i);
+    if (b !== band) { band = b; rk += '<div class="rk-band">' + capit(b.label) + ', ' + rangeOf(b) + ' <i>the party in office won ' + b.won + ' of ' + b.n + '</i></div>'; }
     rk += '<div class="rk-row"><span class="rk-lab">' + e.y + ' ' + esc(e.c) + ' <i>' + e.p + '</i></span><span class="rk-plot"><i class="rk-bar' + (e.w ? ' won' : '') + '" style="width:' + pct + '%"></i></span><span class="rk-n">' + pct +
       '%</span><span class="rk-res hide-s">' + (e.w ? 'won' : 'lost') + '</span><span class="rk-flag">' + (miss ? 'missed' : '') + '</span></div>';
   });
   $('rk').innerHTML = rk + '</div>';
+  // how sure: the count against the national vote
+  (function () {
+    const off = {1952: [0, 18], 1960: [-9, -6, 'end'], 1976: [0, 19], 2020: [-9, 4, 'end'], 1968: [-8, 15, 'end'], 2024: [9, 12], 2016: [7, -9], 2004: [-9, 5, 'end'], 2000: [9, 16], 2012: [9, 4], 1996: [9, 4], 1972: [9, 4], 1956: [-9, 4, 'end'], 1992: [0, -10], 1980: [0, 18], 2008: [-9, 4, 'end'], 1984: [-9, 4, 'end']};
+    const offS = {1952: [0, 17], 1960: [-8, -5, 'end'], 1976: [-8, 5, 'end'], 2020: [-8, 5, 'end'], 1968: [-7, 14, 'end'], 2024: [8, 11], 2016: [4, -9], 2004: [-8, 11, 'end'], 2000: [8, 14], 2012: [8, 4], 1996: [8, 4], 1972: [8, 4], 1956: [-8, 4, 'end'], 1992: [-3, -8, 'end'], 1980: [0, 17], 2008: [-8, 4, 'end'], 1984: [-8, 4, 'end'], 1988: [-8, 0, 'end']};
+    const draw = (W, H, small) => {
+      const L = small ? 38 : 46, Rt = 14, T = 14, B = 44, x0 = 20, x1 = 90, y0 = 42, y1 = 64, O = small ? offS : off, rad = small ? 5 : 6;
+      const X = v => L + (v - x0) / (x1 - x0) * (W - L - Rt), Y = v => H - B - (v - y0) / (y1 - y0) * (H - T - B);
+      let s = '<svg class="' + (small ? 'sc-s' : 'sc-w') + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Each election by its share of keys in favor and the share of the two-party vote won by the party in office. The two rise together.">';
+      for (let v = 45; v <= 60; v += 5) s += '<line class="sc-g' + (v === 50 ? ' mid' : '') + '" x1="' + L + '" x2="' + (W - Rt) + '" y1="' + Y(v) + '" y2="' + Y(v) + '"/><text class="sc-t" x="' + (L - 7) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + v + '%</text>';
+      for (let v = 30; v <= 90; v += (small ? 20 : 10)) s += '<line class="sc-g' + (v === 50 ? ' mid' : '') + '" y1="' + T + '" y2="' + (H - B) + '" x1="' + X(v) + '" x2="' + X(v) + '"/><text class="sc-t" x="' + X(v) + '" y="' + (H - B + 18) + '" text-anchor="middle">' + v + '%</text>';
+      s += '<text class="sc-t" x="' + (W - Rt) + '" y="' + (H - 6) + '" text-anchor="end">Share of keys in favor of the party in office</text><text class="sc-t" x="' + L + '" y="' + (T + 4) + '" dx="6">Its share of the two-party vote</text>';
+      const ln = v => SURE.line[0] + SURE.line[1] * v / 100;
+      s += '<line class="sc-fit" x1="' + X(22) + '" y1="' + Y(ln(22)) + '" x2="' + X(88) + '" y2="' + Y(ln(88)) + '"/>';
+      E.forEach(e => { const o = O[e.y] || [small ? 8 : 9, 4], cx = X(100 * e.i), cy = Y(e.v);
+        s += '<g><title>' + e.y + ' ' + esc(e.c) + ': ' + (100 * e.i).toFixed(1) + '% of keys, ' + e.v.toFixed(1) + '% of the vote, ' + (e.w ? 'won' : 'lost') + '</title><circle class="sc-d' + (e.w ? ' won' : '') + '" cx="' + cx + '" cy="' + cy + '" r="' + rad + '"/>' +
+          '<text class="sc-y" x="' + (cx + o[0]) + '" y="' + (cy + o[1]) + '" text-anchor="' + (o[2] || (o[0] ? 'start' : 'middle')) + '">' + (small ? '\u2019' + String(e.y).slice(2) : e.y) + '</text></g>'; });
+      return s + '</svg>';
+    };
+    $('sc').innerHTML = draw(720, 400, false) + draw(360, 340, true);
+    const mid = SURE.bands.filter(b => b.lo >= 0.5 && b.lo < 0.7), low = SURE.bands.filter(b => b.hi <= 0.5), top = SURE.bands[SURE.bands.length - 1];
+    const sum = (a, k) => a.reduce((n, b) => n + b[k], 0);
+    $('sure-ec').innerHTML = '<b>The Electoral College.</b> With fewer than half the keys in its favor, the party in office lost all ' + word(sum(low, 'n')) + ' times. With 70% or more it won all ' + word(top.n) +
+      '. In between, from 50% to 70%, it won ' + word(sum(mid, 'won')) + ' of ' + word(sum(mid, 'n')) + '. So a count under one half or above 70% is a clear call, and a count between them is closer to a coin flip than the bare call suggests.';
+    $('sure-pv').innerHTML = '<b>The national vote.</b> The count tracks the vote more closely than it tracks the winner (correlation ' + SURE.r_vote.toFixed(2) + '). Every ten points of keys is worth about ' + (SURE.line[1] / 10).toFixed(1) +
+      ' points of the two-party vote, and half the keys lines up with ' + SURE.at_half.toFixed(1) + '% of the vote, though the line at one half was never fitted. Read as a call on who wins the most votes, the keys are right in ' + SURE.vote_right + ' of ' + R.n +
+      ': they had 2000 and 2016 right on the vote and wrong on the Electoral College. Estimating each election\'s vote from the other ' + (R.n - 1) + ', the typical miss is ' + SURE.miss.toFixed(1) + ' points; the largest are 1972 and 1952.';
+    if (SURE.run && RUN) {
+      const pc = x => Math.round(100 * x) + '%', sh = SURE.run.shares;
+      $('run-sure').innerHTML = '<b>How sure is that?</b> ' + (l => l.slice(0, -1).join(', ') + ' and ' + l[l.length - 1])(SURE.bands.map((b, i) => [b, sh[i]]).filter(p => p[1] >= 0.005).map((p, i) => pc(p[1]) + (i ? ' in ' : ' of runs end in the ') + p[0].label + (i ? '' : ' range'))) +
+        '. Weighting each range by how parties in office have done there since ' + E[0].y + ' puts the Republicans\' chance of winning near <b>' + pc(SURE.run.chance) + '</b>, lower than the share of runs above one half, because a count just over the line has won only about half the time. ' +
+        'The average count corresponds to about ' + SURE.run.vote.toFixed(0) + '% of the two-party vote, give or take ' + SURE.miss.toFixed(1) + ' points before the uncertainty in the keys themselves. These rest on ' + R.n + ' elections, so read them as rough.';
+    }
+  })();
   // next to the other two models
   const of = x => x.right + ' of ' + x.n;
   $('cmp').innerHTML = [

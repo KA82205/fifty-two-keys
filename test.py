@@ -48,6 +48,9 @@ TOOK_OFFICE = {1952: 0, 1956: 1, 1960: 0, 1964: 1, 1968: 0, 1972: 1, 1976: 0, 19
                2000: 0, 2004: 1, 2008: 0, 2012: 1, 2016: 0, 2020: 0, 2024: 0}      # did the party in office keep the White House
 
 
+BANDS = [(0, 0.4, 'clear loss'), (0.4, 0.5, 'likely loss'), (0.5, 0.6, 'toss-up'), (0.6, 0.7, 'lean win'), (0.7, 1.01, 'clear win')]
+
+
 def load():
     gallup = {int(r['year']): float(r['june_net_approval']) for r in csv.DictReader(open(os.path.join(HERE, 'data', 'june_net_approval_gallup.csv')))}
     rows = []
@@ -178,6 +181,28 @@ def main():
     maj = [r['year'] for r in rows if (r['idx'] > 0.5) != (r['y'] > 50)]
     print('NATIONAL VOTE: the same call scored on the national vote instead:', len(rows) - len(maj), 'of', len(rows), 'misses', maj)
     out['verdict'] = {'right': len(rows) - len(maj), 'misses': maj}
+
+    # HOW SURE: what happened to the party in office at each level of the count. The bands are every ten points, round numbers set
+    # before the tally. This describes the record; it does not change the call, and the line stays at one half.
+    sure = []
+    for lo, hi, label in BANDS:
+        rs = [r for r in rows if lo <= r['idx'] < hi]
+        sure.append({'lo': lo, 'hi': hi, 'label': label, 'n': len(rs), 'won': sum(1 for r in rs if won[r['year']]), 'years': [r['year'] for r in rs],
+                     'share': round(float(np.mean([r['y'] for r in rs])), 1) if rs else None})
+    xs, ys = np.array([r['idx'] for r in rows]), np.array([r['y'] for r in rows])
+    slope, icept = np.polyfit(xs, ys, 1)
+    left = []
+    for i in range(len(rows)):
+        m = np.arange(len(rows)) != i; b1, b0 = np.polyfit(xs[m], ys[m], 1); left.append(float(ys[i] - (b0 + b1 * xs[i])))
+    out['sure'] = {'bands': sure, 'r_vote': round(float(np.corrcoef(xs, ys)[0, 1]), 2), 'line': [round(float(icept), 2), round(float(slope), 2)],
+                   'at_half': round(float(icept + slope / 2), 1), 'miss': round(float(np.mean(np.abs(left))), 1),
+                   'largest': sorted(((round(e, 1), r['year']) for e, r in zip(left, rows)), key=lambda t: -abs(t[0]))[:2]}
+    print('HOW SURE (the party in office, by its share of keys; a description of the record, not a rule):')
+    for b in sure:
+        print(f"  {100 * b['lo']:.0f}% to {min(100, 100 * b['hi']):.0f}%, {b['label']}: won {b['won']} of {b['n']} {b['years']}, average share of the vote {b['share']}")
+    sr = out['sure']
+    print(f"  against the national vote: correlation {sr['r_vote']}; share = {sr['line'][0]} + {sr['line'][1]} x index, {sr['at_half']} at one half;"
+          f" typical miss with the election left out {sr['miss']} points; largest {sr['largest']}")
 
     print('\n' + '-' * 30 + ' CHECKS FOR OVERFITTING: NONE OF THESE CHANGES THE MODEL ' + '-' * 30)
     model_right = out['call']['right']
