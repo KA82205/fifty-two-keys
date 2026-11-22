@@ -352,6 +352,8 @@ python run_2028.py     # optional: the run ahead for 2028, projection_2028.json 
 python make_page.py    # docs/index.html, from template.html (checks what the page says against results.json)
 ```
 
+The logo is `docs/logo.svg` (`logo.png`, `logo-lockup.png`, `favicon.svg`, `apple-touch-icon.png` and `og.png` are made from it). The ring has fifty-two marks, one for each key.
+
 `keys_table.csv` has one column for each key, then two columns that are not keys: two primary keys as they
 would be under a change that was tried and left out, which `test.py` uses to report it.
 

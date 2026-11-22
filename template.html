@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{TITLE}}</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%231f3d31%22/%3E%3Cpath%20transform%3D%22translate%2820%205.6%29%20scale%281.2%29%22%20fill%3D%22%23d2aa45%22%20fill-rule%3D%22evenodd%22%20d%3D%22M8%2019.26A8.5%208.5%200%201%201%2012%2019.26V30H16.5V33.5H12V36H15V39H12V41A2%202%200%200%201%208%2041ZM10%205.2A2.8%202.8%200%201%200%2010%2010.8A2.8%202.8%200%201%200%2010%205.2Z%22/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:image" content="https://ka82205.github.io/fifty-two-keys/og.png">
+<meta name="theme-color" content="#1f3d31">
 <meta name="description" content="{{Count}} yes-or-no questions about the party in the White House, each answered by a fixed rule from public data. Inspired by Allan Lichtman's 13 Keys to the White House. The record since 1952 and where 2028 stands.">
 <style>
 @font-face{font-family:"Besley";font-style:normal;font-weight:400 900;font-display:swap;src:url(data:font/woff2;base64,{{FONT_DISPLAY}}) format("woff2")}
@@ -297,23 +302,137 @@ footer b{color:var(--ink);font-weight:600}
   .mark{display:none}
   .links{margin-left:0}
 }
+
+/* ---- look: bands, cards, hero, logo */
+:root{--card:#fdfdfa;--band:#e8ece1;--shadow:0 1px 2px rgba(23,33,27,.05),0 10px 28px -14px rgba(23,33,27,.22);--forest:#183229}
+@media (prefers-color-scheme:dark){:root{--card:#161d19;--band:#0c100e;--shadow:0 1px 2px rgba(0,0,0,.4);--forest:#14271f}}
+.logo{width:28px;height:28px;flex:none;display:block;border-radius:7px}
+.mark{display:inline-flex;align-items:center;gap:10px}
+.top-in{height:56px}
+.links{gap:4px}
+.links a{padding:6px 11px;border-radius:999px;transition:background .15s,color .15s}
+.links a:hover,.links a:focus-visible{background:var(--paper-2);text-decoration:none}
+section{padding:68px 0;scroll-margin-top:56px}
+.band,.hero,footer{position:relative;box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax);background:var(--bg)}
+.band{--bg:var(--band)}
+.sec-head h2::before{content:"";display:block;width:44px;height:5px;border-radius:3px;background:var(--brass-ink);margin-bottom:18px}
+h2{font-size:clamp(1.8rem,3.6vw,2.5rem);letter-spacing:-.01em}
+
+.hero{--bg:var(--forest);color:var(--board-ink);padding:64px 0 48px}
+.hero-top{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:48px;align-items:center}
+.hero h1{font-size:clamp(2.6rem,9.5vw,5.6rem)}
+.hero .lede{color:#dfe7da}
+.hero .credit a{color:var(--brass);text-decoration-color:rgba(210,170,69,.5)}
+.hero .note{color:var(--board-muted)}
+.emblem{background:radial-gradient(closest-side,rgba(255,255,255,.09),transparent)}
+.emblem svg{display:block;width:100%;height:auto;overflow:visible}
+.emblem line{stroke-width:7;stroke-linecap:round}
+.emblem line.t{stroke:var(--brass)}
+.emblem line.f{stroke:var(--board-ink)}
+.emblem line.o{stroke:#4f7a69}
+.emblem use{fill:var(--brass)}
+.gauge{margin-top:44px;padding:26px 30px 22px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11)}
+.gz-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 26px;align-items:center}
+.gz-head strong{font:800 clamp(2.8rem,6vw,3.9rem)/1 var(--display);color:var(--brass);letter-spacing:-.01em}
+.gz-head p{margin:0;max-width:56ch;font-size:1.1rem}
+.gz-plot{margin-top:18px}
+.gz-dots{position:relative;height:74px}
+.gz-d{position:absolute;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;border:1.5px solid var(--board-ink);box-sizing:border-box}
+.gz-d.won{background:var(--brass);border-color:var(--brass)}
+.gz-now{position:absolute;top:0;bottom:-14px;width:2px;margin-left:-1px;background:var(--brass);z-index:2}
+.gz-now span{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font:700 .8rem/1 var(--text);color:var(--forest);background:var(--brass);padding:4px 8px;border-radius:999px;white-space:nowrap}
+.gz-iqr{position:absolute;bottom:-20px;height:16px;border:2px solid var(--brass);border-radius:4px;z-index:1}
+.gz-track{display:flex;gap:2px;height:12px}
+.gz-track i,.gz-list i{border-radius:2px}
+.gz-track i:first-child{border-radius:6px 2px 2px 6px}.gz-track i:last-child{border-radius:2px 6px 6px 2px}
+.s0{background:#3a5c4e}.s1{background:#587c6c}.s2{background:#a9b9ac}.s3{background:#b89a4d}.s4{background:var(--brass)}
+.gz-edges{position:relative;height:20px;font-size:.76rem;color:var(--board-muted);font-variant-numeric:tabular-nums}
+.gz-edges span{position:absolute;top:5px;transform:translateX(-50%)}
+.gz-edges span:first-child{transform:none}.gz-edges span:last-child{transform:translateX(-100%)}
+.gz-edges .mid{color:var(--board-ink);font-weight:700}
+.gz-labs{display:flex;gap:2px;margin-top:4px;font-size:.86rem;line-height:1.3}
+.gz-labs span{min-width:0;text-align:center}
+.gz-labs b{display:block;font-weight:600}
+.gz-labs small{display:block;color:var(--board-muted);font-size:.8rem}
+.gz-list{display:none;list-style:none;margin:10px 0 0;padding:0;font-size:.86rem;color:var(--board-muted)}
+.gz-list li{display:flex;align-items:center;gap:8px;padding:3px 0}
+.gz-list i{width:14px;height:10px;flex:none}
+.gz-list b{color:var(--board-ink);font-weight:600}
+.gz-cap{display:flex;flex-wrap:wrap;gap:6px 22px;margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.11);max-width:none;font-size:.84rem;color:var(--board-muted)}
+.gz-cap span{display:inline-flex;align-items:center;gap:8px}
+.gz-cap .gz-d{position:static;margin:0}
+.gz-bar{width:20px;height:11px;border:2px solid var(--brass);border-radius:3px}
+
+#now{padding-top:60px}
+.board{border-radius:18px;box-shadow:var(--shadow);background:radial-gradient(700px 360px at 12% 0,#28503f 0,transparent 70%),var(--board)}
+.settled li{border-bottom-color:var(--line)}
+.run,.sub,.glist,.steps li,.panel,.define,.cols3 > div{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.run{margin-top:44px;padding:30px 32px 24px;border-top:1px solid var(--line)}
+.sub{margin:28px 0 0;padding:28px 32px}
+.glist{margin:24px 0 0;padding:24px 28px 8px}
+.glist .key:last-child{border-bottom:0}
+.steps li{border-top:1px solid var(--line);padding:22px 24px 24px}
+.steps li::before{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--board);color:var(--brass);font-size:1.3rem;margin-bottom:16px}
+.define{border-left:5px solid var(--brass-ink);padding:16px 22px}
+.panel{padding:24px 28px}
+.cols3{gap:22px}
+.cols3 > div{padding:24px 26px 14px}
+.gridwrap{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px 18px 14px}
+.grow .lab{background:var(--card)}
+.grow.sel,.grow.sel .lab{background:var(--paper-2)}
+.figs{gap:16px}
+.fig{background:var(--card);border:1px solid var(--line);border-top:1px solid var(--line);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow)}
+.fig strong{font-size:clamp(2rem,3.4vw,2.7rem);white-space:nowrap}
+.fig.lead{background:radial-gradient(420px 220px at 15% 0,#28503f 0,transparent 70%),var(--board);border-color:var(--board-edge);color:var(--board-ink)}
+.fig.lead strong{color:var(--brass)}
+.fig.lead span{color:var(--board-muted)}
+#record > p{margin-top:32px !important}
+footer{--bg:var(--forest);margin-top:0;border-top:0;padding:44px 0 64px;color:var(--board-muted)}
+footer b{color:var(--board-ink)}
+footer a{color:var(--board-ink)}
+.foot-mark{display:flex;align-items:center;gap:12px;font:700 1.15rem var(--display);color:var(--board-ink);margin-bottom:18px}
+.foot-mark .logo{width:36px;height:36px;border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+@media (max-width:900px){
+  .hero-top{grid-template-columns:1fr}
+  .emblem{display:none}
+}
+@media (max-width:760px){
+  section{padding:52px 0}
+  .hero{padding:40px 0 30px}
+  .gauge{padding:20px 16px 16px;margin-top:30px}
+  .gz-head{grid-template-columns:1fr}
+  .gz-labs{display:none}.gz-list{display:block}
+  .run,.sub{padding:20px 16px}
+  .glist{padding:18px 16px 4px}
+  .panel,.cols3 > div,.steps li{padding:18px 16px}
+}
+@media (max-width:560px){
+  .mark{display:inline-flex}.mark span{display:none}
+  .links{margin-left:auto}
+}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="key" viewBox="0 0 20 44"><path fill-rule="evenodd" d="M8 19.26A8.5 8.5 0 1 1 12 19.26V30H16.5V33.5H12V36H15V39H12V41A2 2 0 0 1 8 41ZM10 5.2A2.8 2.8 0 1 0 10 10.8A2.8 2.8 0 1 0 10 5.2Z"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d31"/><path d="M32.00 8.80L32.00 4.40M34.80 8.97L35.33 4.60M37.55 9.47L38.61 5.20M40.23 10.31L41.79 6.19M42.78 11.46L44.83 7.56M45.18 12.91L47.68 9.29M47.38 14.63L50.30 11.34M49.37 16.62L52.66 13.70M51.09 18.82L54.71 16.32M52.54 21.22L56.44 19.17M53.69 23.77L57.81 22.21M54.53 26.45L58.80 25.39M55.03 29.20L59.40 28.67M55.20 32.00L59.60 32.00M55.03 34.80L59.40 35.33M54.53 37.55L58.80 38.61M53.69 40.23L57.81 41.79M52.54 42.78L56.44 44.83M51.09 45.18L54.71 47.68M49.37 47.38L52.66 50.30M47.38 49.37L50.30 52.66M45.18 51.09L47.68 54.71M42.78 52.54L44.83 56.44M40.23 53.69L41.79 57.81M37.55 54.53L38.61 58.80M34.80 55.03L35.33 59.40M32.00 55.20L32.00 59.60M29.20 55.03L28.67 59.40M26.45 54.53L25.39 58.80M23.77 53.69L22.21 57.81M21.22 52.54L19.17 56.44M18.82 51.09L16.32 54.71M16.62 49.37L13.70 52.66M14.63 47.38L11.34 50.30M12.91 45.18L9.29 47.68M11.46 42.78L7.56 44.83M10.31 40.23L6.19 41.79M9.47 37.55L5.20 38.61M8.97 34.80L4.60 35.33M8.80 32.00L4.40 32.00M8.97 29.20L4.60 28.67M9.47 26.45L5.20 25.39M10.31 23.77L6.19 22.21M11.46 21.22L7.56 19.17M12.91 18.82L9.29 16.32M14.63 16.62L11.34 13.70M16.62 14.63L13.70 11.34M18.82 12.91L16.32 9.29M21.22 11.46L19.17 7.56M23.77 10.31L22.21 6.19M26.45 9.47L25.39 5.20M29.20 8.97L28.67 4.60" stroke="#d2aa45" stroke-width="1.5" stroke-linecap="round" fill="none"/><path transform="translate(24 14) scale(.8)" fill="#d2aa45" fill-rule="evenodd" d="M8 19.26A8.5 8.5 0 1 1 12 19.26V30H16.5V33.5H12V36H15V39H12V41A2 2 0 0 1 8 41ZM10 5.2A2.8 2.8 0 1 0 10 10.8A2.8 2.8 0 1 0 10 5.2Z"/></symbol><symbol id="key" viewBox="0 0 20 44"><path fill-rule="evenodd" d="M8 19.26A8.5 8.5 0 1 1 12 19.26V30H16.5V33.5H12V36H15V39H12V41A2 2 0 0 1 8 41ZM10 5.2A2.8 2.8 0 1 0 10 10.8A2.8 2.8 0 1 0 10 5.2Z"/></symbol></svg>
 
 <nav class="top" aria-label="Sections"><div class="wrap top-in">
-  <a class="mark" href="#top">{{TITLE}}</a>
+  <a class="mark" href="#top"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>{{TITLE}}</span></a>
   <div class="links"><a href="#now">2028</a><a href="#run">Run ahead</a><a href="#how">How it works</a><a href="#record">Track record</a><a href="#history">Every election</a><a href="#keys">The keys</a><a href="#notes">Fine print</a></div>
 </div></nav>
 
 <div class="wrap">
 <header class="hero" id="top">
+  <div class="hero-top">
+  <div class="hero-text">
   <h1>{{TITLE}}</h1>
   <p class="lede">{{Count}} yes-or-no questions about the party that holds the White House. A fixed rule answers each one from public data. When more than half of them go that party's way, the keys say it wins the election.</p>
   <p class="credit">Inspired by <a href="https://en.wikipedia.org/wiki/The_Keys_to_the_White_House">Allan Lichtman's 13 Keys to the White House</a>.</p>
   <p class="note">Working version of {{DATE}}. The key list is not frozen yet.</p>
+  </div>
+  <div class="emblem" id="emblem" aria-hidden="true"></div>
+  </div>
+  <div class="gauge" id="gauge"></div>
 </header>
 
 <section id="now">
@@ -367,7 +486,7 @@ footer b{color:var(--ink);font-weight:600}
   </div>
 </section>
 
-<section id="how">
+<section id="how" class="band">
   <div class="sec-head"><h2>How it works</h2></div>
   <ol class="steps">
     <li><h3>Ask {{count}} questions</h3><p>Each key is a yes-or-no question about the party in the White House, such as whether unemployment is lower than a year ago. A fixed rule answers it from public figures. Yes means it favors that party.</p></li>
@@ -382,7 +501,7 @@ footer b{color:var(--ink);font-weight:600}
     <h2>How it would have done</h2>
     <p>The keys make one call per election: the party in office wins, or it loses. This is how that call would have done in the <span id="n-el"></span> elections from 1952 to 2024.</p>
   </div>
-  <div class="headline" id="headline"></div>
+  <div class="figs" id="headline"></div>
 
   <div class="sub">
     <h3>Every election, ranked by the share of keys in favor</h3>
@@ -423,7 +542,7 @@ footer b{color:var(--ink);font-weight:600}
   <p style="margin-top:36px;max-width:74ch"><b>How much of this is hindsight?</b> Nothing in the model was tuned to these results. The keys and the five groups were written down before they were scored, no key carries a fitted weight, and the line is fixed at one half. Three changes that would have raised the record, to between {{TRIED_LOW}} and {{TRIED_HIGH}} of 19, were tried and taken out, because each was chosen after seeing which elections the keys had missed. It is still a back-test, written in 2026 by someone who knew how these elections went. The first election the model has not seen is 2028.</p>
 </section>
 
-<section id="history">
+<section id="history" class="band">
   <div class="sec-head">
     <h2>Every key, every election</h2>
     <p>Each row is an election and each square is one key, in the order of the list further down. Point at a square, or use the arrow keys, to see the question and the figure behind the answer.</p>
@@ -449,7 +568,7 @@ footer b{color:var(--ink);font-weight:600}
   <div id="list"></div>
 </section>
 
-<section id="notes">
+<section id="notes" class="band">
   <div class="sec-head"><h2>The fine print</h2></div>
   <div class="cols3">
     <div>
@@ -488,6 +607,7 @@ footer b{color:var(--ink);font-weight:600}
 </section>
 
 <footer>
+  <div class="foot-mark"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>{{TITLE}}</span></div>
   <p><b>Inspired by Allan Lichtman's 13 Keys to the White House.</b> This is an independent, personal project. It is not affiliated with or endorsed by him.</p>
   <p>Data: Federal Reserve Bank of St. Louis (FRED and the FRED-MD monthly database) for the economy; Federal Reserve Bank of Philadelphia state coincident indexes, weighted as in Enns, Colner, Kumar and Lagodny, &ldquo;Understanding Biden&rsquo;s Exit and the 2024 Election&rdquo; (PS: Political Science &amp; Politics, 2024); Roper Center and Gallup polls for approval; Wikipedia for seat counts, primary results, election results and Lichtman's ratings of his keys.</p>
 </footer>
@@ -572,8 +692,12 @@ const DATA = /*DATA*/null;
 
   // ---- record: one call per election, scored on who won
   $('n-el').textContent = R.n;
-  $('headline').innerHTML = '<strong>' + R.right + ' of ' + R.n + '</strong><p>elections since ' + E[0].y + ' in which the keys called the winner. When they said the party in office would lose, it lost ' +
-    (R.said_lose.right === R.said_lose.n ? 'all ' + R.said_lose.n + ' times' : R.said_lose.right + ' times in ' + R.said_lose.n) + '. When they said it would win, it won ' + R.said_win.right + ' times in ' + R.said_win.n + '.</p>';
+  $('headline').innerHTML = [
+    [R.right + ' of ' + R.n, 'Called the winner', 'elections since ' + E[0].y, ' lead'],
+    [R.said_lose.right + ' of ' + R.said_lose.n, 'When the keys said lose', R.said_lose.right === R.said_lose.n ? 'the party in office lost every time' : 'the party in office lost', ''],
+    [R.said_win.right + ' of ' + R.said_win.n, 'When the keys said win', 'the party in office won', ''],
+    [DATA.sure.vote_right + ' of ' + R.n, 'Called the national vote', 'the same call, scored on who won the most votes', '']
+  ].map(f => '<div class="fig' + f[3] + '"><strong>' + f[0] + '</strong><b>' + f[1] + '</b><span>' + f[2] + '</span></div>').join('');
   const ticks = [25, 50, 75];
   let rk = '<div class="rk-head"><span>Election, candidate</span><span class="rk-axis">' + ticks.map(t => '<span' + (t === 50 ? '' : ' class="minor"') + ' style="left:' + t + '%">' + t + '%</span>').join('') +
     '</span><span class="rk-n">In favor</span><span class="rk-n hide-s">Result</span><span></span></div><div class="rk-body"><div class="rk-grid">' + ticks.map(t => '<i' + (t === 50 ? ' class="mid"' : '') + ' style="left:' + t + '%"></i>').join('') + '</div>';
@@ -621,6 +745,31 @@ const DATA = /*DATA*/null;
         'The average count corresponds to about ' + SURE.run.vote.toFixed(0) + '% of the two-party vote, give or take ' + SURE.miss.toFixed(1) + ' points before the uncertainty in the keys themselves. These rest on ' + R.n + ' elections, so read them as rough.';
     }
   })();
+  // ---- the hero: the fifty-two keys as a ring, and where 2028 sits on the record
+  (function () {
+    const n = K.length, gap = 7, sweep = (360 - gap * G.length) / n; let ang = -90 + gap / 2, s = '';
+    G.forEach(g => { K.filter(k => k.g === g.id).forEach(k => {
+      const a = (ang + sweep / 2) * Math.PI / 180, c = Math.cos(a), d = Math.sin(a);
+      s += '<line class="' + (k.s === 1 ? 't' : k.s === 0 ? 'f' : 'o') + '" x1="' + (150 + 112 * c).toFixed(1) + '" y1="' + (150 + 112 * d).toFixed(1) + '" x2="' + (150 + 138 * c).toFixed(1) + '" y2="' + (150 + 138 * d).toFixed(1) + '"/>'; ang += sweep; });
+      ang += gap; });
+    $('emblem').innerHTML = '<svg viewBox="0 0 300 300">' + s + '<use href="#key" x="118" y="80" width="64" height="140.8"/></svg>';
+    const S = DATA.sure, Rn = DATA.run, pc = x => Math.round(100 * x) + '%';
+    const lanes = []; let dots = '';
+    E.slice().sort((a, b) => a.i - b.i).forEach(e => { let r = 0; while (lanes[r] !== undefined && 100 * e.i - lanes[r] < 2.6) r++; lanes[r] = 100 * e.i;
+      dots += '<i class="gz-d' + (e.w ? ' won' : '') + '" style="left:' + (100 * e.i).toFixed(1) + '%;bottom:' + (6 + 15 * r) + 'px" title="' + e.y + ' ' + esc(e.c) + ': ' + (100 * e.i).toFixed(1) + '% of keys, ' + (e.w ? 'won' : 'lost') + '"></i>'; });
+    const w = b => (100 * (Math.min(b.hi, 1) - b.lo)).toFixed(0);
+    const segs = S.bands.map((b, i) => '<i class="s' + i + '" style="flex:' + w(b) + '"></i>').join('');
+    const labs = S.bands.map((b, i) => '<span style="flex:' + w(b) + '"><b>' + b.label.charAt(0).toUpperCase() + b.label.slice(1) + '</b><small>won ' + b.won + ' of ' + b.n + '</small></span>').join('');
+    const list = S.bands.map((b, i) => '<li><i class="s' + i + '"></i><b>' + b.label.charAt(0).toUpperCase() + b.label.slice(1) + '</b> ' + (b.lo === 0 ? 'under ' + pc(b.hi) : b.hi > 1 ? pc(b.lo) + ' and up' : pc(b.lo) + ' to ' + pc(b.hi)) + ', won ' + b.won + ' of ' + b.n + '</li>').join('');
+    const edges = [0, 40, 50, 60, 70, 100].map(v => '<span' + (v === 50 ? ' class="mid"' : '') + ' style="left:' + v + '%">' + v + '%</span>').join('');
+    const low = S.bands.filter(b => b.hi <= 0.5), lost = low.reduce((a, b) => a + b.n - b.won, 0), lowN = low.reduce((a, b) => a + b.n, 0);
+    $('gauge').innerHTML = (Rn ? '<div class="gz-head"><strong>' + pc(Rn.mean) + '</strong><p>of the keys favor the Republicans in the 2028 run ahead, on today\'s outlook. ' +
+      (lost === lowN ? 'Under 50%, the party in office has lost all ' + word(lowN) + ' times since ' + E[0].y + '.' : '') + '</p></div>' : '') +
+      '<div class="gz-plot"><div class="gz-dots">' + dots + (Rn ? '<div class="gz-now" style="left:' + (100 * Rn.mean).toFixed(1) + '%"><span>2028</span></div><div class="gz-iqr" style="left:' + (100 * Rn.p25).toFixed(1) + '%;width:' + (100 * (Rn.p75 - Rn.p25)).toFixed(1) + '%"></div>' : '') +
+      '</div><div class="gz-track">' + segs + '</div><div class="gz-edges">' + edges + '</div><div class="gz-labs">' + labs + '</div></div><ul class="gz-list">' + list + '</ul>' +
+      '<p class="gz-cap"><span><i class="gz-d won"></i>An election the party in office won</span><span><i class="gz-d"></i>One it lost</span>' + (Rn ? '<span><i class="gz-bar"></i>Half of the 2028 runs</span>' : '') + '</p>';
+  })();
+
   // next to the other two models
   const of = x => x.right + ' of ' + x.n;
   $('cmp').innerHTML = [
