@@ -332,7 +332,10 @@ h2{font-size:clamp(1.8rem,3.6vw,2.5rem);letter-spacing:-.01em}
 .emblem line.o{stroke:#4f7a69}
 .emblem use{fill:var(--brass)}
 .gauge{margin-top:44px;padding:26px 30px 22px;border-radius:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.11)}
-.gz-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 36px;align-items:center}
+.gz-head{display:grid;grid-template-columns:auto minmax(0,1fr) 250px;gap:10px 36px;align-items:center}
+.gz-odds{border-left:1px solid rgba(255,255,255,.14);padding-left:26px}
+.gz-odds strong{font-size:clamp(2rem,3.6vw,2.6rem)}
+.gz-odds span{display:block;font-size:.86rem;line-height:1.4;color:var(--board-muted);margin-top:6px}
 .gz-head strong{display:block;font:800 clamp(2.5rem,5.4vw,3.6rem)/1 var(--display);color:var(--brass);letter-spacing:-.01em;white-space:nowrap}
 .gz-kick{display:block;font-size:.92rem;color:var(--board-muted);margin-bottom:8px}
 .gz-head p b{color:var(--brass);font-weight:700}
@@ -343,15 +346,15 @@ h2{font-size:clamp(1.8rem,3.6vw,2.5rem);letter-spacing:-.01em}
 .gz-dots{position:relative;height:74px}
 .gz-d{position:absolute;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;border:1.5px solid var(--board-ink);box-sizing:border-box}
 .gz-d.won{background:var(--brass);border-color:var(--brass)}
-.gz-now{position:absolute;top:0;bottom:-14px;width:2px;margin-left:-1px;background:var(--brass);z-index:2}
+.gz-now{position:absolute;top:0;bottom:-17px;width:2px;margin-left:-1px;background:var(--brass);z-index:2}
 .gz-now span{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font:700 .8rem/1 var(--text);color:var(--forest);background:var(--brass);padding:4px 8px;border-radius:999px;white-space:nowrap}
-.gz-iqr{position:absolute;bottom:-20px;height:16px;border:2px solid var(--brass);border-radius:4px;z-index:1}
+.gz-iqr{position:absolute;bottom:-17px;height:22px;box-sizing:border-box;border:2px solid var(--brass);border-radius:4px;z-index:1}
 .gz-track{display:flex;gap:2px;height:12px}
 .gz-track i,.gz-list i{border-radius:2px}
 .gz-track i:first-child{border-radius:6px 2px 2px 6px}.gz-track i:last-child{border-radius:2px 6px 6px 2px}
 .s0{background:#3a5c4e}.s1{background:#587c6c}.s2{background:#a9b9ac}.s3{background:#b89a4d}.s4{background:var(--brass)}
-.gz-edges{position:relative;height:20px;font-size:.76rem;color:var(--board-muted);font-variant-numeric:tabular-nums}
-.gz-edges span{position:absolute;top:5px;transform:translateX(-50%)}
+.gz-edges{position:relative;height:24px;font-size:.76rem;color:var(--board-muted);font-variant-numeric:tabular-nums}
+.gz-edges span{position:absolute;top:8px;transform:translateX(-50%)}
 .gz-edges span:first-child{transform:none}.gz-edges span:last-child{transform:translateX(-100%)}
 .gz-edges .mid{color:var(--board-ink);font-weight:700}
 .gz-labs{display:flex;gap:2px;margin-top:4px;font-size:.86rem;line-height:1.3}
@@ -399,6 +402,10 @@ footer b{color:var(--board-ink)}
 footer a{color:var(--board-ink)}
 .foot-mark{display:flex;align-items:center;gap:12px;font:700 1.15rem var(--display);color:var(--board-ink);margin-bottom:18px}
 .foot-mark .logo{width:36px;height:36px;border-radius:9px;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
+@media (max-width:1100px){
+  .gz-head{grid-template-columns:auto minmax(0,1fr)}
+  .gz-odds{grid-column:1/-1;border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
+}
 @media (max-width:900px){
   .hero-top{grid-template-columns:1fr}
   .emblem{display:none}
@@ -408,6 +415,7 @@ footer a{color:var(--board-ink)}
   .hero{padding:40px 0 30px}
   .gauge{padding:20px 16px 16px;margin-top:30px}
   .gz-head{grid-template-columns:1fr}
+  .gz-odds{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.14);padding-top:12px}
   .gz-labs{display:none}.gz-list{display:block}
   .run,.sub{padding:20px 16px}
   .glist{padding:18px 16px 4px}
@@ -774,7 +782,7 @@ const DATA = {"groups":[{"id":"A","name":"Economy now","n":18,"desc":"Is the eco
     const now = Rn ? S.bands.find(b => Rn.likely >= b.lo && Rn.likely < b.hi) : null, wins = Rn && Rn.likely > 0.5;
     $('gauge').innerHTML = (Rn ? '<div class="gz-head"><div><span class="gz-kick">The 2028 prediction, as things stand</span><strong>' + now.label.charAt(0).toUpperCase() + now.label.slice(1) + '</strong></div><p>The keys say the Republicans <b>' + (wins ? 'win' : 'lose') +
       '</b> the 2028 election. If every open key lands the way it leans, ' + Rn.likely_for + ' of ' + K.length + ' go their way, which scores <b>' + pc(Rn.likely) + '</b> group by group. Parties in office in that range have ' +
-      (now.won === 0 ? 'lost all ' + word(now.n) + ' times' : now.won === now.n ? 'won all ' + word(now.n) + ' times' : 'won ' + word(now.won) + ' times in ' + word(now.n)) + ' since ' + E[0].y + '.</p></div>' : '') +
+      (now.won === 0 ? 'lost all ' + word(now.n) + ' times' : now.won === now.n ? 'won all ' + word(now.n) + ' times' : 'won ' + word(now.won) + ' times in ' + word(now.n)) + ' since ' + E[0].y + '.</p><div class="gz-odds"><strong>' + pc(Rn.above) + '</strong><span>chance the keys end up saying the Republicans win: the share of ' + Rn.runs + ' runs that finish above one half.' + (S.run ? ' Weighted by how each range has turned out, nearer ' + pc(S.run.chance) + '.' : '') + '</span></div></div>' : '') +
       '<div class="gz-plot"><div class="gz-dots">' + dots + (Rn ? '<div class="gz-now" style="left:' + (100 * Rn.likely).toFixed(1) + '%"><span>2028</span></div><div class="gz-iqr" style="left:' + (100 * Rn.p25).toFixed(1) + '%;width:' + (100 * (Rn.p75 - Rn.p25)).toFixed(1) + '%"></div>' : '') +
       '</div><div class="gz-track">' + segs + '</div><div class="gz-edges">' + edges + '</div><div class="gz-labs">' + labs + '</div></div><ul class="gz-list">' + list + '</ul>' +
       '<p class="gz-cap"><span><i class="gz-d won"></i>An election the party in office won</span><span><i class="gz-d"></i>One it lost</span>' + (Rn ? '<span><i class="gz-bar"></i>Half of the ' + Rn.runs + ' runs of 2028 end here</span>' : '') + '</p>';
