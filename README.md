@@ -66,13 +66,6 @@ under HOW SURE. It changes nothing in the model: the call is still made at one h
 - The 2028 prediction at the top of the page is stated the same way: the call (win or lose) and its range. Until the keys are
   scored it uses the count with every open key landing the way it leans, now 27 of 52 and 42.0% group by group, which is a
   likely loss. Beside each range it shows the share of the run-ahead runs that end there.
-- A tilt by party was tried and is reported beside the call, not used in it. Moving the line five points toward the
-  Republicans (in office they need 45% of the keys, the Democrats 55%) gives 17 of 19; any tilt from 4 to 8 points gives the
-  same. It also holds when the tilt is chosen from earlier elections only (10 of 12 since 1980, against 9) and with each
-  election left out (17 of 19). It fixes 1952 and 2024 and leaves 2000 and 2016 wrong, so it is not an Electoral College
-  effect: the Democrats lost the national vote in both of the years it fixes. It rests on those two elections and was found
-  after the results. With it the 2028 call is still a loss (42% against 45%) and the keys say win in about 36% of runs
-  instead of 20%.
 
 ## Guarding against overfitting
 

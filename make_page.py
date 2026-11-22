@@ -245,12 +245,6 @@ def main():
         shares = [sum(h['share'] for h in run['hist'] if round(100 * b['lo']) <= h['lo'] < round(100 * min(b['hi'], 1))) for b in sure['bands']]
         assert abs(sum(shares) - 1) < 0.01
         payload['sure']['run'] = {'shares': [round(x, 3) for x in shares], 'vote': round(sure['line'][0] + sure['line'][1] * ix['mean'], 1)}
-        tl = res['tilt']
-        line = round(100 * (0.5 - tl['x']))
-        assert line % 5 == 0 and tl['misses'] == [2000, 2016] and tl['changed'] == [1952, 2024], 'the page says the tilt fixes 1952 and 2024 and not 2000 or 2016'
-        over = sum(h['share'] for h in run['hist'] if h['lo'] >= line)
-        assert run['likely']['index'] < line / 100 and over > above, 'the page says the 2028 call is still a loss with the tilt'
-        payload['tilt'] = dict(tl, line=line, over=round(over, 3))
         payload['run'] = {'mean': ix['mean'], 'median': ix['median'], 'p25': ix['p25'], 'p75': ix['p75'], 'above': above, 'odds': odds, 'runs': f"{run['runs']:,}",
                           'hist': run['hist'], 'hmax': max(b['share'] for b in run['hist']), 'groups': run['groups'], 'likely': run['likely']['index'], 'likely_for': run['likely']['in_favor'],
                           'stretches': run['stretches']['n'], 'recession': run['recession_share'], 'n_econ': len(GROUPS['A']) + len(GROUPS['B']),

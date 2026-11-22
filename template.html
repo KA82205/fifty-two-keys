@@ -541,7 +541,6 @@ footer a{color:var(--board-ink)}
     <div class="sc" id="sc"></div>
     <p class="body-p" id="sure-ec"></p>
     <p class="body-p" style="margin-top:10px" id="sure-pv"></p>
-    <p class="body-p" style="margin-top:10px" id="sure-tilt"></p>
     <p class="note" style="margin-top:12px;max-width:74ch">The ranges in the ranking above are every ten points, round numbers that were not tuned. They describe the record and change nothing in the model: the call is still made at one half.</p>
   </div>
 
@@ -754,13 +753,6 @@ const DATA = /*DATA*/null;
     $('sure-pv').innerHTML = '<b>The national vote.</b> The count tracks the vote more closely than it tracks the winner (correlation ' + SURE.r_vote.toFixed(2) + '). Every ten points of keys is worth about ' + (SURE.line[1] / 10).toFixed(1) +
       ' points of the two-party vote, and half the keys lines up with ' + SURE.at_half.toFixed(1) + '% of the vote, though the line at one half was never fitted. Read as a call on who wins the most votes, the keys are right in ' + SURE.vote_right + ' of ' + R.n +
       ': they had 2000 and 2016 right on the vote and wrong on the Electoral College. Estimating each election\'s vote from the other ' + (R.n - 1) + ', the typical miss is ' + SURE.miss.toFixed(1) + ' points; the largest are 1972 and 1952.';
-    const TL = DATA.tilt;
-    if (TL) {
-      const pts = Math.round(100 * TL.x);
-      $('sure-tilt').innerHTML = '<b>A tilt by party, tried and not adopted.</b> Move the line ' + word(pts) + ' points toward the Republicans, so that in office they need ' + TL.line + '% of the keys and the Democrats need ' + (100 - TL.line) +
-        '%, and the record rises to ' + TL.right + ' of ' + R.n + '. It turns ' + TL.changed.join(' and ') + ' into correct calls and leaves ' + TL.misses.join(' and ') + ' wrong, so it is not the Electoral College at work: the Democrats lost the national vote in both of the years it fixes. ' +
-        'It rests on those two elections and was found after the results, so the call is still made at one half. On the tilted line the 2028 call is still a loss, ' + Math.round(100 * RUN.likely) + '% against ' + TL.line + '%, and the keys would say the Republicans win in about ' + Math.round(100 * TL.over) + '% of runs instead of ' + Math.round(100 * RUN.above) + '%.';
-    }
     if (SURE.run && RUN) {
       const pc = x => Math.round(100 * x) + '%', sh = SURE.run.shares;
       $('run-sure').innerHTML = '<b>How sure is that?</b> ' + (l => l.slice(0, -1).join(', ') + ' and ' + l[l.length - 1])(SURE.bands.map((b, i) => [b, sh[i]]).filter(p => p[1] >= 0.005).map((p, i) => pc(p[1]) + (i ? ' in ' : ' of runs end in the ') + p[0].label + (i ? '' : ' range'))) +
