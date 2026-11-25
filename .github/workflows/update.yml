@@ -12,6 +12,10 @@ on:
         description: "Series to accept even though they failed a check, separated by spaces (after looking at them)"
         required: false
         default: ""
+      check:
+        description: "Run as the hourly check does: stop if nothing is new"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -43,10 +47,11 @@ jobs:
         timeout-minutes: 25
         env:
           TRUST: ${{ inputs.trust }}
+          CHECK: ${{ inputs.check }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}      # optional: without it FRED is read through its download links
           PYTHONUNBUFFERED: "1"
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "$CHECK" != "true" ]; then
             python update.py --force --trust "$TRUST"
           else
             python update.py
