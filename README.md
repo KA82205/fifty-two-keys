@@ -362,6 +362,12 @@ fingerprints of the last run (`data/fingerprint.json`). The date a file was fetc
 nothing differs and the day is the same, the run ends: nothing is recalculated and nothing is saved. The first run of
 each day always goes through, because the page's date and the 30-day approval window move with the day.
 
+**"Every hour" is what is asked of GitHub, not what GitHub promises.** GitHub starts scheduled runs when it has room,
+and in November 2026 it was starting this account's scheduled runs hours late. A late run loses nothing but time. The
+hours at which the economy is read are judged by the clock when the run really starts, so a morning run that starts in
+the afternoon is caught by the afternoon and evening hours and by the day's first run. A run started with the "Run
+workflow" button starts at once; the button has a box to make the run as the hourly check does.
+
 1. **Fetch.** Twelve monthly and five quarterly series, the latest S&P 500 and oil prices and the 50 state indexes from
    FRED; approval polls from VoteHub.
 2. **Check.** Each series must be a table of that series, in order, with every figure inside the range the series can
