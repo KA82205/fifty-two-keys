@@ -29,7 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
+      # The branch as it stands when the run starts, not as it stood when the run was asked for: a run that waited
+      # behind another one must start from what that one saved.
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -70,8 +74,13 @@ jobs:
             echo "Nothing changed."
           else
             git commit -m "Update $(TZ=America/New_York date '+%Y-%m-%d %H:%M'): $WHAT"
-            git push || { git pull --rebase && git push; }
-            echo "pushed=true" >> "$GITHUB_OUTPUT"
+            # Runs are made one at a time, so a push is refused only if somebody else pushed meanwhile. Generated
+            # files cannot be merged: this run's result is dropped, and the next run starts from the new state.
+            if git push; then
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::warning::The repository changed while this run was working. Its result was not saved; the next run starts from the new state."
+            fi
           fi
 
       # The Margin reads this site's count. With a DISPATCH_TOKEN secret it is told at once; without one it finds the
