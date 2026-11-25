@@ -191,6 +191,21 @@ def test_ties_missing_figures_and_the_other_party():
         C.CYCLE.clear(); C.CYCLE.update(keep)
 
 
+def test_a_new_outlook_moves_the_chances_and_calls_nothing():
+    """A survey with slower growth and higher unemployment, entered in spring 2027: the open economy keys move, no key is called."""
+    def gloomier(dst):
+        path = os.path.join(dst, 'data', 'outlook.json'); c = json.load(open(path))
+        c['outlook']['gdp'] = [x - 1.5 for x in c['outlook']['gdp']]; c['outlook']['unemployment'] += 0.6; c['outlook_date'] = '2027-02-12'
+        json.dump(c, open(path, 'w'))
+    pr, dst = case((2027, 2), '2027-03-20', keep=True)
+    assert pr['outlook_from']['stale'], 'the February survey should be out by March 20 and is not entered'
+    pr2 = rerun(dst, edit=gloomier)
+    shutil.rmtree(os.path.dirname(dst))
+    assert not pr2['outlook_from']['stale'] and pr2['outlook_from']['date'] == '2027-02-12'
+    assert pr2['keys']['A01']['p'] < pr['keys']['A01']['p'] - 0.05 and pr2['keys']['B04']['p'] < pr['keys']['B04']['p'] - 0.05 and pr2['index']['mean'] < pr['index']['mean']
+    assert {i: c['status'] for i, c in pr2['calls'].items()} == {i: c['status'] for i, c in pr['calls'].items()} and not status(pr2, 'provisional')
+
+
 def test_the_page_and_the_feed_are_built_at_every_stage():
     """The page is written from the run at four points of the same made-up future. Its sentences follow the figures: no stage
     stops the build, a projected count is never shown as a count of calls, and the feed carries every key's state."""

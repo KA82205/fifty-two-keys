@@ -756,7 +756,7 @@
    "p": 0.881,
    "p_calm": 0.881,
    "p_recession": 0.881,
-   "note": "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections.",
+   "note": "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
@@ -764,7 +764,7 @@
    "p": 0.75,
    "p_calm": 0.751,
    "p_recession": 0.75,
-   "note": "Rubio (35%) and Vance (34%) are level in national polls, which points to a real contest.",
+   "note": "Rubio (35%) and Vance (34%) are level in national polls, which points to a real contest. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
@@ -772,7 +772,7 @@
    "p": 0.681,
    "p_calm": 0.68,
    "p_recession": 0.683,
-   "note": "Vance leads Rubio in New Hampshire polls, 39% to 27%, and the nomination is open.",
+   "note": "Vance leads Rubio in New Hampshire polls, 39% to 27%, and the nomination is open. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
@@ -780,7 +780,7 @@
    "p": 0.884,
    "p_calm": 0.883,
    "p_recession": 0.886,
-   "note": "Two candidates dominate the Republican race, and the Democratic field is split five ways.",
+   "note": "Two candidates dominate the Republican race, and the Democratic field is split five ways. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
@@ -788,7 +788,7 @@
    "p": 0.627,
    "p_calm": 0.626,
    "p_recession": 0.63,
-   "note": "The Democratic field is split, and New Hampshire is in dispute with the national party over its date.",
+   "note": "The Democratic field is split, and New Hampshire is in dispute with the national party over its date. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   }
@@ -1198,6 +1198,7 @@
   "states": "2026-09",
   "approval_polls": "2026-11-25"
  },
+ "odds_entered": "November 2026",
  "outlook_from": {
   "date": "2026-11-16",
   "source": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Entered by hand when a new survey is out.",

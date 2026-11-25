@@ -521,6 +521,8 @@ def notes():
         'E06': "Two candidates dominate the Republican race, and the Democratic field is split five ways.",
         'E07': "The Democratic field is split, and New Hampshire is in dispute with the national party over its date.",
     }
+    for k in ('E03', 'E04', 'E05', 'E06', 'E07'):                                    # these rest on polls and odds typed in by hand: say when
+        n[k] += f" (As entered in {CFG['odds_entered']}.)"
     # a key that has landed says what settled it
     if STATES['keys']:
         f = STATES['final']
@@ -575,6 +577,7 @@ def main():
         'horizon': {'target': 'June 2028', 'months_left': max(0, H - max(K['u'], 0)), 'quarters_left': 6 - KQ, 'days_to_close': max(0, (closes - TODAY).days)},
         'through': dict({col: month(START + K[s]) for s, col in MD.values() if K[s] >= 0}, quarterly=f"{QKEY(KQ)[0]} Q{QKEY(KQ)[1]}", states=STATES['through'],
                         approval_polls=APPROVAL['to']),
+        'odds_entered': CFG['odds_entered'],
         'outlook_from': {'date': str(vintage), 'source': CFG['outlook_note'], 'next_survey_by': str(due), 'stale': TODAY > due and min(K['u'], K['cpi']) < H},
         'copy_differs': sorted(a for a, v in Rn['copy'].items() if a in FIXED and bool(v) != FIXED[a]),
         'outlook': {k: v for k, v in OUTLOOK.items()}, 'politics': POLITICS, 'polls': POLLS,

@@ -92,6 +92,7 @@
  },
  "outlook_date": "2026-11-16",
  "outlook_note": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Entered by hand when a new survey is out.",
+ "odds_entered": "November 2026",
  "politics": {
   "surge": 0.03,
   "net_given_surge": 0.6,
