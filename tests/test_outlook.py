@@ -16,7 +16,7 @@ from test_engine import case, rerun                     # noqa: E402
 TODAY = datetime.date(2027, 2, 14)
 
 
-def workbook(when, gdp, gdp_year, jobs, jobs_year, cpi, cpi_year, u, drop=None, scale=1.0):
+def workbook(when, gdp, gdp_year, jobs, jobs_year, cpi, cpi_year, u, u_year=(4.3, 4.2, 4.2), drop=None, scale=1.0):
     """A survey: growth by quarter (five figures) and for the next years, jobs a month the same way, inflation, unemployment."""
     import openpyxl
     wb = openpyxl.Workbook(); wb.remove(wb.active)
@@ -39,7 +39,7 @@ def workbook(when, gdp, gdp_year, jobs, jobs_year, cpi, cpi_year, u, drop=None, 
         ea.append(ea[-1] + 12 * j * scale if j is not None else None)
     sheet('EMP', em, (ea + [None] * 4)[:4])
     sheet('CPI', [3.0] + cpi, (cpi_year + [None] * 4)[:4])
-    sheet('UNEMP', [4.3] + u, [4.3, 4.2, 4.2, None])
+    sheet('UNEMP', [4.3] + u, (list(u_year) + [None] * 4)[:4])
     if drop:
         del wb[drop]
     b = io.BytesIO(); wb.save(b)
@@ -50,7 +50,7 @@ def workbook(when, gdp, gdp_year, jobs, jobs_year, cpi, cpi_year, u, drop=None, 
 NOV = dict(when=(2026, 4), gdp=[2.3, 2.1, 2.2, 2.2, 2.1], gdp_year=[2.2, 2.1], jobs=[90, 65, 49, 51, 51], jobs_year=[55, 50], cpi=[4.0, 2.6, 2.4, 2.4, 2.4], cpi_year=[3.8, 2.4, 2.3],
            u=[4.2, 4.2, 4.2, 4.2, 4.2])
 FEB = dict(when=(2027, 1), gdp=[1.4, 1.2, 1.6, 1.9, 2.0], gdp_year=[1.8], jobs=[30, 20, 40, 45, 60], jobs_year=[None], cpi=[3.1, 2.9, 2.7, 2.6, 2.5], cpi_year=[2.8, 2.4],
-           u=[4.4, 4.6, 4.7, 4.7, 4.8])
+           u=[4.4, 4.6, 4.7, 4.7, 4.8], u_year=[4.6, 4.9])
 
 
 def scratch():
@@ -77,7 +77,9 @@ def test_a_later_survey_replaces_the_part_it_gives_and_nothing_else():
     assert o['gdp'] == [2.3, 1.4, 1.2, 1.6, 1.9, 2.0, 1.8], o['gdp']                  # 2026 Q4 kept; five quarters from the survey; 2028 Q2 from its figure for 2028
     assert o['cpi_quarters'] == [4.0, 3.1, 2.9, 2.7, 2.6, 2.5, 2.4, 2.4], o['cpi_quarters']
     assert o['jobs_a_month'] == [90, 90] + [30] * 3 + [20] * 3 + [40] * 3 + [45] * 3 + [60] * 6, o['jobs_a_month']     # no figure for 2028: the last quarter is carried on
-    assert o['unemployment'] == 4.8
+    assert o['unemployment'] == 4.9                                                   # the survey's figure for 2028: its five quarters stop at 2028 Q1
+    reach = dict(FEB, when=(2027, 3), u=[4.4, 4.5, 4.6, 4.7, 4.75])                  # a survey that reaches 2028 Q2 gives that quarter's own figure
+    path2 = scratch(); O.refresh(TODAY, path2, lambda: workbook(**reach)); assert json.load(open(path2))['outlook']['unemployment'] == 4.7
     for k in ('income', 'hourly_pay', 'spending', 'industrial_production', 'factory_jobs', 'oil', 'sentiment', 'population', 'recession_share'):
         assert o[k] == was[k], k
     assert new['politics'] == old['politics'] and new['settled'] == old['settled'] and 'as entered by hand (2026-11-16)' in new['outlook_note']

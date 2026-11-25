@@ -6,7 +6,8 @@ February, May, August and November, and this file reads them from the survey's o
 
     growth            real GDP, each quarter's growth at a yearly rate, from the median level of each quarter
     jobs_a_month      payroll jobs, the change in the median level from one quarter to the next, divided by three
-    unemployment      the median rate for the furthest quarter the survey gives
+    unemployment      the median rate for the second quarter of 2028 once the survey reaches it; before that its figure
+                      for 2028 as a whole, or the furthest quarter it gives if it has none
     cpi_quarters      consumer prices, each quarter's median rate of inflation at a yearly rate
 
 The survey gives five quarters: the one it is taken in and the next four. A quarter beyond them takes the survey's figure for
@@ -93,7 +94,10 @@ def from_survey(sv):
     quarters = lambda f: {s + k - 2: f(k) for k in range(2, 7)}
     out = {'gdp': quarters(lambda k: rate(g[str(k)], g[str(k - 1)]) if g.get(str(k - 1)) else None),
            'jobs_a_month': quarters(lambda k: (e[str(k)] - e[str(k - 1)]) / 3 if e.get(str(k - 1)) is not None else None),
-           'cpi_quarters': quarters(lambda k: c[str(k)]), 'unemployment': u['6']}
+           'cpi_quarters': quarters(lambda k: c[str(k)])}
+    target = Q0 + 6                                     # the second quarter of 2028: the quarter the keys are scored on
+    by_year = dict(zip(range(y, y + 4), (u.get(a) for a in 'ABCD')))
+    out['unemployment'] = u[str(target - s + 2)] if s <= target <= s + 4 else by_year.get(target // 4) if by_year.get(target // 4) is not None else u['6']
     year = {}                                           # the survey's figure for a calendar year, for quarters beyond its five
     for i, (a, b) in enumerate(zip('ABCD', ' ABC')):
         year[y + i] = {'gdp': 100 * (g[a] / g[b] - 1) if g.get(a) and g.get(b) else None,
