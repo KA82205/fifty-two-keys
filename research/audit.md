@@ -18,7 +18,7 @@ each would have to pass first. Section 10 lists what was done alongside the audi
    called in advance. The first real test is 2028.
 3. **Two keys use ratings made after the fact, and the record depends on them.** Without Lichtman's own ratings for the
    third-party and contest keys the record is 13 of 19.
-4. **The grouping is favourable.** Of 1,346 other ways to group the same keys, 91% do worse than the published one.
+4. **The grouping is favorable.** Of 1,346 other ways to group the same keys, 91% do worse than the published one.
 5. **The 52 keys carry the information of about nine.** Four of them give the same answer in every election where all
    four exist.
 6. **One half is not the break-even point.** All four misses are calls for the party in office. In the record a party
