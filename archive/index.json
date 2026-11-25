@@ -17,5 +17,24 @@
   "changes": [
    "The first published run. Recovered from the repository history; the time is that of the commit that published it."
   ]
+ },
+ {
+  "as_of": "November 25, 2026",
+  "mean": 0.395,
+  "median": 0.405,
+  "p25": 0.306,
+  "p75": 0.483,
+  "above_half": 0.197,
+  "in_favor": 27,
+  "likely": 0.42,
+  "vote": 48.3,
+  "landed": [],
+  "open": 44,
+  "file": "2026-11-25T121550Z.json",
+  "made": "2026-11-25T12:15:50Z",
+  "engine": "2026.11b",
+  "changes": [
+   "The run-ahead method changed (version 2026.11a to 2026.11b); see the change log."
+  ]
  }
 ]

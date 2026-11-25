@@ -1,5 +1,5 @@
 {
- "as_of": "November 22, 2026",
+ "as_of": "November 25, 2026",
  "runs": 200000,
  "stretches": {
   "n": 117,
@@ -842,8 +842,8 @@
   "disapprove": 64.5,
   "pollsters": 3,
   "polls": 5,
-  "from": "2026-10-24",
-  "to": "2026-11-22",
+  "from": "2026-10-27",
+  "to": "2026-11-25",
   "year_ago": {
    "approve": 39.3,
    "disapprove": 56.4,
