@@ -412,10 +412,10 @@ nothing. A survey that cannot be reached or read, or whose figures cannot be a f
 stays, the run says so, and once the next survey should be out and is not in, the page says so and the first run of each
 Monday ends as failed.
 
-What the survey does not give stays as entered, with the date it was entered: income, hourly pay, spending, industrial
-production, factory jobs, oil, sentiment, the growth of the population and the 30% share of runs with a recession. So do
-the odds for the approval and nomination keys. Between surveys the latest published figures are carried along the shape
-of the outlook in hand.
+What the survey does not give is taken from the figures themselves, not typed: income, hourly pay, spending, industrial
+production and factory jobs follow their own pace over the last two years, oil and sentiment stay where they last stood, the
+population grows as it did over the last year, and the share of runs with a recession is the record's own. Between surveys
+the latest published figures are carried along the shape of the outlook in hand.
 
 ### What is read and what is still entered
 
@@ -427,8 +427,21 @@ hand; `KEYS.md` lists all 52.
 Still entered, once each, in 2028: the nominee's share of pledged delegates when the primaries end (E04) and the New
 Hampshire primary line once both parties have a candidate with a majority of pledged delegates (E05 to E07). No free, open
 list of delegates or of New Hampshire's certified results exists to read. If a party has no such candidate by August 1,
-2028, its keys are left open and the count is closed without them. Also entered, with their date: the odds for the
-four nomination keys, until each is settled.
+2028, its keys are left open and the count is closed without them.
+
+No odds are entered. Until a nomination key is settled its chance is how often it was yes in the record (`record_rates` in
+`run_2028.py`): for the party in office, over the eight elections since 1952 in which the sitting president did not run;
+for the other party's primary, over all nineteen; with half a yes and half a no added to each count, so that a handful of
+elections never gives 0 or 100%. The third-candidate key starts from its own share of the record (15 of 19) and moves
+halfway to the polls once three pollsters name a third candidate. The odds typed in November 2026 are kept in
+`data/outlook.json` and in each run's file for the record, and one line of "what if" shows what they would give.
+
+A second source for a large move. A new figure too large to pass the checks is not used. For the five series the Bureau of
+Labor Statistics publishes (unemployment, payrolls, factory jobs, consumer prices, hourly pay) the run then asks the
+Bureau's own public service; if the Bureau gives the same figures for every month read, the figure is let in and the run
+says so. A real shock passes without anyone starting a run; a broken download does not. The other series have no second
+source that answers without a key and are still let in by hand (`trust`). Once a day the run compares the unemployment
+rate with the Bureau, so the second source is known to answer before the day it is needed.
 
 No longer entered: income, hourly pay, spending, industrial production and factory jobs each follow their own pace over
 the last two years; oil and consumer sentiment stay where they last stood; the population grows as it did over the last

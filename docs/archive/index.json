@@ -137,5 +137,29 @@
    "A13 (Oil is cheaper than a year ago, after inflation): 74% to 62%.",
    "B13 (Consumer sentiment is higher than when the term began): 9% to 1%."
   ]
+ },
+ {
+  "as_of": "November 25, 2026",
+  "mean": 0.375,
+  "median": 0.383,
+  "p25": 0.285,
+  "p75": 0.465,
+  "above_half": 0.157,
+  "in_favor": 25,
+  "likely": 0.381,
+  "vote": 47.4,
+  "landed": [],
+  "open": 44,
+  "file": "2026-11-25T232433Z.json",
+  "made": "2026-11-25T23:24:33Z",
+  "engine": "2026.11e",
+  "changes": [
+   "The run-ahead method changed (version 2026.11d to 2026.11e); see the change log.",
+   "The odds for the nomination and approval keys were revised.",
+   "E07 (The challenger lost the New Hampshire primary) now leans no: 48%, from 63%.",
+   "E06 (The party's candidate did better in New Hampshire than the challenger did): 88% to 74%.",
+   "E04 (The party's nomination was not seriously contested): 75% to 61%.",
+   "E03 (No third candidate has a significant following): 88% to 78%."
+  ]
  }
 ]

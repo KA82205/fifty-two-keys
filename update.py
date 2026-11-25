@@ -6,6 +6,11 @@ figure the run-ahead reads is new.
     python update.py --offline       no reading: run, archive and build from the figures already here
     python update.py --trust UNRATE  accept a series even though it failed a check (after looking at it)
 
+A second source
+    A figure of the Bureau of Labor Statistics (unemployment, payrolls, factory jobs, consumer prices, hourly pay) that is held
+    only for its size is compared with the Bureau's own public service. If the Bureau gives the same figures, it is let in
+    and the run says so. See SECOND below.
+
 What it reads, and when
     VoteHub (api.votehub.com)    polls of presidential approval: on every run
     Philadelphia Fed             the Survey of Professional Forecasters' table of median forecasts, for the outlook
@@ -20,14 +25,14 @@ When it runs the model again
     nothing is saved. The first run of each day always goes through, so the page's date and its 30-day windows keep up.
 
 The rules it keeps
-    A figure that fails a check is not used. The last good figure stays, the run says so, and the run ends as failed
+    A figure that fails a check, and that its own agency does not confirm, is not used. The last good figure stays, the run says so, and the run ends as failed
     so that somebody looks: at once when a figure is first held back, and then once a day until it is settled. A source
     that cannot be reached is tried again on the next run and reported once a day if it stays out of reach.
     Nothing is ever filled in, and a key with missing figures stays open: it never becomes "no".
     Every run whose projection differs from the last one kept is written to archive/ under its own time stamp, with the
     figures, assumptions and versions behind it. Archive files are never rewritten.
 """
-import csv, datetime, hashlib, io, json, os, subprocess, sys, time, urllib.error, urllib.parse, urllib.request
+import csv, datetime, hashlib, io, json, os, re, subprocess, sys, time, urllib.error, urllib.parse, urllib.request
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -84,7 +89,14 @@ STATE_RULE = ((40, 500), 0.06, 0.12)
 
 
 class Held(Exception):
-    """A figure that failed a check. It is not used."""
+    """A figure that failed a check. It is not used. `size` is set when the figure failed for how large it is (outside its
+    range, too big a step, too big a revision) and for no other reason: those are the failures a second source can settle."""
+    size = False
+
+
+def too_large(words):
+    err = Held(words); err.size = True
+    return err
 
 
 DOWN = {}                                              # hosts that did not answer in this run: they are not asked again
@@ -155,18 +167,75 @@ def check(series, new, held, rule, step_months):
     before = None
     for d, v in new:
         if v != v or not low <= v <= high:                                  # v != v: not a number
-            raise Held(f'{series}: {v:g} for {d[:7]} is outside {low:g} to {high:g}')
+            raise too_large(f'{series}: {v:g} for {d[:7]} is outside {low:g} to {high:g}')
         if d in held:
             if moved(held[d], v, revision):
-                raise Held(f'{series}: {d[:7]} was {held[d]:g} and now reads {v:g}, a larger revision than this series gets')
+                raise too_large(f'{series}: {d[:7]} was {held[d]:g} and now reads {v:g}, a larger revision than this series gets')
         elif before is not None and months(before[0], d) <= 3 * step_months:
             gap = max(1, round(months(before[0], d) / step_months))          # a figure after a missing month or two may have moved that much more
             limit = ('points', step[1] * gap) if isinstance(step, tuple) else step * gap
             if moved(before[1], v, limit):
-                raise Held(f'{series}: {before[1]:g} in {before[0][:7]} to {v:g} in {d[:7]} is a larger change than a new figure of this series makes')
+                raise too_large(f'{series}: {before[1]:g} in {before[0][:7]} to {v:g} in {d[:7]} is a larger change than a new figure of this series makes')
         before = (d, v)
     if held and months(max(dates), max(held)) > step_months:               # one step behind is allowed: a first reading entered by hand
         raise Held(f'{series}: the download stops at {max(dates)[:7]}, well before the figures already held ({max(held)[:7]})')
+
+
+# A second source for a figure too large to pass. The Bureau of Labor Statistics publishes these five series itself, and its
+# own public service gives them without FRED in between. A figure that failed only for its size, and that the Bureau gives
+# as FRED does for every month read, is the published figure: it is let in, and the report says so. This is how a real shock
+# passes without anyone starting a run by hand. A figure the Bureau gives differently, or does not give, stays held.
+# The other series (industrial production, spending, housing starts, sentiment, oil, shares, jobless claims, and the
+# quarterly accounts) have no second source here that answers without a key: for those, --trust after looking.
+BLS = 'https://api.bls.gov/publicAPI/v2/timeseries/data/'
+SECOND = {'UNRATE': 'LNS14000000', 'PAYEMS': 'CES0000000001', 'MANEMP': 'CES3000000001', 'CPIAUCSL': 'CUSR0000SA0', 'CES0600000008': 'CES0600000008'}
+
+
+def bls(series, first_year, last_year, post=None):
+    """{YYYY-MM-01: value} for one Bureau of Labor Statistics series, from the Bureau's public service. A month the Bureau
+    marks as missing is left out. With a key in BLS_API_KEY the daily allowance is larger; none is needed."""
+    body = {'seriesid': [series], 'startyear': str(first_year), 'endyear': str(last_year)}
+    if os.environ.get('BLS_API_KEY', '').strip():
+        body['registrationkey'] = os.environ['BLS_API_KEY'].strip()
+    if post is None:
+        def post(url, data):
+            req = urllib.request.Request(url, data=json.dumps(data).encode(), headers=dict(AGENT, **{'Content-Type': 'application/json'}))
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return r.read().decode('utf-8-sig')
+    got = json.loads(post(BLS, body))
+    if got.get('status') != 'REQUEST_SUCCEEDED' or not got.get('Results', {}).get('series'):
+        raise ConnectionError('; '.join(got.get('message') or [])[:120] or str(got.get('status')))
+    one = got['Results']['series'][0]
+    if one.get('seriesID') != series:
+        raise ConnectionError(f"asked for {series}, was given {one.get('seriesID')}")
+    out = {}
+    for o in one.get('data') or []:
+        if re.fullmatch(r'M(0[1-9]|1[0-2])', o.get('period') or ''):
+            try: out[f"{int(o['year'])}-{o['period'][1:]}-01"] = float(o['value'])
+            except (TypeError, ValueError): pass
+    return out
+
+
+SECOND_SOURCE = bls                                    # the tests put a table in its place
+
+
+def confirmed(series, new):
+    """Does the agency that publishes this series give the figures FRED gave? (True or False, and the words for the report.)
+    Every month read from FRED must be there and equal; one that differs, or is missing, and nothing is confirmed."""
+    if series not in SECOND or not new:
+        return False, ''
+    try:
+        own = SECOND_SOURCE(SECOND[series], int(new[0][0][:4]), int(new[-1][0][:4]))
+    except Exception as err:                            # noqa: BLE001
+        return False, f'; the Bureau of Labor Statistics was not reached to compare ({type(err).__name__}: {str(err)[:80]})'
+    missing = [d for d, _ in new if d not in own]
+    if missing:
+        return False, f"; the Bureau of Labor Statistics has no figure for {missing[-1][:7]} to compare"
+    off = [(d, v, own[d]) for d, v in new if abs(v - own[d]) > 5e-5 * max(1.0, abs(own[d]))]
+    if off:
+        d, v, o = off[-1]
+        return False, f"; the Bureau of Labor Statistics gives {o:g} for {d[:7]}, not {v:g}"
+    return True, f"the Bureau of Labor Statistics gives the same {len(new)} figures (its series {SECOND[series]})"
 
 
 def table(path):
@@ -186,7 +255,13 @@ def refresh_table(path, rules, today, trust, report, monthly):
             if monthly and c in AVERAGED:
                 new = [(d, v) for d, v in new if d < this_month]            # the month in progress is not a monthly average yet
             if c not in trust:
-                check(c, new, held[c], rules[c], step)
+                try:
+                    check(c, new, held[c], rules[c], step)
+                except Held as err:
+                    ok, words = confirmed(c, new) if monthly and err.size else (False, '')
+                    if not ok:
+                        raise Held(str(err) + words) from None
+                    report.setdefault('confirmed', []).append(f'{err}. Let in: {words}')
             before = max(held[c]) if held[c] else None
             held[c].update(new)
             report['read'].append(c)
@@ -479,7 +554,7 @@ def main(argv):
     latest = json.load(open(latest_path))
     log = json.load(open(log_path)) if os.path.exists(log_path) else {}
     new_day = latest.get('as_of', '') < str(today)
-    report = {'read': [], 'new': [], 'held': [], 'failed': [], 'trusted': sorted(trust)}
+    report = {'read': [], 'new': [], 'held': [], 'failed': [], 'confirmed': [], 'trusted': sorted(trust)}
     economy = not offline and economy_due(now, new_day, force)
     read_on = dict(log.get('read_on') or {})
     if not offline:
@@ -497,6 +572,10 @@ def main(argv):
             state, words = SEATS(today); print('Seats in Congress: ' + words, flush=True)            # counted once, in the January a new Congress meets
             if state == 'new': report['new'].append({'series': 'seats in the new Congress'})
             if state == 'unreachable': print('::warning::' + words)
+            if new_day or force:                           # once a day, so the second source is known to answer before the day it is needed
+                rows, _ = table(os.path.join(D, 'latest_monthly.csv'))
+                ok, words = confirmed('UNRATE', [(r['observation_date'], float(r['UNRATE'])) for r in rows if r['UNRATE'] != ''])
+                report['second_source'] = {'agrees': ok, 'said': words.lstrip('; ')}; print('Second source, the unemployment rate: ' + words.lstrip('; '), flush=True)
             if not report['failed']: read_on['economy'] = str(today)
         else:
             print(f"The economic series are not read at this hour ({now:%A %H:%M} Eastern); they were last read {log.get('economy_read', 'at the last full run')}.", flush=True)
@@ -513,6 +592,8 @@ def main(argv):
             report[kind] = [m for m in log.get(kind, []) if not of_polls(m)] + report[kind]
     for line in report['held'] + report['failed']:
         print('::warning::' + line)
+    for line in report['confirmed']:
+        print('::notice::' + line)
     print(f"read {len(report['read'])} sources; new figures: {json.dumps(report['new'])}")
     held = sorted({m.split(':')[0] for m in report['held']})
     fp = fingerprint(today, held); old = json.load(open(fp_path)) if os.path.exists(fp_path) else {}

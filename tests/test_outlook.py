@@ -82,7 +82,7 @@ def test_a_later_survey_replaces_the_part_it_gives_and_nothing_else():
     path2 = scratch(); O.refresh(TODAY, path2, lambda: workbook(**reach)); assert json.load(open(path2))['outlook']['unemployment'] == 4.7
     for k in ('income', 'hourly_pay', 'spending', 'industrial_production', 'factory_jobs', 'oil', 'sentiment', 'population', 'recession_share'):
         assert o[k] == was[k], k
-    assert new['politics'] == old['politics'] and new['settled'] == old['settled'] and 'as entered by hand (2026-11-16)' in new['outlook_note']
+    assert new['politics'] == old['politics'] and new['settled'] == old['settled'] and 'typed on 2026-11-16 is kept here and not read' in new['outlook_note']
     again, _ = O.refresh(TODAY + datetime.timedelta(days=1), path, lambda: workbook(**FEB))
     assert again == 'same' and json.load(open(path)) == new, 'the same survey read twice is one change'
 

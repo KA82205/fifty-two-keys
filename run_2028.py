@@ -27,9 +27,10 @@ How the other keys are run (11 keys)
   has moved between the midterm and June of the election year in the terms since 1950 (or by its month-to-month moves in
   this term, if those are larger). No trend is assumed. In half of the runs with a recession every step goes down. A
   reading that has been taken is used as it is, and the keys land once the June 2028 polls are in.
-  The third-candidate key: the odds entered in data/outlook.json, moved halfway toward what the polls say once three
+  The third-candidate key: how often the key was yes in the record, moved halfway toward what the polls say once three
   pollsters have named a third candidate in the last 90 days; scored by rule on the June 2028 polls (facts.py).
-  The four nomination keys: the odds entered in data/outlook.json, with the date they were entered, until each is settled.
+  The four nomination keys: how often each was yes in the record (record_rates below), until each is settled. No odds
+  are entered by hand; the ones entered in November 2026 stay in data/outlook.json for the record and are not read.
 """
 import csv, datetime, json, math, os, random, statistics as st, sys
 
@@ -42,7 +43,7 @@ import calls as CALL                                  # noqa: E402
 
 CFG = json.load(open(os.path.join(D, 'outlook.json')))          # the outlook and the odds: entered by hand, with what each rests on in the README
 LATEST = json.load(open(os.path.join(D, 'latest.json')))        # the date of the run and the latest daily prices: written by update.py
-OUTLOOK, POLITICS, POLLS = CFG['outlook'], CFG['politics'], CFG['polls']
+OUTLOOK, POLITICS = CFG['outlook'], CFG['politics']
 TODAY = datetime.date.fromisoformat(LATEST['as_of'])
 AS_OF = f"{TODAY:%B} {TODAY.day}, {TODAY.year}"
 ym = lambda y, m: y * 12 + (m - 1)
@@ -50,7 +51,7 @@ START, H = ym(2026, 10), 20                           # the run starts from Octo
 QEND = [2, 5, 8, 11, 14, 17, 20]                      # quarter ends from December 2026 to June 2028
 Q0 = 2026 * 4 + 3                                     # 2026 Q4, the first quarter of the run
 RUNS, SEED = int(os.environ.get('KEYS_RUNS', 200000)), 2028     # KEYS_RUNS: fewer runs, for the tests only
-ENGINE = '2026.11d'                                   # the version of this run-ahead method; a change to the method changes it, new data do not
+ENGINE = '2026.11e'                                   # the version of this run-ahead method; a change to the method changes it, new data do not
 # what the three "approval is rising" keys (C03, C04, C05) did in each election since 1952; years without the president on the ticket count double
 CYCLES = {1952: (1, 0, 1), 1956: (1, 1, 0), 1960: (0, 1, 0), 1964: (1, 1, 0), 1968: (0, 0, 0), 1972: (1, 1, 1), 1976: (0, 0, 0), 1980: (1, 0, 0),
           1984: (1, 1, 1), 1988: (0, 0, 0), 1992: (0, 0, 0), 1996: (1, 1, 1), 2000: (1, 0, 0), 2004: (0, 0, 0), 2008: (0, 0, 0), 2012: (1, 1, 1),
@@ -134,6 +135,31 @@ def baselines():
     return out
 
 
+def record_rates(path=None):
+    """The chances of the third-candidate key and the four nomination keys, counted from the record (keys_table.csv) and
+    not typed in. Each is the share of past elections in which the key was yes, with half a yes and half a no added
+    to the count, so that a handful of elections never gives a chance of 0 or 100%.
+      E05 and E04   the party in office: counted over the elections in which the sitting president did not run, as in
+                    2028. E04 is counted apart for the years the nominee won New Hampshire and the years he did not.
+      E07           the other party's primary is its own affair whoever holds the White House: counted over every election.
+      E06           compares the two primaries, so it is counted apart for each combination of E05 and E07, over every election.
+      E03           counted over every election.
+    Returns the rates and the counts behind them."""
+    rows = list(csv.DictReader(open(path or os.path.join(HERE, 'keys_table.csv'))))
+    col = lambda r, key: int(r[next(c for c in r if c.startswith(key + '_') and not c.endswith('_if_nominee'))])
+    rate = lambda rs, key: (sum(col(r, key) for r in rs) + 0.5) / (len(rs) + 1)
+    count = lambda rs, key: [sum(col(r, key) for r in rs), len(rs)]
+    open_ = [r for r in rows if col(r, 'E01') == 0]
+    won, lost = [r for r in open_ if col(r, 'E05')], [r for r in open_ if not col(r, 'E05')]
+    cell = lambda a, b: [r for r in rows if col(r, 'E05') == a and col(r, 'E07') == b]
+    return {'no_third_candidate': rate(rows, 'E03'), 'nominee_wins_nh': rate(open_, 'E05'), 'two_thirds_if_won': rate(won, 'E04'), 'two_thirds_if_lost': rate(lost, 'E04'),
+            'challenger_loses_nh': rate(rows, 'E07'), 'stronger': {f'{a}{b}': rate(cell(a, b), 'E06') for a in (1, 0) for b in (1, 0)},
+            'counts': {'elections': len(rows), 'president_not_running': len(open_), 'no_third_candidate': count(rows, 'E03'), 'nominee_wins_nh': count(open_, 'E05'), 'two_thirds_if_won': count(won, 'E04'),
+                       'two_thirds_if_lost': count(lost, 'E04'), 'challenger_loses_nh': count(rows, 'E07'), 'stronger': {f'{a}{b}': count(cell(a, b), 'E06') for a in (1, 0) for b in (1, 0)}}}
+
+
+ENTERED_POLITICS = dict(POLITICS)                      # as typed in November 2026, kept for the record
+POLITICS = dict(record_rates(), slump_in_recession=POLITICS['slump_in_recession'])
 ENTERED_OUTLOOK = {k: OUTLOOK[k] for k in ('hourly_pay', 'spending', 'industrial_production', 'factory_jobs', 'income', 'population', 'oil', 'sentiment', 'recession_share')}      # as typed in November 2026, kept for the record
 OUTLOOK.update(baselines())
 BASE = dict(
@@ -319,8 +345,8 @@ def economy_keys(s, med, rnd):
 
 
 def third_chance():
-    """The chance that no third candidate reaches 10% in the June 2028 polls. With no reading it is the odds entered
-    (data/outlook.json). With one (three or more pollsters naming a third candidate in the last 90 days, facts.py) it is
+    """The chance that no third candidate reaches 10% in the June 2028 polls. With no reading it is how often none did in
+    the record (record_rates). With one (three or more pollsters naming a third candidate in the last 90 days, facts.py) it is
     halfway between those odds and what the reading says, which is held loosely: the further June is, the more such
     support has room to fade or to grow."""
     now = (THIRD or {}).get('now') or {}
@@ -345,16 +371,11 @@ def other_keys(rnd, recession):
         if name == 'june28': months = max(months, 0.5)          # until the June polls are in, today's reading is not June's: half a month's step stays open
         cur += step * math.sqrt(months) * (-abs(z) if down else z); at = max(when, TODAY); seen[name] = cur
     j = seen['june28']; dis = d0 - (j - a0); mid = (APPROVAL.get('midterm') or {}).get('approve', a0)
-    won = rnd.random() < POLITICS['nominee_wins_nh']
-    cut = lambda mu, sd, lo, hi: min(hi, max(lo, rnd.gauss(mu, sd)))
-    rep = cut(47, 8, 30, 70) if won else cut(33, 8, 10, 45)                           # the Republican nominee's share of the New Hampshire vote
-    if rnd.random() < POLITICS['dem_on_ballot']:
-        dwon = rnd.random() < POLITICS['dem_nominee_wins_nh']; dem = cut(33, 6, 24, 55) if dwon else cut(22, 10, 3, 34)
-    else:
-        dwon = rnd.random() < POLITICS['dem_write_in_win']; dem = cut(45, 8, 30, 65) if dwon else cut(5, 3, 0, 15)
+    won = rnd.random() < POLITICS['nominee_wins_nh']; other_lost = rnd.random() < POLITICS['challenger_loses_nh']
+    stronger = rnd.random() < POLITICS['stronger'][f'{int(won)}{int(other_lost)}']
     return {'C01': j >= 50, 'C02': j > dis, 'C03': j > seen['june27'], 'C04': j > mid, 'C05': j > seen['jan28'], 'C06': dis < 50,
             'E03': rnd.random() < THIRD_P,
-            'E04': rnd.random() < (POLITICS['two_thirds_if_won'] if won else POLITICS['two_thirds_if_lost']), 'E05': won, 'E06': rep > dem, 'E07': not dwon}
+            'E04': rnd.random() < (POLITICS['two_thirds_if_won'] if won else POLITICS['two_thirds_if_lost']), 'E05': won, 'E06': stronger, 'E07': other_lost}
 
 
 def run(runs=RUNS, seed=SEED, share=None, gap=0.3):
@@ -535,6 +556,7 @@ def notes():
     jobs_ahead = avg(OUTLOOK['jobs_a_month'][max(8, K['jobs']):]) if K['jobs'] < H else 0
     man6 = 1000 * (now['man'] - P['man'][last['man'] - 6])
     a = APPROVAL
+    c = POLITICS['counts']
     n = {
         'A01': f"Forecasters expect growth of about {OUTLOOK['gdp'][6]}% a year in spring 2028. It was {QS[Q0 + KQ]['gdp']}% in the latest quarter.",
         'A02': f"Forecast growth is about {avg(OUTLOOK['gdp'][3:]):.0f}% a year, and the population is growing about {OUTLOOK['population']}%.",
@@ -576,14 +598,14 @@ def notes():
         'C04': f"Approval averaged {a['midterm']['approve']:.0f}% in the polls around the midterms and is {a['approve']:.0f}% now. It has moved about {a['step']} points a month in this term.",
         'C05': (f"{a['jan28']['approve']:.0f}% approved in January 2028; {a['approve']:.0f}% do now." if a.get('jan28') else "Neither reading the key compares exists yet, so it is close to a coin toss."),
         'C06': f"{a['disapprove']:.0f}% disapprove now.",
-        'E03': "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections.",
-        'E04': f"Rubio ({POLLS['rubio']:.0f}%) and Vance ({POLLS['vance']:.0f}%) are level in national polls, which points to a real contest.",
-        'E05': f"Vance leads Rubio in New Hampshire polls, {POLLS['nh_vance']:.0f}% to {POLLS['nh_rubio']:.0f}%, and the nomination is open.",
-        'E06': "Two candidates dominate the Republican race, and the Democratic field is split five ways.",
-        'E07': "The Democratic field is split, and New Hampshire is in dispute with the national party over its date.",
+        'E03': f"No third candidate reached 10% by June in {c['no_third_candidate'][0]} of the {c['no_third_candidate'][1]} elections on record.",
+        'E04': f"In the {c['president_not_running']} elections since 1952 in which the sitting president did not run, his party's nominee won two-thirds of the delegates in {c['two_thirds_if_won'][0] + c['two_thirds_if_lost'][0]}.",
+        'E05': f"In those {c['president_not_running']} elections the party's nominee won the New Hampshire primary in {c['nominee_wins_nh'][0]}.",
+        'E06': f"The party's nominee did better in New Hampshire than the challenger did in {sum(v[0] for v in c['stronger'].values())} of {c['elections']} elections.",
+        'E07': f"The challenger lost the New Hampshire primary in {c['challenger_loses_nh'][0]} of {c['elections']} elections.",
     }
-    for k in ('E03', 'E04', 'E05', 'E06', 'E07'):                                    # these rest on polls and odds typed in by hand: say when
-        n[k] += f" (As entered in {CFG['odds_entered']}.)"
+    for k in ('E03', 'E04', 'E05', 'E06', 'E07'):                                    # no odds are entered: the chance is the record's, until the key is settled
+        n[k] += ' The chance shown is that share, with half a yes and half a no added to the count.' if k != 'E06' else ' The chance shown is counted apart for each way the two primaries can fall.'
     # a key that has landed says what settled it
     if STATES['keys']:
         f = STATES['final']
@@ -639,17 +661,17 @@ def main():
         'horizon': {'target': 'June 2028', 'months_left': max(0, H - max(K['u'], 0)), 'quarters_left': 6 - KQ, 'days_to_close': max(0, (closes - TODAY).days)},
         'through': dict({col: month(START + K[s]) for s, col in MD.values() if K[s] >= 0}, quarterly=f"{QKEY(KQ)[0]} Q{QKEY(KQ)[1]}", states=STATES['through'],
                         approval_polls=APPROVAL['to']),
-        'odds_entered': CFG['odds_entered'],
+        'odds_entered': 'not entered: counted from the record',
         'outlook_from': {'date': str(vintage), 'source': CFG['outlook_note'], 'next_survey_by': str(due), 'stale': TODAY > due and min(K['u'], K['cpi']) < H},
         'copy_differs': sorted(a for a, v in Rn['copy'].items() if a in FIXED and bool(v) != FIXED[a]),
-        'outlook': {k: v for k, v in OUTLOOK.items()}, 'politics': POLITICS, 'polls': POLLS,
+        'outlook': {k: v for k, v in OUTLOOK.items()}, 'politics': POLITICS, 'politics_as_entered_in_november_2026': ENTERED_POLITICS,
         'range': spread(Rn['per'], OUTLOOK['recession_share'], random.Random(SEED + 1)),
         'decisive': sorted(({'id': a, 'p': round(Rn['p'][a], 3), 'if_yes': round(y, 3), 'if_no': round(n, 3)} for a, (y, n) in Rn['split'].items()
                             if a not in SETTLED and y is not None and n is not None), key=lambda d: d['if_no'] - d['if_yes']),
         'engine': ENGINE,
         'outlook_baselines': {'from_the_figures': baselines(), 'as_entered_in_november_2026': ENTERED_OUTLOOK, 'recession_share_from': 'the share of like stretches since 1964 in which a recession began in the months still ahead'},
         'approval_step': {'points_a_month': APPROVAL['step'], 'measured': APPROVAL['step_from'], 'from': f"{APPROVAL['approve']}% approve, {APPROVAL['disapprove']}% disapprove"},
-        'third_candidates': {'chance_none_reaches_10': round(THIRD_P, 3), 'reading': ((THIRD or {}).get('now') or {}).get('reading'), 'pollsters': ((THIRD or {}).get('now') or {}).get('pollsters', 0), 'odds_entered': POLITICS['no_third_candidate']},
+        'third_candidates': {'chance_none_reaches_10': round(THIRD_P, 3), 'reading': ((THIRD or {}).get('now') or {}).get('reading'), 'pollsters': ((THIRD or {}).get('now') or {}).get('pollsters', 0), 'odds_entered': POLITICS['no_third_candidate'], 'from_the_record': POLITICS['no_third_candidate']},
         'approval': {k: APPROVAL[k] for k in ('approve', 'disapprove', 'pollsters', 'polls', 'from', 'to', 'year_ago', 'midterm')},
         'states': {k: STATES[k] for k in ('through', 'growing', 'growing_ev', 'faster_ev')},
         'data_through': {'monthly': f"{datetime.date((START + K['u']) // 12, (START + K['u']) % 12 + 1, 1):%B %Y}", 'quarterly': f"{QKEY(KQ)[0]} Q{QKEY(KQ)[1]}",
@@ -676,10 +698,13 @@ def main():
         r = run(runs=min(60000, RUNS), **kw); v = r['index']
         vary.append({'what': label, 'mean': round(avg(v), 3), 'above_half': round(sum(1 for x in v if x > 0.5) / len(v), 3)})
     also('recession in 20% of runs', share=0.20); also('recession in 40% of runs', share=0.40)
-    keep = dict(POLITICS)
-    POLITICS.update(nominee_wins_nh=0.55, two_thirds_if_won=0.7, two_thirds_if_lost=0.4, no_third_candidate=0.8, dem_nominee_wins_nh=0.5); also('a rougher nomination season')
-    POLITICS.update(keep); POLITICS.update(nominee_wins_nh=0.8, two_thirds_if_won=0.9, two_thirds_if_lost=0.7, no_third_candidate=0.93, dem_nominee_wins_nh=0.35); also('a smoother nomination season')
-    POLITICS.update(keep)
+    keep = dict(POLITICS)                              # the nomination keys: every chance a quarter of the way to no, then to yes, then as typed in November 2026
+    lean = lambda to: {k: (v + 0.25 * (to - v)) for k, v in keep.items() if isinstance(v, float) and k != 'slump_in_recession'}
+    for to, label in ((0.0, 'a rougher nomination season'), (1.0, 'a smoother nomination season')):
+        POLITICS.update(lean(to)); POLITICS['stronger'] = {k: v + 0.25 * (to - v) for k, v in keep['stronger'].items()}; also(label); POLITICS.update(keep)
+    e = ENTERED_POLITICS; lost = 1 - (e['dem_on_ballot'] * e['dem_nominee_wins_nh'] + (1 - e['dem_on_ballot']) * e['dem_write_in_win'])
+    POLITICS.update(no_third_candidate=e['no_third_candidate'], nominee_wins_nh=e['nominee_wins_nh'], two_thirds_if_won=e['two_thirds_if_won'], two_thirds_if_lost=e['two_thirds_if_lost'], challenger_loses_nh=lost)
+    also('the nomination odds as typed in November 2026'); POLITICS.update(keep)
     step = APPROVAL['step']                                # approval moving half as much, or twice as much, from month to month as it has in this term
     APPROVAL['step'] = step / 2; also('approval moving half as much each month'); APPROVAL['step'] = step * 2; also('approval moving twice as much each month'); APPROVAL['step'] = step
     out['if'] = vary

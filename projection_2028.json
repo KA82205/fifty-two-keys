@@ -10,368 +10,372 @@
  },
  "recession_share": 0.333,
  "index": {
-  "mean": 0.389,
-  "median": 0.397,
-  "p5": 0.194,
-  "p25": 0.296,
-  "p75": 0.479,
-  "p95": 0.57,
-  "above_half": 0.192,
-  "p10": 0.228,
-  "p90": 0.538,
-  "sd": 0.117,
-  "expected_in_favor": 23.48
+  "mean": 0.375,
+  "median": 0.383,
+  "p5": 0.177,
+  "p25": 0.285,
+  "p75": 0.465,
+  "p95": 0.556,
+  "above_half": 0.157,
+  "p10": 0.21,
+  "p90": 0.525,
+  "sd": 0.119,
+  "expected_in_favor": 22.98
  },
  "index_dist": [
   [
    0.03,
-   2e-05
+   7e-05
   ],
   [
    0.04,
-   3e-05
+   7e-05
+  ],
+  [
+   0.05,
+   6e-05
   ],
   [
    0.06,
-   0.00016
+   0.00064
   ],
   [
    0.07,
-   0.00016
+   0.00047
   ],
   [
    0.08,
-   0.00018
+   0.00053
   ],
   [
    0.09,
-   0.00099
+   0.00229
   ],
   [
    0.1,
-   0.00067
+   0.00129
   ],
   [
    0.11,
-   0.00178
+   0.00295
   ],
   [
    0.12,
-   0.00163
+   0.00356
   ],
   [
    0.13,
-   0.00179
+   0.00367
   ],
   [
    0.14,
-   0.0043
+   0.00617
   ],
   [
    0.15,
-   0.00652
+   0.0089
   ],
   [
    0.16,
-   0.00284
+   0.00568
   ],
   [
    0.17,
-   0.00776
+   0.01035
   ],
   [
    0.18,
-   0.01229
+   0.01303
   ],
   [
    0.19,
-   0.01082
+   0.01515
   ],
   [
    0.2,
-   0.01001
+   0.01258
   ],
   [
    0.21,
-   0.01586
+   0.01815
   ],
   [
    0.22,
-   0.01544
+   0.01723
   ],
   [
    0.23,
-   0.01843
+   0.02065
   ],
   [
    0.24,
-   0.02241
+   0.02159
   ],
   [
    0.25,
-   0.01761
+   0.01803
   ],
   [
    0.26,
-   0.02312
+   0.02438
   ],
   [
    0.27,
-   0.02261
+   0.0232
   ],
   [
    0.28,
-   0.0203
+   0.01869
   ],
   [
    0.29,
-   0.02851
+   0.02967
   ],
   [
    0.3,
-   0.01852
+   0.01914
   ],
   [
    0.31,
-   0.02697
+   0.02712
   ],
   [
    0.32,
-   0.02241
+   0.02339
   ],
   [
    0.33,
-   0.02049
+   0.02296
   ],
   [
    0.34,
-   0.02262
+   0.02209
   ],
   [
    0.35,
-   0.02973
+   0.03053
   ],
   [
    0.36,
-   0.02325
+   0.0251
   ],
   [
    0.37,
-   0.02687
+   0.02763
   ],
   [
    0.38,
-   0.02783
+   0.02705
   ],
   [
    0.39,
-   0.02864
+   0.03206
   ],
   [
    0.4,
-   0.02618
+   0.02695
   ],
   [
    0.41,
-   0.0291
-  ],
-  [
-   0.42,
-   0.03139
-  ],
-  [
-   0.43,
-   0.03154
-  ],
-  [
-   0.44,
-   0.02919
-  ],
-  [
-   0.45,
-   0.03637
-  ],
-  [
-   0.46,
-   0.0279
-  ],
-  [
-   0.47,
    0.03081
   ],
   [
+   0.42,
+   0.02992
+  ],
+  [
+   0.43,
+   0.032
+  ],
+  [
+   0.44,
+   0.0281
+  ],
+  [
+   0.45,
+   0.03522
+  ],
+  [
+   0.46,
+   0.02822
+  ],
+  [
+   0.47,
+   0.02907
+  ],
+  [
    0.48,
-   0.03122
+   0.02698
   ],
   [
    0.49,
-   0.02974
+   0.02892
   ],
   [
    0.5,
-   0.02318
+   0.02022
   ],
   [
    0.51,
-   0.02427
+   0.02161
   ],
   [
    0.52,
-   0.02868
+   0.0238
   ],
   [
    0.53,
-   0.02114
+   0.01784
   ],
   [
    0.54,
-   0.01809
+   0.01453
   ],
   [
    0.55,
-   0.0207
+   0.01777
   ],
   [
    0.56,
-   0.01088
+   0.009
   ],
   [
    0.57,
-   0.01161
+   0.0089
   ],
   [
    0.58,
-   0.01153
+   0.00914
   ],
   [
    0.59,
-   0.00709
+   0.00602
   ],
   [
    0.6,
-   0.00536
+   0.00402
   ],
   [
    0.61,
-   0.00488
+   0.00348
   ],
   [
    0.62,
-   0.00519
+   0.00363
   ],
   [
    0.63,
-   0.00331
+   0.00246
   ],
   [
    0.64,
-   0.00193
+   0.00131
   ],
   [
    0.65,
-   0.00134
+   0.00118
   ],
   [
    0.66,
-   0.00072
+   0.00056
   ],
   [
    0.67,
-   0.00072
+   0.00056
   ],
   [
    0.68,
-   0.00079
+   0.00062
   ],
   [
    0.69,
-   0.00042
+   0.0004
   ],
   [
    0.7,
-   0.00028
+   0.00018
   ],
   [
    0.71,
-   0.00026
+   0.00015
   ],
   [
    0.72,
-   0.00033
+   0.00015
   ],
   [
    0.73,
-   0.00026
+   0.00011
   ],
   [
    0.74,
-   5e-05
+   1e-05
   ]
  ],
  "calm": {
-  "mean": 0.448,
-  "above_half": 0.286
+  "mean": 0.433,
+  "above_half": 0.234
  },
  "hist": [
   {
    "lo": 0,
-   "share": 0.0
+   "share": 0.0001
   },
   {
    "lo": 5,
-   "share": 0.0021
+   "share": 0.0049
   },
   {
    "lo": 10,
-   "share": 0.0123
+   "share": 0.0203
   },
   {
    "lo": 15,
-   "share": 0.0429
+   "share": 0.0564
   },
   {
    "lo": 20,
-   "share": 0.0844
+   "share": 0.0906
   },
   {
    "lo": 25,
-   "share": 0.114
+   "share": 0.1178
   },
   {
    "lo": 30,
-   "share": 0.1163
+   "share": 0.1183
   },
   {
    "lo": 35,
-   "share": 0.1341
+   "share": 0.1414
   },
   {
    "lo": 40,
-   "share": 0.1548
+   "share": 0.1526
   },
   {
    "lo": 45,
-   "share": 0.147
+   "share": 0.1402
   },
   {
    "lo": 50,
-   "share": 0.1168
+   "share": 0.0984
   },
   {
    "lo": 55,
-   "share": 0.0519
+   "share": 0.0419
   },
   {
    "lo": 60,
-   "share": 0.019
+   "share": 0.0139
   },
   {
    "lo": 65,
-   "share": 0.0033
+   "share": 0.0027
   },
   {
    "lo": 70,
-   "share": 0.0011
+   "share": 0.0006
   },
   {
    "lo": 75,
@@ -424,16 +428,16 @@
    "n": 6
   },
   "E": {
-   "mean": 0.689,
+   "mean": 0.617,
    "p10": 0.429,
    "p90": 0.857,
-   "likely": 6,
+   "likely": 5,
    "n": 7
   }
  },
  "likely": {
-  "in_favor": 26,
-  "index": 0.409
+  "in_favor": 25,
+  "index": 0.381
  },
  "keys": {
   "A01": {
@@ -703,88 +707,88 @@
   "C01": {
    "p": 0.02,
    "p_calm": 0.024,
-   "p_recession": 0.012,
+   "p_recession": 0.011,
    "note": "31% approve now, in polls of all adults from the past month (4 pollsters).",
    "landed": false,
    "status": "unresolved"
   },
   "C02": {
-   "p": 0.03,
-   "p_calm": 0.036,
-   "p_recession": 0.018,
+   "p": 0.029,
+   "p_calm": 0.035,
+   "p_recession": 0.017,
    "note": "31% approve and 66% disapprove now.",
    "landed": false,
    "status": "unresolved"
   },
   "C03": {
-   "p": 0.415,
-   "p_calm": 0.497,
-   "p_recession": 0.25,
+   "p": 0.419,
+   "p_calm": 0.503,
+   "p_recession": 0.249,
    "note": "31% approve now against 39% a year ago. Neither June reading the key compares exists yet, so it is close to a coin toss.",
    "landed": false,
    "status": "unresolved"
   },
   "C04": {
-   "p": 0.427,
-   "p_calm": 0.512,
-   "p_recession": 0.256,
+   "p": 0.429,
+   "p_calm": 0.515,
+   "p_recession": 0.255,
    "note": "Approval averaged 31% in the polls around the midterms and is 31% now. It has moved about 2.19 points a month in this term.",
    "landed": false,
    "status": "unresolved"
   },
   "C05": {
    "p": 0.418,
-   "p_calm": 0.501,
-   "p_recession": 0.251,
+   "p_calm": 0.502,
+   "p_recession": 0.249,
    "note": "Neither reading the key compares exists yet, so it is close to a coin toss.",
    "landed": false,
    "status": "unresolved"
   },
   "C06": {
    "p": 0.042,
-   "p_calm": 0.051,
-   "p_recession": 0.026,
+   "p_calm": 0.05,
+   "p_recession": 0.025,
    "note": "66% disapprove now.",
    "landed": false,
    "status": "unresolved"
   },
   "E03": {
-   "p": 0.881,
-   "p_calm": 0.881,
-   "p_recession": 0.881,
-   "note": "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections. (As entered in November 2026.)",
+   "p": 0.776,
+   "p_calm": 0.775,
+   "p_recession": 0.777,
+   "note": "No third candidate reached 10% by June in 15 of the 19 elections on record. The chance shown is that share, with half a yes and half a no added to the count.",
    "landed": false,
    "status": "unresolved"
   },
   "E04": {
-   "p": 0.748,
-   "p_calm": 0.748,
-   "p_recession": 0.748,
-   "note": "Rubio (35%) and Vance (34%) are level in national polls, which points to a real contest. (As entered in November 2026.)",
+   "p": 0.613,
+   "p_calm": 0.612,
+   "p_recession": 0.613,
+   "note": "In the 8 elections since 1952 in which the sitting president did not run, his party's nominee won two-thirds of the delegates in 5. The chance shown is that share, with half a yes and half a no added to the count.",
    "landed": false,
    "status": "unresolved"
   },
   "E05": {
-   "p": 0.68,
-   "p_calm": 0.682,
-   "p_recession": 0.677,
-   "note": "Vance leads Rubio in New Hampshire polls, 39% to 27%, and the nomination is open. (As entered in November 2026.)",
+   "p": 0.721,
+   "p_calm": 0.721,
+   "p_recession": 0.721,
+   "note": "In those 8 elections the party's nominee won the New Hampshire primary in 6. The chance shown is that share, with half a yes and half a no added to the count.",
    "landed": false,
    "status": "unresolved"
   },
   "E06": {
-   "p": 0.885,
-   "p_calm": 0.886,
-   "p_recession": 0.884,
-   "note": "Two candidates dominate the Republican race, and the Democratic field is split five ways. (As entered in November 2026.)",
+   "p": 0.738,
+   "p_calm": 0.737,
+   "p_recession": 0.738,
+   "note": "The party's nominee did better in New Hampshire than the challenger did in 16 of 19 elections. The chance shown is counted apart for each way the two primaries can fall.",
    "landed": false,
    "status": "unresolved"
   },
   "E07": {
-   "p": 0.627,
-   "p_calm": 0.626,
-   "p_recession": 0.63,
-   "note": "The Democratic field is split, and New Hampshire is in dispute with the national party over its date. (As entered in November 2026.)",
+   "p": 0.475,
+   "p_calm": 0.475,
+   "p_recession": 0.475,
+   "note": "The challenger lost the New Hampshire primary in 9 of 19 elections. The chance shown is that share, with half a yes and half a no added to the count.",
    "landed": false,
    "status": "unresolved"
   }
@@ -1194,7 +1198,7 @@
   "states": "2026-09",
   "approval_polls": "2026-11-25"
  },
- "odds_entered": "November 2026",
+ "odds_entered": "not entered: counted from the record",
  "outlook_from": {
   "date": "2026-11-16",
   "source": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Growth, jobs, unemployment and inflation are read from each new survey as it comes out; the rest is entered by hand.",
@@ -1282,6 +1286,62 @@
   ]
  },
  "politics": {
+  "no_third_candidate": 0.775,
+  "nominee_wins_nh": 0.7222222222222222,
+  "two_thirds_if_won": 0.7857142857142857,
+  "two_thirds_if_lost": 0.16666666666666666,
+  "challenger_loses_nh": 0.475,
+  "stronger": {
+   "11": 0.95,
+   "10": 0.7222222222222222,
+   "01": 0.5,
+   "00": 0.5
+  },
+  "counts": {
+   "elections": 19,
+   "president_not_running": 8,
+   "no_third_candidate": [
+    15,
+    19
+   ],
+   "nominee_wins_nh": [
+    6,
+    8
+   ],
+   "two_thirds_if_won": [
+    5,
+    6
+   ],
+   "two_thirds_if_lost": [
+    0,
+    2
+   ],
+   "challenger_loses_nh": [
+    9,
+    19
+   ],
+   "stronger": {
+    "11": [
+     9,
+     9
+    ],
+    "10": [
+     6,
+     8
+    ],
+    "01": [
+     0,
+     0
+    ],
+    "00": [
+     1,
+     2
+    ]
+   }
+  },
+  "slump_in_recession": 0.5
+ },
+ "politics_as_entered_in_november_2026": {
   "slump_in_recession": 0.5,
   "no_third_candidate": 0.88,
   "nominee_wins_nh": 0.68,
@@ -1291,20 +1351,14 @@
   "dem_nominee_wins_nh": 0.42,
   "dem_write_in_win": 0.1
  },
- "polls": {
-  "rubio": 35.4,
-  "vance": 34.0,
-  "nh_vance": 39.0,
-  "nh_rubio": 27.3
- },
  "range": {
   "above_half": [
-   0.145,
-   0.236
+   0.117,
+   0.196
   ],
   "mean": [
-   0.372,
-   0.405
+   0.358,
+   0.391
   ],
   "blocks": 15,
   "block_years": 4
@@ -1313,263 +1367,263 @@
   {
    "id": "C01",
    "p": 0.02,
-   "if_yes": 0.733,
-   "if_no": 0.181
+   "if_yes": 0.696,
+   "if_no": 0.146
   },
   {
    "id": "C02",
-   "p": 0.03,
-   "if_yes": 0.702,
-   "if_no": 0.176
+   "p": 0.029,
+   "if_yes": 0.664,
+   "if_no": 0.142
   },
   {
    "id": "C06",
    "p": 0.042,
-   "if_yes": 0.644,
-   "if_no": 0.172
+   "if_yes": 0.598,
+   "if_no": 0.138
   },
   {
    "id": "B03",
    "p": 0.179,
-   "if_yes": 0.532,
-   "if_no": 0.118
+   "if_yes": 0.451,
+   "if_no": 0.093
   },
   {
    "id": "A05",
    "p": 0.377,
-   "if_yes": 0.442,
-   "if_no": 0.041
-  },
-  {
-   "id": "B04",
-   "p": 0.352,
-   "if_yes": 0.429,
-   "if_no": 0.063
+   "if_yes": 0.366,
+   "if_no": 0.031
   },
   {
    "id": "B08",
    "p": 0.18,
-   "if_yes": 0.488,
-   "if_no": 0.127
+   "if_yes": 0.419,
+   "if_no": 0.1
+  },
+  {
+   "id": "B04",
+   "p": 0.352,
+   "if_yes": 0.358,
+   "if_no": 0.049
   },
   {
    "id": "B01",
    "p": 0.377,
-   "if_yes": 0.411,
-   "if_no": 0.06
+   "if_yes": 0.342,
+   "if_no": 0.046
   },
   {
    "id": "B07",
    "p": 0.513,
-   "if_yes": 0.363,
-   "if_no": 0.012
+   "if_yes": 0.298,
+   "if_no": 0.009
   },
   {
    "id": "A07",
    "p": 0.377,
-   "if_yes": 0.396,
-   "if_no": 0.069
+   "if_yes": 0.328,
+   "if_no": 0.054
   },
   {
    "id": "B15",
    "p": 0.539,
-   "if_yes": 0.337,
-   "if_no": 0.022
+   "if_yes": 0.277,
+   "if_no": 0.017
   },
   {
    "id": "B02",
    "p": 0.582,
-   "if_yes": 0.323,
-   "if_no": 0.01
+   "if_yes": 0.265,
+   "if_no": 0.007
+  },
+  {
+   "id": "C03",
+   "p": 0.419,
+   "if_yes": 0.306,
+   "if_no": 0.05
   },
   {
    "id": "A06",
    "p": 0.565,
-   "if_yes": 0.323,
-   "if_no": 0.022
-  },
-  {
-   "id": "A03",
-   "p": 0.565,
-   "if_yes": 0.322,
-   "if_no": 0.023
-  },
-  {
-   "id": "A02",
-   "p": 0.633,
-   "if_yes": 0.301,
-   "if_no": 0.005
-  },
-  {
-   "id": "C03",
-   "p": 0.415,
-   "if_yes": 0.364,
-   "if_no": 0.07
+   "if_yes": 0.265,
+   "if_no": 0.017
   },
   {
    "id": "B06",
    "p": 0.36,
-   "if_yes": 0.38,
-   "if_no": 0.087
+   "if_yes": 0.316,
+   "if_no": 0.068
+  },
+  {
+   "id": "A03",
+   "p": 0.565,
+   "if_yes": 0.265,
+   "if_no": 0.018
   },
   {
    "id": "C04",
-   "p": 0.427,
-   "if_yes": 0.356,
-   "if_no": 0.07
-  },
-  {
-   "id": "A10",
-   "p": 0.608,
+   "p": 0.429,
    "if_yes": 0.298,
-   "if_no": 0.027
+   "if_no": 0.052
   },
   {
-   "id": "A09",
-   "p": 0.668,
-   "if_yes": 0.281,
-   "if_no": 0.014
-  },
-  {
-   "id": "A08",
-   "p": 0.395,
-   "if_yes": 0.353,
-   "if_no": 0.087
+   "id": "A02",
+   "p": 0.633,
+   "if_yes": 0.246,
+   "if_no": 0.004
   },
   {
    "id": "C05",
    "p": 0.418,
-   "if_yes": 0.347,
-   "if_no": 0.081
+   "if_yes": 0.291,
+   "if_no": 0.061
+  },
+  {
+   "id": "A10",
+   "p": 0.608,
+   "if_yes": 0.246,
+   "if_no": 0.021
+  },
+  {
+   "id": "A09",
+   "p": 0.668,
+   "if_yes": 0.23,
+   "if_no": 0.011
+  },
+  {
+   "id": "A08",
+   "p": 0.395,
+   "if_yes": 0.289,
+   "if_no": 0.071
   },
   {
    "id": "A04",
    "p": 0.787,
-   "if_yes": 0.243,
-   "if_no": 0.004
+   "if_yes": 0.199,
+   "if_no": 0.003
   },
   {
    "id": "A01",
    "p": 0.657,
-   "if_yes": 0.273,
-   "if_no": 0.037
-  },
-  {
-   "id": "A18",
-   "p": 0.838,
-   "if_yes": 0.229,
-   "if_no": 0.0
+   "if_yes": 0.224,
+   "if_no": 0.029
   },
   {
    "id": "A14",
    "p": 0.677,
-   "if_yes": 0.265,
-   "if_no": 0.039
+   "if_yes": 0.218,
+   "if_no": 0.03
+  },
+  {
+   "id": "A18",
+   "p": 0.838,
+   "if_yes": 0.188,
+   "if_no": 0.0
   },
   {
    "id": "B09",
    "p": 0.882,
-   "if_yes": 0.217,
+   "if_yes": 0.178,
    "if_no": 0.003
   },
   {
    "id": "B10",
    "p": 0.95,
-   "if_yes": 0.202,
+   "if_yes": 0.166,
    "if_no": 0.0
-  },
-  {
-   "id": "A16",
-   "p": 0.489,
-   "if_yes": 0.295,
-   "if_no": 0.094
   },
   {
    "id": "B12",
    "p": 0.754,
-   "if_yes": 0.241,
-   "if_no": 0.042
+   "if_yes": 0.198,
+   "if_no": 0.032
   },
   {
-   "id": "A11",
-   "p": 0.881,
-   "if_yes": 0.215,
-   "if_no": 0.018
+   "id": "A16",
+   "p": 0.489,
+   "if_yes": 0.242,
+   "if_no": 0.076
   },
   {
    "id": "B14",
    "p": 0.179,
-   "if_yes": 0.349,
-   "if_no": 0.158
+   "if_yes": 0.292,
+   "if_no": 0.128
+  },
+  {
+   "id": "A11",
+   "p": 0.881,
+   "if_yes": 0.176,
+   "if_no": 0.015
+  },
+  {
+   "id": "E05",
+   "p": 0.721,
+   "if_yes": 0.192,
+   "if_no": 0.068
   },
   {
    "id": "A15",
    "p": 0.625,
-   "if_yes": 0.248,
-   "if_no": 0.099
+   "if_yes": 0.204,
+   "if_no": 0.08
   },
   {
    "id": "A17",
    "p": 0.411,
-   "if_yes": 0.277,
-   "if_no": 0.132
+   "if_yes": 0.229,
+   "if_no": 0.107
   },
   {
    "id": "E06",
-   "p": 0.885,
-   "if_yes": 0.208,
-   "if_no": 0.07
+   "p": 0.738,
+   "if_yes": 0.187,
+   "if_no": 0.073
+  },
+  {
+   "id": "E04",
+   "p": 0.613,
+   "if_yes": 0.2,
+   "if_no": 0.09
   },
   {
    "id": "B11",
    "p": 0.564,
-   "if_yes": 0.244,
-   "if_no": 0.124
-  },
-  {
-   "id": "E05",
-   "p": 0.68,
-   "if_yes": 0.228,
-   "if_no": 0.116
+   "if_yes": 0.204,
+   "if_no": 0.096
   },
   {
    "id": "A13",
    "p": 0.615,
-   "if_yes": 0.235,
-   "if_no": 0.124
+   "if_yes": 0.195,
+   "if_no": 0.097
   },
   {
    "id": "A12",
    "p": 0.719,
-   "if_yes": 0.223,
-   "if_no": 0.114
-  },
-  {
-   "id": "E04",
-   "p": 0.748,
-   "if_yes": 0.216,
-   "if_no": 0.12
+   "if_yes": 0.184,
+   "if_no": 0.089
   },
   {
    "id": "E07",
-   "p": 0.627,
-   "if_yes": 0.224,
-   "if_no": 0.139
+   "p": 0.475,
+   "if_yes": 0.202,
+   "if_no": 0.117
+  },
+  {
+   "id": "E03",
+   "p": 0.776,
+   "if_yes": 0.172,
+   "if_no": 0.105
   },
   {
    "id": "B13",
    "p": 0.009,
-   "if_yes": 0.273,
-   "if_no": 0.191
-  },
-  {
-   "id": "E03",
-   "p": 0.881,
-   "if_yes": 0.201,
-   "if_no": 0.123
+   "if_yes": 0.216,
+   "if_no": 0.157
   }
  ],
- "engine": "2026.11d",
+ "engine": "2026.11e",
  "outlook_baselines": {
   "from_the_figures": {
    "hourly_pay": 4.3,
@@ -1668,10 +1722,11 @@
   "from": "31.4% approve, 65.5% disapprove"
  },
  "third_candidates": {
-  "chance_none_reaches_10": 0.88,
+  "chance_none_reaches_10": 0.775,
   "reading": null,
   "pollsters": 1,
-  "odds_entered": 0.88
+  "odds_entered": 0.775,
+  "from_the_record": 0.775
  },
  "approval": {
   "approve": 31.4,
@@ -1711,33 +1766,38 @@
  "if": [
   {
    "what": "recession in 20% of runs",
-   "mean": 0.413,
-   "above_half": 0.23
+   "mean": 0.398,
+   "above_half": 0.188
   },
   {
    "what": "recession in 40% of runs",
-   "mean": 0.377,
-   "above_half": 0.171
+   "mean": 0.363,
+   "above_half": 0.14
   },
   {
    "what": "a rougher nomination season",
-   "mean": 0.377,
-   "above_half": 0.159
+   "mean": 0.353,
+   "above_half": 0.107
   },
   {
    "what": "a smoother nomination season",
-   "mean": 0.398,
-   "above_half": 0.214
+   "mean": 0.387,
+   "above_half": 0.186
+  },
+  {
+   "what": "the nomination odds as typed in November 2026",
+   "mean": 0.382,
+   "above_half": 0.173
   },
   {
    "what": "approval moving half as much each month",
-   "mean": 0.386,
-   "above_half": 0.179
+   "mean": 0.372,
+   "above_half": 0.145
   },
   {
    "what": "approval moving twice as much each month",
-   "mean": 0.401,
-   "above_half": 0.231
+   "mean": 0.387,
+   "above_half": 0.201
   }
  ]
 }

@@ -15,9 +15,10 @@ its calendar year (growth of the yearly average for GDP and jobs, fourth quarter
 survey gives no such figure, its last quarterly figure is carried on. Quarters before the survey keep what they had: by then
 they are published, and the run-ahead follows the published figures.
 
-The rest of the outlook is not in the survey and stays as entered, with the month it was entered: income, hourly pay,
-spending, industrial production, factory jobs, the price of oil, consumer sentiment, the growth of the population, and the
-share of runs with a recession. So do the odds for the approval and nomination keys.
+The rest of the outlook is not in the survey: income, hourly pay, spending, industrial production, factory jobs, the
+price of oil, consumer sentiment, the growth of the population, and the share of runs with a recession. run_2028.py takes
+those from the published figures themselves (baselines) and the odds for the nomination keys from the record
+(record_rates). What was typed for them in November 2026 stays in data/outlook.json for the record and is not read.
 
 The outlook is replaced only by a survey later than the one it holds. Reading the same survey again changes nothing, and
 says how closely this rule gives the figures that were entered by hand. A survey that cannot be read, or whose figures are
@@ -144,7 +145,7 @@ def apply(cfg, sv, today):
     entered = cfg.get('outlook_entered') or cfg.get('outlook_date')
     new.update(outlook_survey=label, outlook_date=str(today), outlook_entered=entered,
                outlook_note=f"Survey of Professional Forecasters, {y} Q{q}, read on {today:%B} {today.day}, {today.year}: growth, jobs, unemployment and inflation. "
-                            f"{KEPT[0].upper() + KEPT[1:]} as entered by hand ({entered}).")
+                            f"The rest is taken from the published figures and the record by run_2028.py; what was typed on {entered} is kept here and not read.")
     return new, said
 
 

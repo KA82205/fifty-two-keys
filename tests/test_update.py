@@ -98,16 +98,59 @@ def test_a_failed_series_keeps_its_figures():
         if series == 'UNRATE':
             return [('2026-09-01', 4.2), ('2026-10-01', 4.1), ('2026-11-01', 44.0)]              # a broken figure
         return [('2026-09-01', 159128.0), ('2026-10-01', 159301.0), ('2026-11-01', 159340.0)]    # a small revision and a new month
+    second = update.SECOND_SOURCE
     try:
-        update.fred = fake
-        report = {'read': [], 'new': [], 'held': [], 'failed': []}
+        update.fred = fake; update.SECOND_SOURCE = lambda *a: {'2026-09-01': 4.2, '2026-10-01': 4.1, '2026-11-01': 4.4}      # the Bureau's own figure differs
+        report = {'read': [], 'new': [], 'held': [], 'failed': [], 'confirmed': []}
         import datetime
         update.refresh_table(path, {'UNRATE': update.MONTHLY['UNRATE'], 'PAYEMS': update.MONTHLY['PAYEMS']}, datetime.date(2026, 12, 7), set(), report, monthly=True)
     finally:
-        update.fred = real
+        update.fred = real; update.SECOND_SOURCE = second
+    assert 'gives 4.4 for 2026-11, not 44' in report['held'][0] and report['confirmed'] == []
     assert open(path).read() == 'observation_date,UNRATE,PAYEMS\n2026-09-01,4.2,159128\n2026-10-01,4.1,159301\n2026-11-01,,159340\n', open(path).read()
     assert len(report['held']) == 1 and 'UNRATE' in report['held'][0] and report['read'] == ['PAYEMS']
     assert report['new'] == [{'series': 'PAYEMS', 'through': '2026-11', 'was': '2026-10'}]
+
+
+def test_a_real_shock_passes_when_the_agency_gives_the_same_figure():
+    """A figure held only for its size is let in when the Bureau of Labor Statistics gives it too, for every month read.
+    Anything short of that (a month that differs, a month missing, no answer, a series with no second source, a failure
+    that is not about size) and it stays held."""
+    import datetime
+    real, second = update.fred, update.SECOND_SOURCE
+    shock = [('2026-09-01', 4.2), ('2026-10-01', 4.1), ('2026-11-01', 14.8)]                    # spring 2020, arriving new
+    start = 'observation_date,UNRATE,INDPRO\n2026-09-01,4.2,103\n2026-10-01,4.1,103\n'
+    def go(own, fred_unrate=shock):
+        path = os.path.join(tempfile.mkdtemp(), 'm.csv'); open(path, 'w').write(start)
+        update.fred = lambda series, start, monthly_average=False: fred_unrate if series == 'UNRATE' else [('2026-09-01', 103.0), ('2026-10-01', 103.0), ('2026-11-01', 80.0)]
+        def src(series, a, b):
+            assert series == 'LNS14000000' and (a, b) == (2026, 2026)
+            if isinstance(own, Exception): raise own
+            return own
+        update.SECOND_SOURCE = src
+        report = {'read': [], 'new': [], 'held': [], 'failed': [], 'confirmed': []}
+        try:
+            update.refresh_table(path, {'UNRATE': update.MONTHLY['UNRATE'], 'INDPRO': update.MONTHLY['INDPRO']}, datetime.date(2026, 12, 7), set(), report, monthly=True)
+        finally:
+            update.fred = real; update.SECOND_SOURCE = second
+        return report, open(path).read()
+    report, text = go({'2026-09-01': 4.2, '2026-10-01': 4.1, '2026-11-01': 14.8})
+    assert '2026-11-01,14.8,' in text and len(report['confirmed']) == 1 and 'Let in' in report['confirmed'][0] and 'UNRATE' in report['read']
+    assert len(report['held']) == 1 and report['held'][0].startswith('INDPRO')                    # no second source for this one: held, as before
+    for own, words in (({'2026-09-01': 4.2, '2026-10-01': 4.1, '2026-11-01': 4.8}, 'gives 4.8 for 2026-11, not 14.8'), ({'2026-09-01': 4.2, '2026-10-01': 4.1}, 'has no figure for 2026-11'),
+                       ({'2026-09-01': 4.3, '2026-10-01': 4.1, '2026-11-01': 14.8}, 'gives 4.3 for 2026-09'), (ConnectionError('daily threshold'), 'was not reached')):
+        report, text = go(own)
+        assert '14.8' not in text and report['confirmed'] == [] and any(m.startswith('UNRATE') and words in m for m in report['held']), (words, report['held'])
+    # a failure that is not about size is not the second source's to settle, whatever it says
+    report, text = go({'2026-09-01': 4.2, '2026-10-01': 4.1, '2026-11-01': 4.0}, [('2026-10-01', 4.1), ('2026-09-01', 4.2)])
+    assert report['confirmed'] == [] and any('out of order' in m for m in report['held'])
+    # the Bureau's answer is read as it is sent: months only, a missing month left out, a refusal an error
+    answer = lambda data, status='REQUEST_SUCCEEDED', sid='LNS14000000': (lambda url, body: json.dumps({'status': status, 'message': ['daily threshold reached'] if status != 'REQUEST_SUCCEEDED' else [], 'Results': {'series': [{'seriesID': sid, 'data': data}]}}))
+    rows = [{'year': '2026', 'period': 'M11', 'value': '14.8'}, {'year': '2026', 'period': 'M10', 'value': '-'}, {'year': '2026', 'period': 'M09', 'value': '4.2'}, {'year': '2026', 'period': 'M13', 'value': '5.0'}]
+    assert update.bls('LNS14000000', 2026, 2026, answer(rows)) == {'2026-11-01': 14.8, '2026-09-01': 4.2}
+    for bad in (answer(rows, 'REQUEST_NOT_PROCESSED'), answer(rows, sid='CES0000000001')):
+        try: update.bls('LNS14000000', 2026, 2026, bad); assert False
+        except ConnectionError: pass
 
 
 def test_the_archive_is_written_once():
@@ -234,6 +277,6 @@ def test_a_call_that_changes_is_something_new():
 
 
 if __name__ == '__main__':
-    test_checks(); test_history_is_let_be_and_new_figures_are_not(); test_a_missing_value_is_not_a_zero(); test_a_failed_series_keeps_its_figures(); test_the_archive_is_written_once(); test_changes_are_explained()
+    test_checks(); test_history_is_let_be_and_new_figures_are_not(); test_a_missing_value_is_not_a_zero(); test_a_failed_series_keeps_its_figures(); test_a_real_shock_passes_when_the_agency_gives_the_same_figure(); test_the_archive_is_written_once(); test_changes_are_explained()
     test_the_economy_is_read_when_a_release_could_be_out(); test_reading_the_same_figures_again_changes_nothing(); test_a_projection_is_archived_only_when_it_says_something_new(); test_a_call_that_changes_is_something_new(); test_when_a_run_ends_as_failed()
     print('ok (checks, held figures, the archive, when a run is made and when it ends as failed)')

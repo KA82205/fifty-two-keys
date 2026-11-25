@@ -130,6 +130,17 @@ def test_keys_land_when_june_2028_is_published():
     assert not pr['keys']['A18']['landed'] and not pr['keys']['B15']['landed']
 
 
+def test_the_range_narrows_as_figures_arrive():
+    """One invented future, read at three distances. The run-ahead starts from the figures published so far, so the months
+    still to be drawn fall from 12 to 3, fewer keys are open, and the spread of the index shrinks each time."""
+    seen = []
+    for last, day in (((2027, 6), '2027-07-20'), ((2028, 1), '2028-02-20'), ((2028, 3), '2028-04-20')):
+        pr = case(last, day, runs='20000')
+        seen.append((pr['horizon']['months_left'], sum(1 for k in pr['keys'].values() if 0 < k['p'] < 1), pr['index']['sd'], pr['index']['p90'] - pr['index']['p10']))
+    assert [s[0] for s in seen] == [12, 5, 3], seen
+    assert seen[0][1] >= seen[1][1] >= seen[2][1] and seen[0][2] > seen[1][2] > seen[2][2] and seen[0][3] > seen[1][3] > seen[2][3], seen
+
+
 def test_a_hole_in_the_figures_keeps_the_key_open():
     """One month of unemployment missing in 2027: the three keys that read unemployment stay open, and are not scored as no."""
     pr = case((2028, 6), '2028-08-05', drop=('UNRATE', 2027, 9))
@@ -146,5 +157,5 @@ def test_no_june_polls_no_approval_keys():
 
 
 if __name__ == '__main__':
-    test_today(); test_nothing_lands_early(); test_keys_land_when_june_2028_is_published(); test_a_hole_in_the_figures_keeps_the_key_open(); test_no_june_polls_no_approval_keys()
+    test_today(); test_nothing_lands_early(); test_keys_land_when_june_2028_is_published(); test_the_range_narrows_as_figures_arrive(); test_a_hole_in_the_figures_keeps_the_key_open(); test_no_june_polls_no_approval_keys()
     print('ok (the run-ahead: keys land when their figures are published, and only then)')

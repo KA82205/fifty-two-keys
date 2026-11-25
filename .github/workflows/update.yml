@@ -64,7 +64,8 @@ jobs:
         env:
           TRUST: ${{ inputs.trust }}
           CHECK: ${{ inputs.check }}
-          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}      # optional: without it FRED is read through its download links
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          BLS_API_KEY: ${{ secrets.BLS_API_KEY }}   # optional: a larger daily allowance at the second source      # optional: without it FRED is read through its download links
           PYTHONUNBUFFERED: "1"
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "$CHECK" != "true" ]; then
