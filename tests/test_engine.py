@@ -13,11 +13,24 @@ STATE_KEYS = {'A18', 'B15'}
 APPROVAL = {f'C{i:02d}' for i in range(1, 7)}
 
 
-def case(last_month, as_of, drop=None, no_polls_in=(), states=True):
-    """Run the run-ahead on figures invented through last_month (year, month). Returns the projection."""
+def rerun(dst, as_of=None, edit=None, runs='20000', held=''):
+    """Run the run-ahead again in a copy made by case(keep=True), on another day or after `edit(dst)` has changed a file."""
+    if edit:
+        edit(dst)
+    if as_of:
+        path = os.path.join(dst, 'data', 'latest.json'); L = json.load(open(path)); L['as_of'] = as_of; json.dump(L, open(path, 'w'))
+    r = subprocess.run([sys.executable, 'run_2028.py'], cwd=dst, capture_output=True, text=True, env=dict(os.environ, KEYS_RUNS=runs, KEYS_HELD=held))
+    assert r.returncode == 0, r.stderr[-1500:]
+    return json.load(open(os.path.join(dst, 'projection_2028.json')))
+
+
+def case(last_month, as_of, drop=None, no_polls_in=(), states=True, seed=7, last_quarter=None, edit=None, keep=False, runs='20000'):
+    """Run the run-ahead on figures invented through last_month (year, month). Returns the projection (and the copy, with keep).
+    last_quarter: the last quarter invented, if it is not the last one that last_month completes. edit(dst): a change to the
+    copy's files before the run."""
     dst = os.path.join(tempfile.mkdtemp(), 'repo')
     shutil.copytree(HERE, dst, ignore=shutil.ignore_patterns('.git', '__pycache__', 'archive', 'docs', 'fonts'))
-    rnd, D = random.Random(7), os.path.join(dst, 'data')
+    rnd, D = random.Random(seed), os.path.join(dst, 'data')
     path = os.path.join(D, 'latest_monthly.csv'); rows = list(csv.reader(open(path))); head = rows[0]
     rows = [r for r in rows if all(r[1:4])]                                                    # drop a month that holds only a first reading
     v = {h: float(rows[-1][i] or rows[-2][i]) for i, h in enumerate(head) if i}
@@ -45,7 +58,7 @@ def case(last_month, as_of, drop=None, no_polls_in=(), states=True):
         m += 3
         if m > 12:
             y, m = y + 1, 1
-        if (y, m + 2) > last_month:
+        if (y, m + 2) > last_month or (last_quarter and (y, (m + 2) // 3) > last_quarter):
             break
         g, i = 2.1 + rnd.gauss(0, 0.8), 2.0 + rnd.gauss(0, 1.0)
         q = [g, i, q[2] * 1.000625, q[3] * (1 + g / 100) ** 0.25 / 1.000625, q[4] * (1 + i / 100) ** 0.25 / 1.000625]
@@ -77,9 +90,9 @@ def case(last_month, as_of, drop=None, no_polls_in=(), states=True):
                                'disapprove': round(96 - a + rnd.gauss(0, 1), 1), 'internal': False, 'url': ''})
     json.dump(P, open(path, 'w'))
     json.dump({'as_of': as_of, 'sp500': {'date': as_of, 'value': v['SP500'] * 1.01}, 'oil': {'date': as_of, 'value': v['MCOILWTICO'] * 0.99}}, open(os.path.join(D, 'latest.json'), 'w'))
-    r = subprocess.run([sys.executable, 'run_2028.py'], cwd=dst, capture_output=True, text=True, env=dict(os.environ, KEYS_RUNS='20000'))
-    assert r.returncode == 0, r.stderr[-1500:]
-    out = json.load(open(os.path.join(dst, 'projection_2028.json')))
+    out = rerun(dst, edit=edit, runs=runs)
+    if keep:
+        return out, dst
     shutil.rmtree(os.path.dirname(dst))
     return out
 

@@ -212,9 +212,28 @@ def test_when_a_run_ends_as_failed():
     late = {'economy': '2026-12-06', 'polls': '2026-12-08'}
     assert update.alarm([], [], late, today, False) is None and 'economy' in update.alarm([], [], late, today, True)      # out of reach two days: the day's first run says so
     assert update.alarm([], [], {'economy': '2026-12-07', 'polls': '2026-12-07'}, today, True) is None and update.alarm([], [], {}, today, True) is None
+    # a key held: when it is first held, then once a day; an outlook older than the latest survey: on Mondays
+    assert 'Held: E05' in update.alarm([], [], ok, today, False, keys_held=['E05']) and update.alarm([], [], ok, today, False, keys_held=['E05'], keys_held_before=['E05']) is None
+    assert 'Held: E05' in update.alarm([], [], ok, today, True, keys_held=['E05'], keys_held_before=['E05'])
+    monday, tuesday = datetime.date(2027, 3, 1), datetime.date(2027, 3, 2)
+    assert 'Survey' in update.alarm([], [], {}, monday, True, stale=True) and update.alarm([], [], {}, tuesday, True, stale=True) is None and update.alarm([], [], {}, monday, False, stale=True) is None
+
+
+def test_a_call_that_changes_is_something_new():
+    pr = json.load(open(os.path.join(HERE, 'projection_2028.json')))
+    text = {k: k for k in pr['calls']}
+    held = copy.deepcopy(pr); held['calls']['E05'].update(status='held', why='Late.')
+    assert update.differs(pr, held) and any('E05' in line and 'held' in line for line in update.changes(pr, held, text))
+    final = copy.deepcopy(pr); final['calls']['D01']['final'] = True
+    assert update.differs(pr, final) and any('D01' in line and 'final' in line for line in update.changes(pr, final, text))
+    fixed = copy.deepcopy(pr); fixed['calls']['D01']['value'] = True
+    assert update.differs(pr, fixed) and any('corrected' in line for line in update.changes(pr, fixed, text))
+    stale = copy.deepcopy(pr); stale['outlook_from']['stale'] = True
+    assert update.differs(pr, stale) and any('survey' in line for line in update.changes(pr, stale, text))
+    assert not update.differs(pr, copy.deepcopy(pr)) and update.changes(pr, copy.deepcopy(pr), text) == []
 
 
 if __name__ == '__main__':
     test_checks(); test_history_is_let_be_and_new_figures_are_not(); test_a_missing_value_is_not_a_zero(); test_a_failed_series_keeps_its_figures(); test_the_archive_is_written_once(); test_changes_are_explained()
-    test_the_economy_is_read_when_a_release_could_be_out(); test_reading_the_same_figures_again_changes_nothing(); test_a_projection_is_archived_only_when_it_says_something_new(); test_when_a_run_ends_as_failed()
+    test_the_economy_is_read_when_a_release_could_be_out(); test_reading_the_same_figures_again_changes_nothing(); test_a_projection_is_archived_only_when_it_says_something_new(); test_a_call_that_changes_is_something_new(); test_when_a_run_ends_as_failed()
     print('ok (checks, held figures, the archive, when a run is made and when it ends as failed)')

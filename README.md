@@ -382,9 +382,10 @@ workflow" button starts at once; the button has a box to make the run as the hou
    that cannot be reached is tried again on the next run and reported once it has been out of reach for two days.
 3. **Run.** `run_2028.py` reads the published months and runs only the months still ahead. A key **lands** when the
    figures it is scored on are published through June 2028: the economy keys from FRED, the six approval keys from the
-   June 2028 polls, the two state keys from the state indexes by the rule in `states.py`. The nomination keys are
-   entered in `data/outlook.json` when they are settled. A key with a missing figure stays open. It is never scored as
-   no.
+   June 2028 polls, the two state keys from the state indexes by the rule in `states.py`. From then on it is scored by
+   `build.score_year`, the function that scores 1952 to 2024, and is the same in every run. The nomination keys are
+   entered in `data/outlook.json` and `data/nh_primaries.csv` when they are settled. A key with a missing figure stays
+   open. It is never scored as no. See "The calls" below.
 4. **Archive.** Each run whose projection says something the last one kept did not is written to `archive/` under its
    own time stamp, with the national figures it used, fingerprints of the longer files, the assumptions, the checks,
    the versions, and a list of what changed and why. "Something new" is a headline figure, a key that landed or changed
@@ -403,12 +404,52 @@ reads FRED through its API, which needs a free key. Add it once as a repository 
 archives and rebuilds, keeps the last good economic figures, and ends as failed to say so.
 
 The outlook (the Survey of Professional Forecasters) and the odds for the approval and nomination keys are still typed
-in by hand, in `data/outlook.json`. Between entries the latest figures are carried along the shape of the last outlook.
+in by hand, in `data/outlook.json`, with the day of the survey in `outlook_date`. Between entries the latest figures are
+carried along the shape of the last outlook. The survey comes out in the middle of February, May, August and November.
+Once the next one should be out and has not been entered, the page says so and the first run of each Monday ends as
+failed, as a reminder.
+
+### The calls
+
+`calls.py` decides, on every run, which keys can be called on real evidence. It holds no rule of its own: it lays the
+figures published so far over the files `build.score_year` reads and lets that function score 2028 as it scores every
+other year. A key is in one of four states.
+
+- **Unresolved.** The figures or the event its rule needs do not exist yet. The run ahead gives it a chance.
+- **Provisional.** Every figure its rule reads is published and the rule has been applied. The figures can still be
+  revised, so the call can still change. The key is the same in every run, and it is not the official call yet.
+- **Settled.** Called yes or no on evidence that will not change: a fact, an election result, or, from the day the
+  count is closed, the figures as they stood that day. `final` marks a call that is closed.
+- **Held.** The evidence should be there by now and is not, or an entry and the rule disagree. The key keeps its chance
+  (or, for a key called on an event, the call it had), it is never counted as no, and the run ends as failed once a day
+  until somebody has looked.
+
+The count is closed on **August 1, 2028**, on the figures published by then: the model says that June figures are used
+and that a forecast made at the end of July can use them, and every June figure is normally out by then. From that day a
+later revision is written beside the call and does not change it. That date is a proposal and is one line in
+`calls.py`. When every key is called the page shows the count itself, labelled as observed, instead of a projection; if
+any key is still without evidence the count is not called complete.
+
+`data/key_calls.csv` is the record: a line is added when a key is called, when the figures behind a provisional call
+are revised, and when a call becomes final. Lines are never changed or removed. The record was started on November 25,
+2026, so the eight keys settled before then carry that date. `KEYS.md` and `data/key_registry.json` list, for each of
+the 52 keys, what it compares, the series and source, when each figure comes out, the first day it can be called, what
+happens if a figure is late, and what is still entered by hand: 41 keys need nothing, six are entered once per election
+from the midterm result and the term limit (done for 2028), and five (E03 to E07, the third-candidate, nomination and
+New Hampshire keys) have no open feed and need one entry each in 2028. `KEYS.md` says what would end that.
+
+`docs/keys.json` carries the whole run for anything that follows the count: every key's state, the chance of each open
+key, the groups, and the spread of the count over the runs (`index_dist`), beside the headline figures it always had.
 
 Tests (`tests/`, run before every update): the key table against the locked copy; that a missing figure stays
 missing; the checks, on new figures and on history separately; when the economy is read, when the model is run again
 and when a run ends as failed; the archive; and the run ahead on made-up future figures, where keys must land when June 2028 is
-published and not before, and a hole in the figures must leave a key open.
+published and not before, and a hole in the figures must leave a key open. `tests/test_calls.py` sets the clock by hand
+and walks one made-up future from 2027 to the close: nothing is called early, a revision before the close is recorded as
+a correction, a revision after it does not change the call, a tie is scored as the rule says, a held key is not a no,
+the two copies of the rules (inside the run and in `build.py`) agree on every key, the fully called count equals what
+the rules give, and the page and the feed are built at every stage. The made-up figures never leave the temporary
+folder.
 
 On November 25, 2026 the run ahead was changed to work this way (version `2026.11b`). On the same figures it gave the
 same answer as the version of November 22, key for key. Two things then changed the numbers a little: housing starts
@@ -482,8 +523,10 @@ requests and can be put on any static host as it is.
   https://github.com/ThevinSilva/Fred-MD. Used only by the run ahead.
 - `data/approval_polls.json`: polls of presidential approval as listed by VoteHub (api.votehub.com), refreshed by `update.py`.
   Only polls of all adults count toward the reading; campaign and party internals are left out.
-- `data/outlook.json`: the forecasters' outlook, the odds for the approval and nomination keys, and the keys already
-  settled with the reason for each. Entered by hand.
+- `data/outlook.json`: the forecasters' outlook and its date, the odds for the approval and nomination keys, and the
+  keys already settled with the reason for each. Entered by hand.
+- `data/key_calls.csv`, `data/key_registry.json`, `KEYS.md`: the record of calls, and the list of what each key reads
+  and when it can be called. Written by `run_2028.py` and `calls.py`.
 - `archive/`: every published run. See "Updates, archive and tests".
 - `data/latest_monthly.csv`, `data/quarterly.csv`, `data/latest.json`: the latest monthly and quarterly figures and daily
   prices, read from FRED by `update.py` (UNRATE, PAYEMS, MANEMP, CPIAUCSL, INDPRO, DPCERA3M086SBEA,

@@ -91,6 +91,11 @@ section{padding:72px 0 0;scroll-margin-top:56px}
 .readout .ra b{color:var(--board-ink);font-weight:600}
 .readout .hint{display:block;color:var(--board-muted)}
 
+/* the record of calls */
+.calls{list-style:none;margin:10px 0 0;padding:0;max-height:300px;overflow:auto;border-top:1px solid var(--line)}
+.calls li{display:grid;grid-template-columns:104px 1fr;gap:14px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.calls .cd{color:var(--muted);font-variant-numeric:tabular-nums}
+@media (max-width:560px){.calls li{grid-template-columns:1fr;gap:2px}}
 /* settled keys */
 .settled-h{margin-top:34px}
 .settled{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:0 44px}
@@ -615,6 +620,9 @@ footer a{color:var(--board-ink)}
   </div>
   <h3 class="settled-h" id="settled-h"></h3>
   <ul class="settled" id="settled"></ul>
+  <h3 class="settled-h" id="calls-h">The record of calls</h3>
+  <p class="note" id="calls-note">Every call and every correction, newest first. A line is added when a key is called, when the figures behind a call are revised, and when the call becomes final; none is ever removed. The record was started on November 25, 2026, after the first eight keys were settled. The <a href="data/key_calls.csv">whole record</a> and the <a href="data/key_registry.json">list of what each key reads and when it can be called</a> are files.</p>
+  <ol class="calls" id="calls"></ol>
   <div class="pair">
     <p><b>What it would take.</b> Party strength is already 0 of 6, and each group counts the same. To get above half overall, the other four groups would need to average more than {{NEED}}% of their keys in the Republicans' favor.</p>
     <p><b>The states so far.</b> {{STATES_SO_FAR}} The two state keys are scored on the figures to June 2028.</p>
@@ -649,7 +657,8 @@ footer a{color:var(--board-ink)}
       <p class="note">Each row splits the runs by how one key lands: the share that end above one half when the key is no (open dot) and when it is yes (filled dot). Keys move together, so a row shows what a key signals, not what turning it alone would do. For that, use the scenario lab.</p>
       <div id="decisive"></div>
     </div>
-    <p class="note" id="run-through" style="margin-top:14px"></p>
+    <p class="note" id="run-count" style="margin-top:14px;max-width:86ch"></p>
+    <p class="note" id="run-through" style="margin-top:6px"></p>
     <p class="note" style="margin-top:6px">The chance for each open key is shown on the key board above and in the list of keys below. Sources and method are in the fine print.</p>
   </div>
 </section>
@@ -890,20 +899,28 @@ const DATA = /*DATA*/null;
     const tally = (f + a === 0) ? 'all open' : o === 0 ? (a === ks.length ? 'all against' : f === ks.length ? 'all in favor' : f + ' for, ' + a + ' against') : f + ' for, ' + a + ' against, ' + o + ' open';
     let h = '<div class="rail"><div class="rail-name"><b>' + esc(g.name) + '</b><span>' + ks.length + ' keys, ' + tally + '</span></div><div class="hooks">';
     ks.forEach(k => {
-      const st = k.s === 1 ? 't' : k.s === 0 ? 'f' : 'o', lab = k.id + ': ' + k.t + '. ' + (k.s === 1 ? 'Yes.' : k.s === 0 ? 'No.' : 'Not settled yet.');
+      const st = k.s === 1 ? 't' : k.s === 0 ? 'f' : 'o', lab = k.id + ': ' + k.t + '. ' + (k.s === 1 ? 'Yes' : k.s === 0 ? 'No' : k.st === 'held' ? 'Held' : 'Not settled yet') + (k.st === 'provisional' ? ', not final.' : '.');
       h += '<button type="button" class="kk ' + st + '" data-i="' + ki + '" tabindex="' + (ki === 0 ? 0 : -1) + '" aria-label="' + esc(lab) + '">' + KEY + '</button>'; ki++;
     });
     rack.insertAdjacentHTML('beforeend', h + '</div></div>');
   });
-  $('sum').innerHTML = 'Republicans hold the White House. <b>' + cap(word(nFor + nAg)) + '</b> of the ' + DATA.word + ' keys are settled: <b>' + word(nFor) + '</b> in their favor and <b>' + word(nAg) +
-    '</b> against. The other ' + (K.length - nFor - nAg) + ' are scored in 2028.';
+  const inState = s => K.filter(k => k.st === s), forAg = ks => '<b>' + word(ks.filter(k => k.s === 1).length) + '</b> in their favor and <b>' + word(ks.filter(k => k.s === 0).length) + '</b> against';
+  const kSet = inState('settled'), kPro = inState('provisional'), kHeld = inState('held'), kOpen = inState('unresolved');
+  const CLOSES = DATA.run && DATA.run.count ? new Date(DATA.run.count.closes + 'T12:00:00').toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : '';
+  $('sum').innerHTML = 'Republicans hold the White House. ' + (kSet.length === K.length ? '<b>All</b> ' + DATA.word + ' keys' : '<b>' + cap(word(kSet.length)) + '</b> of the ' + DATA.word + ' keys') + ' are settled: ' + forAg(kSet) + '.' +
+    (kPro.length ? ' <b>' + cap(word(kPro.length)) + '</b> more ' + (kPro.length === 1 ? 'is' : 'are') + ' scored on figures that can still be revised until the count closes on ' + CLOSES + ': ' + forAg(kPro) + '.' : '') +
+    (kHeld.length ? ' <b>' + cap(word(kHeld.length)) + '</b> ' + (kHeld.length === 1 ? 'is' : 'are') + ' held, because the evidence is late or in dispute. A held key is not counted as no.' : '') +
+    (kOpen.length ? ' The other ' + kOpen.length + ' are open' + (kPro.length || kHeld.length ? '.' : ' and are scored in 2028.') : '') +
+    (DATA.run && DATA.run.observed ? ' Every key is called: the count is <b>' + (100 * DATA.run.observed.index).toFixed(1) + '%</b>, ' + (DATA.run.observed.final ? 'and it is final.' : 'not final yet.') : '');
   let onKey = null;
   function readKey(el) {
     if (!el) return;
     if (onKey) onKey.classList.remove('on');
     onKey = el; el.classList.add('on');
     const k = K[+el.dataset.i];
-    const ans = k.s === 1 ? '<b>Yes.</b> ' + esc(k.why) : k.s === 0 ? '<b>No.</b> ' + esc(k.why) : 'Not settled yet. ' + esc(k.when) + '.' + (k.est ? ' <span class="est"><b>Run ahead: ' + esc(k.est) + '.</b> ' + esc(k.note) + '</span>' : '');
+    const tail = k.st === 'provisional' ? ' <span class="est">Not final: the figures can be revised until ' + CLOSES + '.</span>' : k.rev ? ' <span class="est">' + esc(k.rev) + '</span>' : '';
+    const ans = k.s === 1 ? '<b>Yes.</b> ' + esc(k.why) + tail : k.s === 0 ? '<b>No.</b> ' + esc(k.why) + tail :
+      (k.st === 'held' ? '<b>Held.</b> ' + esc(k.open) : 'Not settled yet. ' + esc(k.when) + '.') + (k.est ? ' <span class="est"><b>Run ahead: ' + esc(k.est) + '.</b> ' + esc(k.note) + '</span>' : '');
     readout.innerHTML = '<span class="rid">' + k.id + '</span><span class="rq">' + esc(k.t) + '?</span><span class="ra">' + ans + '</span>';
   }
   rack.addEventListener('mouseover', ev => readKey(ev.target.closest('.kk')));
@@ -912,17 +929,25 @@ const DATA = /*DATA*/null;
   const allKeys = [...rack.querySelectorAll('.kk')];
   rove(rack, '.kk', (t, key) => { const i = +t.dataset.i; return key === 'ArrowRight' || key === 'ArrowDown' ? allKeys[i + 1] : key === 'ArrowLeft' || key === 'ArrowUp' ? allKeys[i - 1] : null; });
 
-  $('settled-h').textContent = 'The ' + word(nFor + nAg) + ' keys already settled';
+  $('settled-h').textContent = kPro.length ? 'The ' + word(nFor + nAg) + ' keys called so far' : 'The ' + word(nFor + nAg) + ' keys already settled';
   const settled = $('settled');
   K.filter(k => k.s !== null).sort((a, b) => a.s - b.s).forEach(k => {
-    settled.insertAdjacentHTML('beforeend', '<li class="' + (k.s ? 't' : 'f') + '">' + KEY + '<span><b>' + esc(k.t) + (k.s ? '? Yes.' : '? No.') + '</b><small>' + esc(k.why) + '</small></span></li>');
+    settled.insertAdjacentHTML('beforeend', '<li class="' + (k.s ? 't' : 'f') + '">' + KEY + '<span><b>' + esc(k.t) + (k.s ? '? Yes.' : '? No.') + '</b><small>' + esc(k.why) +
+      (k.st === 'provisional' ? ' Not final: the figures can be revised until ' + CLOSES + '.' : '') + '</small></span></li>');
   });
+  const REC = DATA.record || [], recDay = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'});
+  const recSay = r => r.status === 'held' ? 'held' : (r.status === 'provisional' ? 'scored ' : 'settled ') + (r.value === '1' ? 'yes' : 'no') + (r.status === 'provisional' ? ', not final' : r.final === '1' ? ', final' : '');
+  $('calls-h').hidden = $('calls').hidden = $('calls-note').hidden = !REC.length;
+  $('calls').innerHTML = REC.slice().reverse().map(r => { const k = K.find(x => x.id === r.key) || {t: ''};
+    return '<li><span class="cd">' + recDay(r.recorded) + '</span><span><b>' + r.key + '</b> ' + esc(k.t) + ': <b>' + recSay(r) + '</b>. ' + esc(r.evidence) + '</span></li>'; }).join('');
 
   // ---- the run ahead
   const RUN = DATA.run;
   if (RUN) {
     const pc = x => Math.round(100 * x) + '%';
-    $('run-head').innerHTML = '<strong>' + pc(RUN.mean) + '</strong><p>of the keys in the Republicans\' favor, group by group, on average across ' + RUN.runs + ' runs. That is ' + (RUN.mean > 0.5 ? 'above' : 'below') +
+    $('run-head').innerHTML = RUN.observed ? '<strong>' + (100 * RUN.observed.index).toFixed(1) + '%</strong><p>of the keys in the Republicans\' favor, group by group, with every key called. That is ' + (RUN.observed.index > 0.5 ? 'above' : 'not above') +
+      ' one half, so the keys say the Republicans <b>' + (RUN.observed.index > 0.5 ? 'win' : 'lose') + '</b>. This is the model\'s call, not the election result.</p>' :
+      '<strong>' + pc(RUN.mean) + '</strong><p>of the keys in the Republicans\' favor, group by group, on average across ' + RUN.runs + ' runs. That is ' + (RUN.mean > 0.5 ? 'above' : 'below') +
       ' one half, so on today\'s outlook the keys would say the Republicans <b>' + (RUN.mean > 0.5 ? 'win' : 'lose') + '</b>. They finish above one half in about <b>' + esc(RUN.odds) + '</b> runs.</p>';
     $('rh').innerHTML = RUN.hist.map(b => '<i' + (b.lo >= 50 ? ' class="win"' : '') + ' style="height:' + (100 * b.share / RUN.hmax).toFixed(1) + '%" title="' + b.lo + '% to ' + (b.lo + 5) + '% in favor: ' + (100 * b.share).toFixed(1) + '% of runs"></i>').join('');
     $('rh').setAttribute('aria-label', 'Where the count ends up across ' + RUN.runs + ' runs. Half of the runs fall between ' + pc(RUN.p25) + ' and ' + pc(RUN.p75) + ' of keys in favor; ' + pc(RUN.above) + ' of runs end above one half.');
@@ -1098,7 +1123,7 @@ const DATA = /*DATA*/null;
     ks.forEach(k => {
       const c = K.indexOf(k);
       const strip = E.map(e => '<i class="' + cls(e.k[c]) + '" title="' + e.y + ': ' + (e.k[c] === 'T' ? 'yes' : e.k[c] === '.' ? 'no' : 'no data') + '"></i>').join('');
-      const now = k.s === null ? '<b>Open</b>' + esc(k.when) + (k.est ? '<span class="est"><b>Run ahead: ' + esc(k.est) + '.</b> ' + esc(k.note) + '</span>' : '') : '<b><i class="sq ' + (k.s ? 't' : 'f') + '"></i>' + (k.s ? 'Yes' : 'No') + '</b>' + esc(k.why);
+      const now = k.s === null ? '<b>' + (k.st === 'held' ? 'Held' : 'Open') + '</b>' + esc(k.st === 'held' ? k.open : k.when) + (k.est ? '<span class="est"><b>Run ahead: ' + esc(k.est) + '.</b> ' + esc(k.note) + '</span>' : '') : '<b><i class="sq ' + (k.s ? 't' : 'f') + '"></i>' + (k.s ? 'Yes' : 'No') + '</b>' + esc(k.why);
       s += '<div class="key"><span class="id">' + k.id + '</span><span><span class="q">' + esc(k.t) + '</span><span class="rule">' + esc(k.r) + '</span>' + (k.tag ? '<span class="tag">' + esc(k.tag) + '</span>' : '') +
         '</span><span class="hist"><span class="strip" role="img" aria-label="Yes in ' + k.true + ' of ' + k.n + ' elections">' + strip + '</span>Yes in ' + k.true + ' of ' + k.n + '</span><span class="now">' + now + '</span>' +
         '<details class="kd" data-c="' + c + '"><summary>Record, figures and source</summary><div></div></details></div>';
@@ -1117,7 +1142,7 @@ const DATA = /*DATA*/null;
       (DATA.research ? ' Weight in the count: ' + (100 * DATA.research.weight[k.id]).toFixed(1) + '%.' : '') + '</p>';
     h += '<div class="scroll"><table class="cmp kd-t"><thead><tr><th scope="col">Election</th><th scope="col">Answer</th><th scope="col">The figure</th><th scope="col">Party in office</th></tr></thead><tbody>' +
       E.map(e => '<tr><td>' + e.y + '</td><td>' + (e.k[c] === 'T' ? 'Yes' : e.k[c] === '.' ? 'No' : 'No figures') + '</td><td>' + esc(e.d[c] || '') + '</td><td>' + (e.w ? 'won' : 'lost') + '</td></tr>').join('') +
-      '<tr class="next"><td>2028</td><td>' + (k.s === null ? 'Open' : k.s ? 'Yes' : 'No') + '</td><td>' + esc(k.s === null ? (k.est ? cap(k.est) + '. ' + k.note : k.when) : k.why) + '</td><td></td></tr></tbody></table></div>';
+      '<tr class="next"><td>2028</td><td>' + (k.s === null ? (k.st === 'held' ? 'Held' : 'Open') : (k.s ? 'Yes' : 'No') + (k.st === 'provisional' ? ', not final' : '')) + '</td><td>' + esc(k.s === null ? (k.est ? cap(k.est) + '. ' + k.note : k.when) : k.why) + '</td><td></td></tr></tbody></table></div>';
     d.lastElementChild.innerHTML = h;
   }, true);
 
@@ -1125,17 +1150,24 @@ const DATA = /*DATA*/null;
   const RS = DATA.research, pct = x => Math.round(100 * x) + '%';
   if (RUN && RUN.range) {
     $('run-not').innerHTML = '<b>A share of runs, not a chance of winning.</b> In ' + pct(RUN.above) + ' of runs the count ends above one half. Drawing the history behind the runs differently moves that between ' +
-      pct(RUN.range.above_half[0]) + ' and ' + pct(RUN.range.above_half[1]) + ', so read it as about one in five. It describes the count, not the election.' +
+      pct(RUN.range.above_half[0]) + ' and ' + pct(RUN.range.above_half[1]) + ', so read it as about ' + esc(RUN.odds) + '. It describes the count, not the election.' +
       (RS ? ' In the record a count just above one half has not meant even odds: parties between 50% and 60% won one time in three. A rough calibration on the ' + R.n + ' elections puts the chance of winning itself near ' +
         pct(RS.win.chance) + ', somewhere between ' + pct(RS.win.range[0]) + ' and ' + pct(RS.win.range[1]) + '. That figure is research, not part of the model; the <a href="audit.html">audit</a> explains it.' : '');
     const dk = (RUN.decisive || []).filter(d => d.p >= 0.1 && d.p <= 0.9).sort((a, b) => (b.if_yes - b.if_no) - (a.if_yes - a.if_no)).slice(0, 10);
-    const top = Math.ceil(Math.max(...dk.map(d => d.if_yes), 0.3) * 10) / 10, X = v => (100 * v / top).toFixed(1) + '%';
+    const top = Math.ceil(Math.max(...dk.map(d => d.if_yes), RUN.above, 0.3) * 10) / 10, X = v => Math.min(100, 100 * v / top).toFixed(1) + '%';
+    $('decisive').closest('.dk').hidden = !dk.length;
     $('decisive').innerHTML = '<div class="dk-axis"><span></span><span class="dk-scale"><i style="left:0">0%</i><i style="left:' + X(RUN.above) + '" class="all">all runs ' + pct(RUN.above) + '</i><i style="left:100%">' + pct(top) + '</i></span></div>' +
       dk.map(d => { const k = K.find(x => x.id === d.id);
         return '<div class="dk-row"><span class="dk-name"><b>' + d.id + '</b> ' + esc(k.t) + '</span><span class="dk-track" role="img" aria-label="' + pct(d.if_no) + ' of runs end above one half when this key is no, ' + pct(d.if_yes) + ' when it is yes">' +
           '<i class="dk-all" style="left:' + X(RUN.above) + '"></i><i class="dk-line" style="left:' + X(Math.min(d.if_no, d.if_yes)) + ';width:' + X(Math.abs(d.if_yes - d.if_no)) + '"></i><i class="dk-no" style="left:' + X(d.if_no) + '"></i><i class="dk-yes" style="left:' + X(d.if_yes) + '"></i></span>' +
           '<span class="dk-val">' + pct(d.if_no) + ' if no, ' + pct(d.if_yes) + ' if yes</span></div>'; }).join('');
-    const th = RUN.through || {};
+    const th = RUN.through || {}, hz = RUN.horizon || {}, of = RUN.outlook_from || {}, ct = RUN.count || {};
+    const left = hz.months_left > 0 ? cap(word(hz.months_left)) + (hz.months_left === 1 ? ' month' : ' months') + ' of figures are still to come before the keys are scored on June 2028. ' : hz.days_to_close > 0 ? 'The June 2028 figures are coming in; the count closes on ' + CLOSES + '. ' : '';
+    $('run-count').innerHTML = RUN.observed ? 'Every key is called on real evidence. Nothing is run ahead any more: the figure above is the count itself' + (RUN.observed.final ? ', and it is final.' : ', not final until the count closes on ' + CLOSES + '.') :
+      left + 'Of the ' + DATA.word + ' keys, <b>' + (ct.settled + ct.provisional) + '</b> are called on real evidence and <b>' + (ct.unresolved + ct.held) + '</b> are run ahead. Counting each open key at its chance, the run expects <b>' +
+      RUN.expected.toFixed(1) + '</b> of 52 in the Republicans\' favor; counting each the way it leans gives ' + RUN.likely_for + '. Neither is a count of calls.' +
+      (of.date ? ' The economic outlook is the forecasters\' survey of ' + new Date(of.date + 'T12:00:00').toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) +
+        (of.stale ? '. <b>A newer survey is out and has not been entered yet</b>, so the months ahead are run on the older one.' : '.') : '');
     $('run-through').textContent = 'Figures in this run: monthly through ' + th.monthly + ', quarterly through ' + th.quarterly + ', prices to ' + new Date(th.prices + 'T12:00:00').toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) + '. Approval: ' + RUN.approval.approve.toFixed(0) + '% approve and ' +
       RUN.approval.disapprove.toFixed(0) + '% disapprove among all adults, from ' + RUN.approval.polls + ' polls by ' + RUN.approval.pollsters + ' pollsters in the past month.';
   }

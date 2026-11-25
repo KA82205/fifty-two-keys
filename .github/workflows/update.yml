@@ -44,6 +44,7 @@ jobs:
           python tests/test_model.py
           python tests/test_update.py
           python tests/test_engine.py
+          python tests/test_calls.py
 
       - name: Read the sources, check them, and rerun 2028 if anything is new
         id: update

@@ -291,7 +291,7 @@ def sha(path):
 
 
 INPUTS = ['data/latest_monthly.csv', 'data/quarterly.csv', 'data/latest.json', 'data/approval_polls.json', 'data/state_index_this_term.csv', 'data/outlook.json', 'locked_keys.csv',
-          'run_2028.py', 'build.py']
+          'run_2028.py', 'build.py', 'calls.py', 'data/congress_seats.csv', 'data/nh_primaries.csv']
 
 
 def vote(index):
@@ -329,6 +329,21 @@ def changes(old, new, text):
     gone = sorted(k for k in ok if k not in nk)
     for k in gone:
         out.append(f"{k} ({text.get(k, k)}) was settled.")
+    oc, nc = old.get('calls') or {}, new.get('calls') or {}
+    for k in sorted(nc):                                 # the calls: a key held, a call revised before the close, a call made final
+        a, b = oc.get(k), nc[k]
+        if not a:
+            continue
+        if b['status'] == 'held' and a['status'] != 'held':
+            out.append(f"{k} ({text.get(k, k)}) is held: {b.get('why', '')}")
+        elif a['status'] == 'held' and b['status'] != 'held':
+            out.append(f"{k} ({text.get(k, k)}) is no longer held.")
+        elif a.get('value') is not None and b.get('value') is not None and a['value'] != b['value']:
+            out.append(f"{k} ({text.get(k, k)}) was corrected to {'yes' if b['value'] else 'no'} on revised figures. {b.get('evidence', '')}")
+        elif b.get('final') and not a.get('final'):
+            out.append(f"{k} ({text.get(k, k)}) is final: {'yes' if b['value'] else 'no'}.")
+    if (new.get('outlook_from') or {}).get('stale') and not (old.get('outlook_from') or {}).get('stale'):
+        out.append('A newer survey of forecasters should be out; the outlook entered is the older one.')
     for k in sorted(nk):
         if nk[k].get('landed') and not (ok.get(k) or {}).get('landed'):
             out.append(f"{k} ({text.get(k, k)}) landed: {'yes' if nk[k]['p'] >= 0.5 else 'no'}. {nk[k]['note']}")
@@ -352,6 +367,9 @@ def differs(old, new):
     if through(old) != through(new): return True
     a, b = old['keys'], new['keys']
     if set(a) != set(b): return True
+    call = lambda pr: {k: (c['status'], c.get('value'), c.get('final')) for k, c in (pr.get('calls') or {}).items()}
+    if old.get('calls') and call(old) != call(new): return True
+    if (old.get('outlook_from') or {}).get('stale') != (new.get('outlook_from') or {}).get('stale') and old.get('outlook_from'): return True
     return any(bool(a[k].get('landed')) != bool(b[k].get('landed')) or (a[k]['p'] >= 0.5) != (b[k]['p'] >= 0.5) or abs(a[k]['p'] - b[k]['p']) >= 0.01 for k in b)
 
 
@@ -407,13 +425,19 @@ def fingerprint(day, held):
     return fp
 
 
-def alarm(held, held_before, read_on, today, new_day, force=False):
+def alarm(held, held_before, read_on, today, new_day, force=False, keys_held=(), keys_held_before=(), stale=False):
     """Should this run end as failed, so that somebody looks? Returns the reason, or None.
     A figure held back: on the run that first holds it, then on the first run of each day until it is settled.
+    A key held (its evidence is late, or an entry and the rule disagree): the same.
     A source out of reach: on the first run of the day, once it has not been read for OUT_OF_REACH_DAYS days.
-    A run asked for by hand reports either."""
+    The outlook is older than the latest survey of forecasters: on the first run of each Monday.
+    A run asked for by hand reports any of them."""
     if held and (set(held) - set(held_before) or new_day or force):
         return 'Some figures failed a check and were not used; the page was rebuilt with the last good ones. See the warnings above.'
+    if keys_held and (set(keys_held) - set(keys_held_before) or new_day or force):
+        return f"Held: {', '.join(sorted(keys_held))}. The evidence for these keys is late or in dispute; they keep their chance and are not counted as no. See KEYS.md for what each needs."
+    if stale and ((new_day and today.weekday() == 0) or force):
+        return 'A newer Survey of Professional Forecasters should be out. data/outlook.json still holds the older one; the run ahead uses it until the new figures are entered.'
     day = datetime.date.fromisoformat
     lost = [k for k in ('economy', 'polls') if read_on.get(k) and (today - day(read_on[k])).days >= OUT_OF_REACH_DAYS]
     if lost and (new_day or force):
@@ -431,7 +455,7 @@ def feed():
     """The part of docs/keys.json that other sites read."""
     try:
         k = json.load(open(os.path.join(HERE, 'docs', 'keys.json')))
-        return [k.get('likely'), k.get('mean'), k.get('sd'), k.get('settled'), (k.get('vote_estimate') or {}).get('party_in_office')]
+        return [k.get('likely'), k.get('mean'), k.get('sd'), k.get('settled'), (k.get('vote_estimate') or {}).get('party_in_office'), k.get('calls'), k.get('index_dist')]
     except Exception:                                                       # noqa: BLE001
         return None
 
@@ -479,21 +503,22 @@ def main(argv):
         return 0
     print('New: ' + (', '.join(what) if what else 'nothing (the run was asked for)'))
     before = feed()
-    run = lambda script: subprocess.run([sys.executable, os.path.join(HERE, script)], cwd=HERE, check=True, stdout=subprocess.DEVNULL)
+    run = lambda script: subprocess.run([sys.executable, os.path.join(HERE, script)], cwd=HERE, check=True, stdout=subprocess.DEVNULL, env=dict(os.environ, KEYS_HELD=' '.join(held)))
     run('run_2028.py')
     pr = json.load(open(os.path.join(HERE, 'projection_2028.json')))
     name = archive(pr, report, made, os.environ.get('GITHUB_SHA', ''))
     print('archived as ' + name if name else 'the projection says nothing new: not added to the archive')
     run('make_page.py')
     first_held = sorted(set(held) - set(log.get('held_names') or []))
+    keys_held = sorted(k for k, c in (pr.get('calls') or {}).items() if c['status'] == 'held')
     if not offline:                                    # a run without reading says nothing about the sources
         json.dump(dict(report, made=made.strftime('%Y-%m-%dT%H:%M:%SZ'), economy_read=made.strftime('%Y-%m-%dT%H:%M:%SZ') if economy else log.get('economy_read'),
-                       read_on=read_on, held_names=held), open(log_path, 'w'), indent=1)
+                       read_on=read_on, held_names=held, keys_held=keys_held), open(log_path, 'w'), indent=1)
     json.dump(fp, open(fp_path, 'w'), indent=1)
     news = [n_['series'] for n_ in report['new']]
     out('changed', 'true'); out('feed', 'true' if feed() != before else 'false')
     out('what', ', '.join(news) if news else ('a figure held back' if first_held else 'the day' if what == ['day'] else 'revised figures'))
-    why = alarm(held, log.get('held_names') or [], read_on, today, new_day, force)
+    why = alarm(held, log.get('held_names') or [], read_on, today, new_day, force, keys_held, log.get('keys_held') or [], (pr.get('outlook_from') or {}).get('stale', False))
     if why:
         print('::error::' + why); out('alert', 'true')
     return 1 if why else 0

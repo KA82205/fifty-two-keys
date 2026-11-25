@@ -194,18 +194,25 @@ def main():
     def chance(p):                                       # a chance in words: these are estimates, so nothing finer than five points
         return 'almost no chance of yes' if p < 0.03 else 'almost sure to be yes' if p > 0.97 else f'about {5 * round(20 * p):d}% chance of yes'
     keys = []
+    calls = (run or {}).get('calls') or {}
+    sentence = lambda t: t if not t else t[0].upper() + t[1:] + ('' if t.endswith('.') else '.')
     for k in ALL:
         i = k[:3]; e = res['each_key'][k]
         s = S2028.get(i)
         est = run['keys'].get(i) if run else None
-        if est and est.get('landed'):                    # its June 2028 figures are published: scored, with the figure that settled it
-            s = (int(est['p'] >= 0.5), est['note'])
+        c = calls.get(i) or {}
+        if c.get('status') in ('settled', 'provisional'):   # called by its rule on real evidence (calls.py), with the evidence
+            s = (int(c['value']), sentence(c.get('evidence') or (est or {}).get('note', '')))
+        elif c:                                             # open or held: no call, whatever was entered
+            s = None
         keys.append({'id': i, 'g': i[0], 't': TEXT[i][0], 'r': TEXT[i][1], 'tag': TAG.get(i, ''), 'n': e['n'], 'true': e['true'], 'agree': e['agree'], 'src': _S[SOURCE[i]],
                      's': None if s is None else s[0], 'why': '' if s is None else s[1], 'when': WHEN.get(i, WHEN.get(i[0], '')),
                      'est': chance(est['p']) if est and s is None else '', 'note': est['note'] if est and s is None else '',
-                     'p': None if est is None or s is not None else est['p'], 'pc': est and est.get('p_calm'), 'pr': est and est.get('p_recession')})
+                     'p': None if est is None or s is not None else est['p'], 'pc': est and est.get('p_calm'), 'pr': est and est.get('p_recession'),
+                     'st': c.get('status') or ('settled' if s is not None else 'unresolved'), 'fin': bool(c.get('final')), 'open': c.get('why', ''), 'next': c.get('next', ''), 'rev': c.get('revised_since', '')})
     if run:
-        assert set(run['keys']) == {k[:3] for k in ALL} - set(S2028), 'the run ahead covers exactly the open keys'
+        assert set(run['keys']) == {i for i in calls if i[0] in 'ABC' or calls[i]['status'] not in ('settled', 'provisional')}, 'the run ahead covers every key not called on an event'
+        assert all((k['s'] is None) == (k['st'] in ('unresolved', 'held')) for k in keys) and all(k['p'] is not None for k in keys if k['s'] is None), 'a key is called, or it has a chance: never neither'
     assert all(i in TEXT for i in ids) and len(keys) == len(ALL)
     payload = {'groups': [{'id': g, 'name': GROUP_NAMES[g], 'n': len(ks), 'desc': GROUP_DESC[g]} for g, ks in GROUPS.items()], 'keys': keys, 'elections': elections, 'word': WORD}
 
@@ -251,8 +258,24 @@ def main():
     if run:
         ix, above = run['index'], run['index']['above_half']
         odds = min(((abs(above - a / b), f'{a} in {b}') for a, b in ((1, 2), (2, 5), (1, 3), (1, 4), (1, 5), (1, 6), (1, 8), (1, 10), (1, 20), (1, 50))))[1]
-        assert ix['median'] < 0.5 and ix['mean'] < 0.5 and run['likely']['index'] < 0.5, 'the page says the keys would say the Republicans lose on today\'s outlook'
-        assert run['groups']['D']['mean'] == 0 and run['calm']['above_half'] > above
+        # What the page says in a sentence follows the figures. Three cases: every key called; well short of one half with
+        # months still to run (the case in 2026); and anything else, which is said in figures only.
+        share, calm, obs = run['recession_share'], run['calm']['above_half'], run.get('observed')
+        in_rec = max(0.0, (above - (1 - share) * calm) / share) if share else 0.0
+        near = lambda p: 'close to nil' if p < 0.03 else f'about {5 * round(20 * p):d}%'
+        left = (run.get('horizon') or {}).get('months_left', 1)
+        if obs:
+            take = (f"Every key is called. The count is {100 * obs['index']:.1f}%, {'above' if obs['index'] > 0.5 else 'not above'} one half, so the keys say the Republicans "
+                    f"{'win' if obs['index'] > 0.5 else 'lose'}." + ('' if obs['final'] else ' It is not final until the count closes.'))
+        elif ix['median'] < 0.5 and ix['mean'] < 0.5 and run['likely']['index'] < 0.5 and above < 0.35 and run['groups']['D']['mean'] == 0 and calm > above and left > 0:
+            take = ("To finish above one half the Republicans would need most things outside Congress to break their way at once: no recession, "
+                    f"approval rising through 2028 and a smooth nomination. With party strength at 0 of 6 and approval near {run['approval']['approve']:.0f}%, a normal economy is not enough. "
+                    f"Without a recession the chance is about {5 * round(20 * calm):d}%; with one it is {near(in_rec)}.")
+        else:
+            still = run['count']['unresolved'] + run['count']['held'] if run.get('count') else len(run['keys'])
+            take = (f"The run expects the count to finish near {100 * ix['mean']:.0f}%, and above one half in about {5 * round(20 * above):d}% of runs. "
+                    + (f"Party strength is 0 of 6, so the other four groups have to average more than {need:.1f}% in the Republicans' favor. " if run['groups']['D']['mean'] == 0 else '')
+                    + (f"{still} keys are still open." if still else ''))
         shares = [sum(h['share'] for h in run['hist'] if round(100 * b['lo']) <= h['lo'] < round(100 * min(b['hi'], 1))) for b in sure['bands']]
         assert abs(sum(shares) - 1) < 0.01
         line_at = lambda v: round(sure['line'][0] + sure['line'][1] * v, 1)
@@ -261,9 +284,7 @@ def main():
         payload['run'] = {'mean': ix['mean'], 'median': ix['median'], 'p25': ix['p25'], 'p75': ix['p75'], 'above': above, 'odds': odds, 'runs': f"{run['runs']:,}",
                           'hist': run['hist'], 'hmax': max(b['share'] for b in run['hist']), 'groups': run['groups'], 'likely': run['likely']['index'], 'likely_for': run['likely']['in_favor'],
                           'stretches': run['stretches']['n'], 'recession': run['recession_share'], 'n_econ': len(GROUPS['A']) + len(GROUPS['B']),
-                          'take': ("To finish above one half the Republicans would need most things outside Congress to break their way at once: no recession, "
-                                   f"approval rising through 2028 and a smooth nomination. With party strength at 0 of 6 and approval near {run['approval']['approve']:.0f}%, a normal economy is not enough. "
-                                   f"Without a recession the chance is about {5 * round(20 * run['calm']['above_half']):d}%; with one it is close to nil.")}
+                          'take': take}
     assert len(GROUPS) == 5, 'the page says five groups, and that the other four must make up for party strength'
     rs_path = os.path.join(HERE, 'research.json')
     rs = json.load(open(rs_path)) if os.path.exists(rs_path) else None
@@ -271,7 +292,10 @@ def main():
     history = json.load(open(index_path)) if os.path.exists(index_path) else []
     if run:
         payload['run'].update(range=run.get('range'), decisive=run.get('decisive'), through=run.get('data_through'), approval=run.get('approval'), as_of=run['as_of'],
-                              calm=run['calm']['above_half'], engine=run.get('engine'))
+                              calm=run['calm']['above_half'], engine=run.get('engine'), count=run.get('count'), horizon=run.get('horizon'), outlook_from=run.get('outlook_from'),
+                              observed=run.get('observed'), expected=run['index'].get('expected_in_favor'))
+        record_path = os.path.join(HERE, 'data', 'key_calls.csv')
+        payload['record'] = list(csv.DictReader(open(record_path)))[-40:] if os.path.exists(record_path) else []
         payload['lab'] = {'line': sure['line'], 'bands': [[b['lo'], min(b['hi'], 1), b['label'], b['n'], b['won']] for b in sure['bands']], 'miss': sure['miss']}
     payload['history'] = [{k: h.get(k) for k in ('made', 'as_of', 'file', 'mean', 'median', 'above_half', 'in_favor', 'likely', 'vote', 'changes', 'engine')} for h in history]
     if rs:
@@ -317,7 +341,7 @@ def main():
     for name in ('keys_table.csv', 'keys_raw_values.csv', 'locked_keys.csv', 'locked_index.csv', 'results.json', 'research.json', 'projection_2028.json'):
         if os.path.exists(os.path.join(HERE, name)):
             shutil.copyfile(os.path.join(HERE, name), os.path.join(docs, 'data', name))
-    for name in ('latest_monthly.csv', 'quarterly.csv', 'outlook.json', 'approval_polls.json'):
+    for name in ('latest_monthly.csv', 'quarterly.csv', 'outlook.json', 'approval_polls.json', 'key_registry.json', 'key_calls.csv'):
         shutil.copyfile(os.path.join(HERE, 'data', name), os.path.join(docs, 'data', name))
     if os.path.isdir(os.path.join(HERE, 'archive')):
         shutil.copytree(os.path.join(HERE, 'archive'), os.path.join(docs, 'archive'), dirs_exist_ok=True)
@@ -328,7 +352,17 @@ def main():
                 'sd': round(iqr / 1.349, 3), 'above_half': run['index']['above_half'], 'above_half_range': (run.get('range') or {}).get('above_half'),
                 'vote_estimate': {'party_in_office': payload['sure']['run']['vote_likely'], 'line': sure['line'], 'typical_miss': sure['miss']},
                 'record': {'right': call['right'], 'n': call['n']}, 'engine': run.get('engine'), 'page': SITE,
-                'note': 'likely: the count if every open key lands the way it leans. above_half: the share of runs in which the count ends above one half; it is not a chance of winning.'}
+                'note': 'likely: the count if every open key lands the way it leans. above_half: the share of runs in which the count ends above one half; it is not a chance of winning.',
+                # from here on: the whole run, for anything that wants more than the headline (format 2; nothing above was changed)
+                'format': 2, 'date': run.get('date'), 'count': run.get('count'), 'observed': run.get('observed'),
+                'calls': {i: {'status': c['status'], 'value': c['value'], 'final': c['final']} for i, c in calls.items()},
+                'chances': {i: v['p'] for i, v in run['keys'].items()},
+                'groups': {g: {'expected': v['mean'], 'p10': v['p10'], 'p90': v['p90'], 'keys': v['n']} for g, v in run['groups'].items()},
+                'index': run['index'], 'index_dist': run.get('index_dist'), 'through': run.get('through'), 'horizon': run.get('horizon'), 'outlook_from': run.get('outlook_from'),
+                'assumptions': {'recession_share': run['recession_share'], 'politics': run['politics']},
+                'more': {'registry': SITE + 'data/key_registry.json', 'calls': SITE + 'data/key_calls.csv', 'run': SITE + 'data/projection_2028.json', 'archive': SITE + 'archive/index.json'},
+                'note2': 'index_dist: [count to the nearest hundredth, share of runs]. calls: every key, settled (final or not), provisional, unresolved or held. chances: the keys not called on an event. '
+                         'expected_in_favor counts every key at its chance; likely counts each open key the way it leans.'}
         json.dump(feed, open(os.path.join(docs, 'keys.json'), 'w'), indent=1)
     audit = os.path.join(HERE, 'research', 'audit.md')
     try:

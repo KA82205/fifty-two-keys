@@ -1,0 +1,9 @@
+recorded,key,status,value,final,basis,evidence
+2026-11-25,D01,settled,0,0,entered,"Republicans will hold at most 178 House seats, against 222 after the 2022 midterm."
+2026-11-25,D02,settled,0,0,entered,"Democrats won the House on November 3, 2026."
+2026-11-25,D03,settled,0,0,entered,"Democrats won the Senate, 56 seats to 44."
+2026-11-25,D04,settled,0,1,rule,Trump won 49.8% of all votes in 2024.
+2026-11-25,D05,settled,0,0,entered,Republicans went from 220 House seats to at most 178.
+2026-11-25,D06,settled,0,0,entered,Republicans went from 53 Senate seats to 44.
+2026-11-25,E01,settled,0,1,entered,Trump cannot run for a third term.
+2026-11-25,E02,settled,1,1,rule,Republicans are in their first term back in the White House.

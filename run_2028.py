@@ -33,6 +33,7 @@ D = os.path.join(HERE, 'data')
 sys.path.insert(0, HERE)
 from build import GROUPS, ALL                         # noqa: E402
 import states as SK                                   # noqa: E402
+import calls as CALL                                  # noqa: E402
 
 CFG = json.load(open(os.path.join(D, 'outlook.json')))          # the outlook and the odds: entered by hand, with what each rests on in the README
 LATEST = json.load(open(os.path.join(D, 'latest.json')))        # the date of the run and the latest daily prices: written by update.py
@@ -50,7 +51,7 @@ CYCLES = {1952: (1, 0, 1), 1956: (1, 1, 0), 1960: (0, 1, 0), 1964: (1, 1, 0), 19
           1984: (1, 1, 1), 1988: (0, 0, 0), 1992: (0, 0, 0), 1996: (1, 1, 1), 2000: (1, 0, 0), 2004: (0, 0, 0), 2008: (0, 0, 0), 2012: (1, 1, 1),
           2016: (1, 1, 1), 2020: (0, 0, 0), 2024: (0, 0, 0)}
 OPEN_SEAT = {1952, 1960, 1968, 1988, 2000, 2008, 2016}
-SETTLED = {k: v['value'] for k, v in CFG['settled'].items()}     # settled by events: the midterms, the term limit, and later the nominations
+ENTERED = CFG['settled']                              # entered with what each rests on: the midterms, the term limit, and later the nominations
 
 RECESSIONS = [((1960, 4), (1961, 2)), ((1969, 12), (1970, 11)), ((1973, 11), (1975, 3)), ((1980, 1), (1980, 7)), ((1981, 7), (1982, 11)),
               ((1990, 7), (1991, 3)), ((2001, 3), (2001, 11)), ((2007, 12), (2009, 6)), ((2020, 2), (2020, 4))]
@@ -77,6 +78,8 @@ def load_monthly():
                     P[s][ym(int(yr), int(mo))] = float(x)
     for r in csv.DictReader(open(os.path.join(D, 'latest_monthly.csv'))):
         y, m, _ = r['observation_date'].split('-')
+        if ym(int(y), int(m)) > ym(TODAY.year, TODAY.month):       # a month that has not begun on the day of the run is not a figure
+            continue
         for name, (s, col) in MD.items():
             if r[col] != '':
                 P[s][ym(int(y), int(m))] = float(r[col])
@@ -100,6 +103,8 @@ def load_quarterly():
         Q[int(r['year']) * 4 + int(r['quarter']) - 1] = {'gdp': None if g in ('', 'NA') else float(g), 'rdpi': None if i in ('', 'NA') else float(i)}
     for r in csv.DictReader(open(os.path.join(D, 'quarterly.csv'))):
         y, m, _ = r['observation_date'].split('-'); q = int(y) * 4 + (int(m) - 1) // 3
+        if ym(int(y), int(m)) + 2 >= ym(TODAY.year, TODAY.month):    # a quarter that has not ended on the day of the run is not a figure
+            continue
         Q[q] = {'gdp': float(r['A191RL1Q225SBEA']), 'rdpi': float(r['A067RL1Q156SBEA'])}
         level[(int(y), (int(m) - 1) // 3 + 1)] = {'pop': float(r['B230RC0Q173SBEA']), 'gdp_pc': float(r['A939RX0Q048SBEA']), 'rdpi_pc': float(r['A229RX0Q048SBEA'])}
     return Q, level
@@ -312,7 +317,7 @@ def other_keys(rnd, recession):
 
 def run(runs=RUNS, seed=SEED, share=None, gap=0.3):
     share = OUTLOOK['recession_share'] if share is None else share
-    S = stretches(gap); med = middle(S); rnd = random.Random(seed); polled = dict(approval_keys(), **STATES['keys'])
+    S = stretches(gap); med = middle(S); rnd = random.Random(seed)
     econ = [economy_keys(s, med, rnd) for s in S]
     rec = [s['recession'] for s in S]; seen = avg(rec)
     w = [share / seen if r else (1 - share) / (1 - seen) for r in rec]
@@ -321,7 +326,7 @@ def run(runs=RUNS, seed=SEED, share=None, gap=0.3):
     yes_rec, n_rec = {}, 0
     yes_above, hits, draws, sums = {}, [0] * len(S), [0] * len(S), [0.0] * len(S)      # for the keys that matter most, and for the range of the estimate
     for i in rnd.choices(range(len(S)), weights=w, k=runs):
-        k = dict(econ[i]); k.update(other_keys(rnd, rec[i])); k.update(polled); k.update({a: bool(b) for a, b in SETTLED.items()})
+        k = dict(econ[i]); k.update(other_keys(rnd, rec[i])); k.update(FIXED)
         sh = {g: sum(v for a, v in k.items() if a[0] == g) / size[g] for g in GROUPS}
         ix = avg(list(sh.values())); above = ix > 0.5
         for a, b in k.items():
@@ -341,7 +346,7 @@ def run(runs=RUNS, seed=SEED, share=None, gap=0.3):
     split = {a: (yes_above.get(a, 0) / tally[a] if tally[a] else None, (n_above - yes_above.get(a, 0)) / (runs - tally[a]) if runs - tally[a] else None) for a in tally}
     per = [{'t0': s['t0'], 'recession': r, 'above': hits[i] / draws[i] if draws[i] else None, 'mean': sums[i] / draws[i] if draws[i] else None} for i, (s, r) in enumerate(zip(S, rec))]
     return dict(p={a: tally[a] / runs for a in sorted(tally)}, index=index, by_group=by_group, calm=calm_index, stretches=len(S), with_recession=sum(rec),
-                first=S[0]['t0'] // 12, last=S[-1]['t0'] // 12, split=split, per=per,
+                first=S[0]['t0'] // 12, last=S[-1]['t0'] // 12, split=split, per=per, copy=dict({a: econ[0][a] for a in LANDED}, **approval_keys()),
                 p_rec={a: yes_rec.get(a, 0) / n_rec for a in tally} if n_rec else {}, p_calm={a: (tally[a] - yes_rec.get(a, 0)) / (runs - n_rec) for a in tally} if runs > n_rec else {})
 
 
@@ -373,7 +378,7 @@ def approval():
     in the window (no campaign or party internals). Polls come from VoteHub (data/approval_polls.json, refreshed by update.py).
     """
     polls = [p for p in json.load(open(os.path.join(D, 'approval_polls.json')))['polls']
-             if p['population'] == 'a' and not p.get('internal') and p['approve'] is not None and p['disapprove'] is not None]
+             if p['population'] == 'a' and not p.get('internal') and p['approve'] is not None and p['disapprove'] is not None and p['end'] <= str(TODAY)]
 
     def reading(lo, hi):
         by = {}
@@ -392,7 +397,7 @@ def approval():
     out = dict(now, year_ago=month(TODAY.year - 1, TODAY.month), midterm=reading('2026-10-01', '2026-11-30'), june27=month(2027, 6),
                jan28=month(2028, 1) or month(2027, 12), june28=month(2028, 6) or month(2028, 5))
     # the June 2028 polls are in a week after the month ends, if every reading the keys compare exists
-    out['in'] = TODAY >= datetime.date(2028, 7, 8) and all(out[k] for k in ('june28', 'june27', 'jan28', 'midterm'))
+    out['in'] = TODAY >= datetime.date.fromisoformat(CALL.CYCLE['approval_in']) and all(out[k] for k in ('june28', 'june27', 'jan28', 'midterm'))
     return out
 
 
@@ -413,12 +418,12 @@ def state_figures():
     (a reading, used in the notes); once they do, it scores A18 and B15 by the model's own rule in states.py."""
     idx = {}
     for r in csv.DictReader(open(os.path.join(D, 'state_index_this_term.csv'))):
-        if r['index'] != '':
+        if r['index'] != '' and r['month'] <= f'{TODAY:%Y-%m}':             # a month that has not begun on the day of the run is not a figure
             idx.setdefault(r['state'], {})[r['month']] = float(r['index'])
     idx['DC'] = {m: (x + idx['VA'][m]) / 2 for m, x in idx['MD'].items() if m in idx['VA']}
     ev, W = SK.electoral_votes(), SK.measures()
     now, last = SK.so_far()
-    out = {'through': last, 'growing': sum(1 for x in now if now[x] > 0), 'growing_ev': sum(ev[2028][x] for x in now if now[x] > 0),
+    out = {'through': min(last, f'{TODAY:%Y-%m}'), 'growing': sum(1 for x in now if now[x] > 0), 'growing_ev': sum(ev[2028][x] for x in now if now[x] > 0),
            'faster_ev': sum(ev[2028][x] for x in now if now[x] > W[(x, 2024)]), 'keys': {}}
     ends = SK.quarter_ends(2028)[0]
     if len(idx) == 51 and all(e in idx[x] for x in idx for e in ends):
@@ -430,6 +435,17 @@ def state_figures():
 
 
 STATES = state_figures()
+
+# Every key's state today, by the model's own rules on the figures published so far (calls.py). A key that is provisional or
+# settled is the same in every run. A key that is held keeps its last entry if it has one; otherwise it stays open.
+CALLS = CALL.evaluate(TODAY, P, QS, LEVEL, APPROVAL, STATES, ENTERED, LANDED, CALL.read_history(os.path.join(D, 'key_calls.csv')), set(os.environ.get('KEYS_HELD', '').split()))
+FIXED = {k: bool(c['value']) for k, c in CALLS.items() if c['status'] in ('provisional', 'settled')}
+FIXED.update({k: c['last'] for k, c in CALLS.items() if 'last' in c and k[0] in 'DE'})
+FIXED.update({k: bool(v['value']) for k, v in ENTERED.items() if k not in FIXED})
+SETTLED = {k: v for k, v in FIXED.items() if k[0] in 'DE'}       # called on events: these leave the list of keys the run-ahead reports on
+_none = [k for k in ('D01', 'D02', 'D03', 'D04', 'D05', 'D06', 'E01', 'E02') if k not in FIXED]
+if _none:
+    raise SystemExit('no evidence entered for ' + ', '.join(_none) + ': these keys have no chance to run, and a missing key is not a no')
 
 
 def notes():
@@ -526,19 +542,41 @@ def main():
     above = sum(1 for x in ix if x > 0.5) / n
     size = {g: len(ks) for g, ks in GROUPS.items()}
     likely = {a: Rn['p'][a] >= 0.5 for a in Rn['p']}
-    note, landed = notes(), LANDED | set(approval_keys()) | set(STATES['keys'])
+    note = notes()
+    landed = {a for a, c in CALLS.items() if a[0] in 'ABC' and c['status'] in ('provisional', 'settled')}     # scored on published figures: the same in every run
+    count = {s: sum(1 for c in CALLS.values() if c['status'] == s) for s in ('settled', 'provisional', 'unresolved', 'held')}
+    closes = datetime.date.fromisoformat(CALL.CYCLE['closes'])
+    month = lambda t: f"{datetime.date(t // 12, t % 12 + 1, 1):%B %Y}"
+    vintage = datetime.date.fromisoformat(CFG['outlook_date'])
+    due = next(datetime.date(y, m, 25) for y in (vintage.year, vintage.year + 1) for m in (2, 5, 8, 11) if datetime.date(y, m, 1) > vintage)   # the survey comes out in the middle of these months
+    dist = {}
+    for x in ix:
+        dist[round(x, 2)] = dist.get(round(x, 2), 0) + 1
     lk = {g: sum(v for a, v in likely.items() if a[0] == g) for g in GROUPS}
     out = {
-        'as_of': AS_OF, 'runs': RUNS, 'stretches': {'n': Rn['stretches'], 'with_recession': Rn['with_recession'], 'first': Rn['first'], 'last': Rn['last']},
+        'as_of': AS_OF, 'date': str(TODAY), 'runs': RUNS, 'stretches': {'n': Rn['stretches'], 'with_recession': Rn['with_recession'], 'first': Rn['first'], 'last': Rn['last']},
         'recession_share': OUTLOOK['recession_share'],
         'index': {'mean': round(avg(ix), 3), 'median': round(q(ix, .5), 3), 'p5': round(q(ix, .05), 3), 'p25': round(q(ix, .25), 3), 'p75': round(q(ix, .75), 3),
-                  'p95': round(q(ix, .95), 3), 'above_half': round(above, 3)},
+                  'p95': round(q(ix, .95), 3), 'above_half': round(above, 3), 'p10': round(q(ix, .10), 3), 'p90': round(q(ix, .90), 3),
+                  'sd': round(st.pstdev(ix), 3), 'expected_in_favor': round(sum(Rn['p'].values()), 2)},
+        # the whole spread of the count over the runs, to the nearest hundredth: [count, share of runs]
+        'index_dist': [[v, round(c / n, 5)] for v, c in sorted(dist.items())],
         'calm': {'mean': round(avg(Rn['calm']), 3), 'above_half': round(sum(1 for x in Rn['calm'] if x > 0.5) / len(Rn['calm']), 3)},
         'hist': [{'lo': b, 'share': round(sum(1 for x in ix if b <= 100 * x < b + 5) / n, 4)} for b in range(0, 100, 5)],
         'groups': {g: {'mean': round(avg(v), 3), 'p10': round(q(sorted(v), .1), 3), 'p90': round(q(sorted(v), .9), 3), 'likely': lk[g], 'n': size[g]} for g, v in Rn['by_group'].items()},
         'likely': {'in_favor': sum(likely.values()), 'index': round(avg([lk[g] / size[g] for g in GROUPS]), 3)},
-        'keys': {a: {'p': round(v, 3), 'p_calm': round(Rn['p_calm'].get(a, v), 3), 'p_recession': round(Rn['p_rec'].get(a, v), 3), 'note': note[a], 'landed': a in landed}
+        'keys': {a: {'p': round(v, 3), 'p_calm': round(Rn['p_calm'].get(a, v), 3), 'p_recession': round(Rn['p_rec'].get(a, v), 3), 'note': note[a], 'landed': a in landed,
+                     'status': CALLS[a]['status']}
                  for a, v in Rn['p'].items() if a not in SETTLED},
+        # every key's state: called on evidence, scored on figures that can still be revised, open, or held (calls.py)
+        'calls': {a: {k: v for k, v in c.items() if v not in ('', None) or k == 'value'} for a, c in CALLS.items()},
+        'count': dict(count, final=sum(1 for c in CALLS.values() if c['final']), closes=str(closes), closed=TODAY >= closes,
+                      called=sum(1 for c in CALLS.values() if c['value'] is not None), in_favor=sum(1 for c in CALLS.values() if c['value'])),
+        'horizon': {'target': 'June 2028', 'months_left': max(0, H - max(K['u'], 0)), 'quarters_left': 6 - KQ, 'days_to_close': max(0, (closes - TODAY).days)},
+        'through': dict({col: month(START + K[s]) for s, col in MD.values() if K[s] >= 0}, quarterly=f"{QKEY(KQ)[0]} Q{QKEY(KQ)[1]}", states=STATES['through'],
+                        approval_polls=APPROVAL['to']),
+        'outlook_from': {'date': str(vintage), 'source': CFG['outlook_note'], 'next_survey_by': str(due), 'stale': TODAY > due and min(K['u'], K['cpi']) < H},
+        'copy_differs': sorted(a for a, v in Rn['copy'].items() if a in FIXED and bool(v) != FIXED[a]),
         'outlook': {k: v for k, v in OUTLOOK.items()}, 'politics': POLITICS, 'polls': POLLS,
         'range': spread(Rn['per'], OUTLOOK['recession_share'], random.Random(SEED + 1)),
         'decisive': sorted(({'id': a, 'p': round(Rn['p'][a], 3), 'if_yes': round(y, 3), 'if_no': round(n, 3)} for a, (y, n) in Rn['split'].items()
@@ -550,6 +588,11 @@ def main():
                          'prices': LATEST['sp500']['date']},
     }
     assert all(out['keys'][a]['p'] in (0, 1) for a in landed), 'a key that has landed is the same in every run'
+    assert all(out['keys'][a]['p'] == CALLS[a]['value'] for a in landed), 'and it is what the rule gives on the published figures'
+    if all(c['value'] is not None for c in CALLS.values()):          # nothing is left open: the count is what the rules give, not a projection
+        final = CALL.index({a: c['value'] for a, c in CALLS.items()})
+        assert min(ix) == max(ix) and abs(ix[0] - final) < 1e-12, 'with every key called, every run gives the count the rules give'
+        out['observed'] = {'index': round(final, 4), 'in_favor': sum(c['value'] for c in CALLS.values()), 'final': all(c['final'] for c in CALLS.values())}
     assert set(out['keys']) | set(SETTLED) == set(full) and all(out['keys'][a]['note'] for a in out['keys'])
     # how far the answer moves when the main assumptions do
     vary = []
@@ -565,6 +608,8 @@ def main():
     POLITICS.update(keep)
     out['if'] = vary
     json.dump(out, open(os.path.join(HERE, 'projection_2028.json'), 'w'), indent=1)
+    for row in CALL.record(CALLS, TODAY, os.path.join(D, 'key_calls.csv')):
+        print(f"  the record: {row['key']} {row['status']}" + (f", {'yes' if row['value'] == '1' else 'no'}" if row['value'] else '') + (' (final)' if row['final'] == '1' else ''))
 
     print(f"2028, run ahead, as of {AS_OF}: {RUNS:,} runs over {Rn['stretches']} stretches of history ({Rn['first']} to {Rn['last']}; {Rn['with_recession']} ran into a recession, weighted to {OUTLOOK['recession_share']:.0%})")
     print(f"  share of keys in the Republicans' favor: mean {out['index']['mean']:.1%}, middle {out['index']['median']:.1%}; half of runs between {out['index']['p25']:.1%} and {out['index']['p75']:.1%}; "
