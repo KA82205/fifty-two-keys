@@ -27,9 +27,15 @@ VOTEHUB = 'https://api.votehub.com/polls?poll_type=approval&subject=donald-trump
 AGENT = {'User-Agent': 'fifty-two-keys/1.0 (weekly update)'}
 FIRST = '2025-12-01'                                   # the first month kept in data/latest_monthly.csv
 
-# series: (lowest and highest believable value, the largest believable change from one month or quarter to the next, the
-# largest believable revision to a figure already held). Changes are fractions unless marked 'points'. The limits are wide:
-# they are there to catch a broken download or a changed unit, not to judge the economy. A figure outside them is held back.
+# series: (lowest and highest believable value, the largest believable change in a NEW figure from the one before it, the
+# largest believable REVISION to a figure already held). Changes are fractions unless marked 'points'.
+#   - Every figure read, new or old, must lie inside the range.
+#   - A figure for a date not held before must not differ from the figure before it by more than the second limit.
+#   - A figure already held must not have moved by more than the third limit. It is not compared with its neighbours again:
+#     the swings of 2020 and 2021 are in the tables already, and what matters for them is that they have not changed much.
+# So the limits on new figures can be tight without tripping over history. They are there to catch a broken download or a
+# changed unit, not to judge the economy: a real move as large as spring 2020 would be held back too, and let in with --trust
+# after somebody has looked at it.
 MONTHLY = {
     'UNRATE': ((2, 16), ('points', 2.0), ('points', 0.4)),            'PAYEMS': ((120000, 200000), 0.03, 0.01),
     'MANEMP': ((9000, 16000), 0.05, 0.02),                             'CPIAUCSL': ((250, 500), 0.03, 0.01),
@@ -40,10 +46,12 @@ MONTHLY = {
 }
 AVERAGED = ('SP500', 'ICSA')                           # daily and weekly series, averaged by month: only finished months are kept
 QUARTERLY = {
-    # growth rates, annualised: 2020 and 2021 hold swings of 63 points (output) and 86 points (income) from one quarter to the next
-    'A191RL1Q225SBEA': ((-40, 40), ('points', 70), ('points', 4)),    'A067RL1Q156SBEA': ((-40, 65), ('points', 95), ('points', 6)),
-    'B230RC0Q173SBEA': ((320000, 370000), 0.005, 0.005),               'A939RX0Q048SBEA': ((55000, 90000), 0.12, 0.03),
-    'A229RX0Q048SBEA': ((40000, 70000), 0.15, 0.04),
+    # growth rates, annualised. The ranges take in 2020 and 2021 (output -28 and +35; income +59), which are held already.
+    'A191RL1Q225SBEA': ((-40, 40), ('points', 12), ('points', 4)),    'A067RL1Q156SBEA': ((-40, 65), ('points', 30), ('points', 6)),
+    # levels: people in thousands, dollars per person. A new quarter sits within a few percent of the one before, so a figure
+    # in other units (millions, or dollars in place of thousands) cannot pass.
+    'B230RC0Q173SBEA': ((320000, 370000), 0.005, 0.005),               'A939RX0Q048SBEA': ((55000, 90000), 0.03, 0.03),
+    'A229RX0Q048SBEA': ((40000, 70000), 0.04, 0.04),
 }
 DAILY = {'sp500': ('SP500', (2000, 20000), 0.30), 'oil': ('DCOILWTICO', (10, 250), 0.45)}
 # the Philadelphia Fed's coincident index for each state (FRED series ALPHCI to WYPHCI). These indexes are re-estimated, so past months move.
@@ -111,27 +119,28 @@ def moved(a, b, limit):
 
 def check(series, new, held, rule, step_months):
     """Check a freshly read series against its limits and against the figures already held. Raises Held with the reason.
-    Only figures that are new, or that differ from the one held, are checked: a figure that was accepted before and has not
-    changed is not judged again (the swings of 2020 are real, and they are already in the tables)."""
+    See the note above MONTHLY for the three limits and what each is applied to."""
     (low, high), step, revision = rule
     if not new:
         raise Held(f'{series}: nothing was read')
     dates = [d for d, _ in new]
     if dates != sorted(set(dates)):
         raise Held(f'{series}: the dates are out of order or repeated')
-    fresh = lambda d, v: d not in held or held[d] != v
-    for (d0, v0), (d1, v1) in zip(new, new[1:]):
-        y0, m0, y1, m1 = int(d0[:4]), int(d0[5:7]), int(d1[:4]), int(d1[5:7])
-        gap = (y1 * 12 + m1) - (y0 * 12 + m0)
-        if gap == step_months and (fresh(d0, v0) or fresh(d1, v1)) and moved(v0, v1, step):
-            raise Held(f'{series}: {v0:g} in {d0[:7]} to {v1:g} in {d1[:7]} is a larger change than this series makes')
+    months = lambda a, b: (int(b[:4]) * 12 + int(b[5:7])) - (int(a[:4]) * 12 + int(a[5:7]))
+    before = None
     for d, v in new:
-        if fresh(d, v) and not low <= v <= high:
+        if v != v or not low <= v <= high:                                  # v != v: not a number
             raise Held(f'{series}: {v:g} for {d[:7]} is outside {low:g} to {high:g}')
-        if d in held and moved(held[d], v, revision):
-            raise Held(f'{series}: {d[:7]} was {held[d]:g} and now reads {v:g}, a larger revision than this series gets')
-    behind = lambda a, b: (int(b[:4]) * 12 + int(b[5:7])) - (int(a[:4]) * 12 + int(a[5:7]))
-    if held and behind(max(dates), max(held)) > step_months:               # one step behind is allowed: a first reading entered by hand
+        if d in held:
+            if moved(held[d], v, revision):
+                raise Held(f'{series}: {d[:7]} was {held[d]:g} and now reads {v:g}, a larger revision than this series gets')
+        elif before is not None and months(before[0], d) <= 3 * step_months:
+            gap = max(1, round(months(before[0], d) / step_months))          # a figure after a missing month or two may have moved that much more
+            limit = ('points', step[1] * gap) if isinstance(step, tuple) else step * gap
+            if moved(before[1], v, limit):
+                raise Held(f'{series}: {before[1]:g} in {before[0][:7]} to {v:g} in {d[:7]} is a larger change than a new figure of this series makes')
+        before = (d, v)
+    if held and months(max(dates), max(held)) > step_months:               # one step behind is allowed: a first reading entered by hand
         raise Held(f'{series}: the download stops at {max(dates)[:7]}, well before the figures already held ({max(held)[:7]})')
 
 

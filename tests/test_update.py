@@ -31,14 +31,53 @@ def test_checks():
     assert 'well before' in check(GOOD[:1], dict(GOOD))                                           # a download that stops early
     assert check(GOOD[:2], dict(GOOD)) is None                                                    # one step behind is allowed (a first reading entered by hand)
     assert check([('2026-09-01', 159128.0), ('2026-10-01', 159293.0)], rule=update.MONTHLY['PAYEMS'], name='PAYEMS') is None
-    # a swing that is already held and has not changed is not judged again; the same swing arriving new is
-    gdp = [('2020-01-01', -5.5), ('2020-04-01', -28.0), ('2020-07-01', 34.9), ('2020-10-01', 4.4)]
-    assert check(gdp, dict(gdp), rule=update.QUARTERLY['A191RL1Q225SBEA'], name='GDP') is None
-    tight = ((-40, 40), ('points', 45), ('points', 4))
-    assert check(gdp, dict(gdp), rule=tight, name='GDP') is None
-    assert 'larger change' in held(lambda: update.check('GDP', gdp, dict(gdp[:2]), tight, 3))
-    assert 'larger change' in held(lambda: update.check('GDP', gdp, {}, tight, 3))
     assert 'outside' in check([('2026-10-01', 159.293)], rule=update.MONTHLY['PAYEMS'], name='PAYEMS')       # the same series in other units
+
+
+def test_history_is_let_be_and_new_figures_are_not():
+    """The quarterly table reaches back through 2020 and 2021. Those swings must not make the checks on new figures any
+    looser: a wrong unit, a slipped decimal point or a corrupt value in a newly published quarter is held back, and so is a
+    real move as large as 2020 until somebody has looked at it."""
+    import csv
+    rows = list(csv.DictReader(open(os.path.join(HERE, 'data', 'quarterly.csv'))))
+    Q = update.QUARTERLY
+    col = lambda c: sorted((r['observation_date'], float(r[c])) for r in rows)
+    nxt = lambda d: f'{int(d[:4]) + (int(d[5:7]) + 3 > 12)}-{(int(d[5:7]) + 2) % 12 + 1:02d}-01'
+    chk = lambda c, new, old: held(lambda: update.check(c, new, old, Q[c], 3))
+    for c in Q:
+        old = col(c); last_d, last_v = old[-1]; d = nxt(last_d); held_now = dict(old)
+        growth = isinstance(Q[c][1], tuple)
+        # the table as it stands, read again: accepted, 2020 and 2021 included
+        assert chk(c, old, held_now) is None, c
+        # the whole history lightly revised, as the statistical agencies do every year: accepted
+        nudged = [(x, v + 0.3 if growth else v * 1.002) for x, v in old]
+        assert chk(c, nudged, held_now) is None, c
+        # an ordinary new quarter: accepted
+        assert chk(c, old + [(d, last_v + 1.0 if growth else last_v * 1.004)], held_now) is None, c
+        # a new quarter in the wrong units, with a slipped decimal point, a flipped sign, a zero, or not a number: all held back
+        bad = [last_v + 25, last_v - 25, float('nan')] if growth else [last_v * 1000, last_v / 1000, last_v * 10, last_v / 10, -last_v, 0.0, last_v * 1.2, last_v * 0.85, float('nan')]
+        if c == 'A067RL1Q156SBEA':
+            bad = [last_v + 40, last_v - 40, float('nan')]
+        for v in bad:
+            assert chk(c, old + [(d, v)], held_now), (c, v)
+        # history that comes back in other units, or re-based: held back, not swallowed as a revision
+        for other in ([(x, v * 3) if abs(v) > 3 else (x, v) for x, v in old] if growth else [(x, v * 1.15) for x, v in old], [(x, v + 9 if growth else v * 1000) for x, v in old]):
+            why = chk(c, other, held_now)
+            assert why and ('revision' in why or 'outside' in why), (c, why)
+    # a move as large as spring 2020 arriving as a NEW figure is held back, though the same figures sit in the table untouched
+    g = col('A191RL1Q225SBEA'); i = [x for x, _ in g].index('2020-04-01')
+    assert 'larger change' in chk('A191RL1Q225SBEA', g[:i + 1], dict(g[:i]))
+    assert 'larger change' in chk('A191RL1Q225SBEA', g[:i + 2], dict(g[:i + 1]))
+    # and a table read from nothing is held too: the first load of a table needs --trust
+    assert chk('A191RL1Q225SBEA', g, {})
+    # the monthly series and the state indexes follow the same rule
+    for c, rule in list(update.MONTHLY.items()) + [('PAPHCI', update.STATE_RULE)]:
+        v0 = {'UNRATE': 4.1, 'PAYEMS': 159293.0, 'MANEMP': 12700.0, 'CPIAUCSL': 330.0, 'INDPRO': 103.0, 'DPCERA3M086SBEA': 126.0, 'CES0600000008': 38.0, 'HOUST': 1350.0, 'UMCSENT': 55.0,
+              'MCOILWTICO': 80.0, 'SP500': 7000.0, 'ICSA': 230000.0, 'PAPHCI': 150.0}[c]
+        old = [('2026-08-01', v0), ('2026-09-01', v0)]
+        assert held(lambda: update.check(c, old + [('2026-10-01', v0)], dict(old), rule, 1)) is None
+        for v in (v0 * 1000, v0 / 1000, v0 * 100, v0 / 100, -v0, 0.0):
+            assert held(lambda: update.check(c, old + [('2026-10-01', v)], dict(old), rule, 1)), (c, v)
 
 
 def test_a_missing_value_is_not_a_zero():
@@ -112,5 +151,5 @@ def test_changes_are_explained():
 
 
 if __name__ == '__main__':
-    test_checks(); test_a_missing_value_is_not_a_zero(); test_a_failed_series_keeps_its_figures(); test_the_archive_is_written_once(); test_changes_are_explained()
+    test_checks(); test_history_is_let_be_and_new_figures_are_not(); test_a_missing_value_is_not_a_zero(); test_a_failed_series_keeps_its_figures(); test_the_archive_is_written_once(); test_changes_are_explained()
     print('ok (checks, held figures, the archive)')
