@@ -1,0 +1,13 @@
+{
+ "day": "2026-11-25",
+ "held back": "4f53cda18c2baa0c",
+ "data/latest_monthly.csv": "2bbb626b65d8fcc4",
+ "data/quarterly.csv": "548802a15fa0bde8",
+ "data/latest.json": "a40ea5ee1f697f3c",
+ "data/approval_polls.json": "452eb4fdf4c8563a",
+ "data/state_index_this_term.csv": "bab5bb3f725151d2",
+ "data/outlook.json": "11b373e9ac73afc8",
+ "locked_keys.csv": "0c7c9208e8fdcd94",
+ "run_2028.py": "527af5084dc63d21",
+ "build.py": "39239e82b11dddfc"
+}

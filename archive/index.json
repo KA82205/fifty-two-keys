@@ -55,5 +55,22 @@
   "changes": [
    "B02 (Industrial production grew faster this term than last): 61% to 56%."
   ]
+ },
+ {
+  "as_of": "November 25, 2026",
+  "mean": 0.394,
+  "median": 0.405,
+  "p25": 0.305,
+  "p75": 0.483,
+  "above_half": 0.195,
+  "in_favor": 27,
+  "likely": 0.42,
+  "vote": 48.3,
+  "landed": [],
+  "open": 44,
+  "file": "2026-11-25T175133Z.json",
+  "made": "2026-11-25T17:51:33Z",
+  "engine": "2026.11b",
+  "changes": []
  }
 ]

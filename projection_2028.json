@@ -19,7 +19,7 @@
  },
  "calm": {
   "mean": 0.447,
-  "above_half": 0.278
+  "above_half": 0.277
  },
  "hist": [
   {
@@ -32,43 +32,43 @@
   },
   {
    "lo": 10,
-   "share": 0.0117
+   "share": 0.0115
   },
   {
    "lo": 15,
-   "share": 0.0433
+   "share": 0.0423
   },
   {
    "lo": 20,
-   "share": 0.0694
+   "share": 0.0705
   },
   {
    "lo": 25,
-   "share": 0.1157
+   "share": 0.1151
   },
   {
    "lo": 30,
-   "share": 0.1035
+   "share": 0.1038
   },
   {
    "lo": 35,
-   "share": 0.1391
+   "share": 0.1402
   },
   {
    "lo": 40,
-   "share": 0.1602
-  },
-  {
-   "lo": 45,
    "share": 0.16
   },
   {
+   "lo": 45,
+   "share": 0.1599
+  },
+  {
    "lo": 50,
-   "share": 0.1159
+   "share": 0.116
   },
   {
    "lo": 55,
-   "share": 0.0574
+   "share": 0.0569
   },
   {
    "lo": 60,
@@ -112,7 +112,7 @@
    "n": 18
   },
   "B": {
-   "mean": 0.463,
+   "mean": 0.464,
    "p10": 0.2,
    "p90": 0.8,
    "likely": 7,
@@ -149,7 +149,7 @@
    "p": 0.67,
    "p_calm": 0.781,
    "p_recession": 0.408,
-   "note": "Forecasters expect growth of about 2.1% a year in spring 2028. It was 3.4% in the latest quarter.",
+   "note": "Forecasters expect growth of about 2.1% a year in spring 2028. It was 4.3% in the latest quarter.",
    "landed": false
   },
   "A02": {
@@ -272,10 +272,10 @@
    "landed": false
   },
   "B01": {
-   "p": 0.367,
-   "p_calm": 0.502,
-   "p_recession": 0.049,
-   "note": "So far this term: 1.98% a year. The bar, the average of the last two terms, is 1.98%.",
+   "p": 0.383,
+   "p_calm": 0.515,
+   "p_recession": 0.074,
+   "note": "So far this term: 2.11% a year. The bar, the average of the last two terms, is 1.98%.",
    "landed": false
   },
   "B02": {
@@ -321,8 +321,8 @@
    "landed": false
   },
   "B08": {
-   "p": 0.399,
-   "p_calm": 0.514,
+   "p": 0.39,
+   "p_calm": 0.502,
    "p_recession": 0.128,
    "note": "So far this term: 1.1% a year. Last term: 1.5%.",
    "landed": false
@@ -380,28 +380,28 @@
    "p": 0.009,
    "p_calm": 0.013,
    "p_recession": 0.0,
-   "note": "32% approve now, in polls of all adults from the past month (3 pollsters).",
+   "note": "31% approve now, in polls of all adults from the past month (4 pollsters).",
    "landed": false
   },
   "C02": {
    "p": 0.013,
    "p_calm": 0.018,
    "p_recession": 0.0,
-   "note": "32% approve and 64% disapprove now.",
+   "note": "31% approve and 66% disapprove now.",
    "landed": false
   },
   "C03": {
    "p": 0.436,
    "p_calm": 0.516,
    "p_recession": 0.25,
-   "note": "32% approve now against 39% a year ago. Approval rose in the last year for 3 of the 7 presidents who were not running again.",
+   "note": "31% approve now against 39% a year ago. Approval rose in the last year for 3 of the 7 presidents who were not running again.",
    "landed": false
   },
   "C04": {
    "p": 0.339,
    "p_calm": 0.403,
    "p_recession": 0.191,
-   "note": "Approval averaged 32% in the polls around the midterms. It was higher by June in 8 of 19 cycles.",
+   "note": "Approval averaged 31% in the polls around the midterms. It was higher by June in 8 of 19 cycles.",
    "landed": false
   },
   "C05": {
@@ -415,7 +415,7 @@
    "p": 0.021,
    "p_calm": 0.03,
    "p_recession": 0.0,
-   "note": "64% disapprove now.",
+   "note": "66% disapprove now.",
    "landed": false
   },
   "E03": {
@@ -581,7 +581,7 @@
    "id": "C01",
    "p": 0.009,
    "if_yes": 0.922,
-   "if_no": 0.189
+   "if_no": 0.188
   },
   {
    "id": "C02",
@@ -593,49 +593,55 @@
    "id": "C06",
    "p": 0.021,
    "if_yes": 0.812,
-   "if_no": 0.182
+   "if_no": 0.181
   },
   {
    "id": "A05",
    "p": 0.395,
-   "if_yes": 0.425,
+   "if_yes": 0.424,
    "if_no": 0.045
-  },
-  {
-   "id": "B01",
-   "p": 0.367,
-   "if_yes": 0.425,
-   "if_no": 0.062
-  },
-  {
-   "id": "B03",
-   "p": 0.162,
-   "if_yes": 0.5,
-   "if_no": 0.137
   },
   {
    "id": "C05",
    "p": 0.276,
-   "if_yes": 0.458,
+   "if_yes": 0.456,
    "if_no": 0.095
+  },
+  {
+   "id": "B03",
+   "p": 0.162,
+   "if_yes": 0.494,
+   "if_no": 0.137
   },
   {
    "id": "B04",
    "p": 0.367,
-   "if_yes": 0.42,
+   "if_yes": 0.418,
    "if_no": 0.065
+  },
+  {
+   "id": "B01",
+   "p": 0.383,
+   "if_yes": 0.41,
+   "if_no": 0.061
   },
   {
    "id": "B07",
    "p": 0.536,
-   "if_yes": 0.352,
+   "if_yes": 0.351,
    "if_no": 0.014
   },
   {
    "id": "A07",
    "p": 0.4,
-   "if_yes": 0.396,
+   "if_yes": 0.395,
    "if_no": 0.062
+  },
+  {
+   "id": "B13",
+   "p": 0.09,
+   "if_yes": 0.487,
+   "if_no": 0.166
   },
   {
    "id": "B02",
@@ -644,58 +650,52 @@
    "if_no": 0.016
   },
   {
-   "id": "B13",
-   "p": 0.09,
-   "if_yes": 0.487,
-   "if_no": 0.167
-  },
-  {
    "id": "B08",
-   "p": 0.399,
-   "if_yes": 0.386,
-   "if_no": 0.069
+   "p": 0.39,
+   "if_yes": 0.387,
+   "if_no": 0.072
   },
   {
    "id": "C04",
    "p": 0.339,
-   "if_yes": 0.402,
+   "if_yes": 0.401,
    "if_no": 0.089
   },
   {
    "id": "C03",
    "p": 0.436,
-   "if_yes": 0.372,
+   "if_yes": 0.371,
    "if_no": 0.059
   },
   {
    "id": "B15",
    "p": 0.565,
-   "if_yes": 0.325,
+   "if_yes": 0.324,
    "if_no": 0.026
   },
   {
    "id": "A03",
    "p": 0.565,
-   "if_yes": 0.324,
+   "if_yes": 0.323,
    "if_no": 0.029
-  },
-  {
-   "id": "B06",
-   "p": 0.4,
-   "if_yes": 0.37,
-   "if_no": 0.079
-  },
-  {
-   "id": "A02",
-   "p": 0.656,
-   "if_yes": 0.295,
-   "if_no": 0.005
   },
   {
    "id": "A06",
    "p": 0.586,
    "if_yes": 0.315,
    "if_no": 0.025
+  },
+  {
+   "id": "B06",
+   "p": 0.4,
+   "if_yes": 0.369,
+   "if_no": 0.079
+  },
+  {
+   "id": "A02",
+   "p": 0.656,
+   "if_yes": 0.294,
+   "if_no": 0.005
   },
   {
    "id": "A09",
@@ -706,7 +706,7 @@
   {
    "id": "A08",
    "p": 0.407,
-   "if_yes": 0.347,
+   "if_yes": 0.346,
    "if_no": 0.091
   },
   {
@@ -718,56 +718,56 @@
   {
    "id": "A04",
    "p": 0.772,
-   "if_yes": 0.251,
+   "if_yes": 0.25,
    "if_no": 0.006
   },
   {
    "id": "A10",
    "p": 0.763,
-   "if_yes": 0.251,
+   "if_yes": 0.25,
    "if_no": 0.016
   },
   {
    "id": "A18",
    "p": 0.854,
-   "if_yes": 0.229,
+   "if_yes": 0.228,
    "if_no": 0.0
   },
   {
    "id": "A14",
    "p": 0.696,
    "if_yes": 0.261,
-   "if_no": 0.046
+   "if_no": 0.043
   },
   {
    "id": "B09",
    "p": 0.891,
-   "if_yes": 0.219,
+   "if_yes": 0.218,
    "if_no": 0.004
   },
   {
    "id": "B10",
    "p": 0.954,
-   "if_yes": 0.205,
+   "if_yes": 0.204,
    "if_no": 0.0
   },
   {
    "id": "B12",
    "p": 0.771,
-   "if_yes": 0.238,
-   "if_no": 0.05
+   "if_yes": 0.239,
+   "if_no": 0.047
   },
   {
    "id": "B14",
    "p": 0.181,
    "if_yes": 0.348,
-   "if_no": 0.162
+   "if_no": 0.161
   },
   {
    "id": "A16",
    "p": 0.627,
    "if_yes": 0.259,
-   "if_no": 0.088
+   "if_no": 0.087
   },
   {
    "id": "A11",
@@ -776,72 +776,72 @@
    "if_no": 0.068
   },
   {
+   "id": "A15",
+   "p": 0.636,
+   "if_yes": 0.245,
+   "if_no": 0.107
+  },
+  {
    "id": "A17",
    "p": 0.413,
    "if_yes": 0.275,
    "if_no": 0.139
   },
   {
-   "id": "A15",
-   "p": 0.636,
-   "if_yes": 0.244,
-   "if_no": 0.11
-  },
-  {
    "id": "E06",
    "p": 0.884,
-   "if_yes": 0.211,
+   "if_yes": 0.21,
    "if_no": 0.077
   },
   {
    "id": "B11",
    "p": 0.707,
-   "if_yes": 0.233,
-   "if_no": 0.103
+   "if_yes": 0.232,
+   "if_no": 0.105
   },
   {
    "id": "A12",
    "p": 0.721,
    "if_yes": 0.226,
-   "if_no": 0.116
+   "if_no": 0.113
   },
   {
    "id": "E05",
    "p": 0.681,
    "if_yes": 0.229,
-   "if_no": 0.122
-  },
-  {
-   "id": "A13",
-   "p": 0.737,
-   "if_yes": 0.221,
-   "if_no": 0.123
+   "if_no": 0.121
   },
   {
    "id": "E04",
    "p": 0.75,
+   "if_yes": 0.219,
+   "if_no": 0.12
+  },
+  {
+   "id": "A13",
+   "p": 0.737,
    "if_yes": 0.22,
-   "if_no": 0.122
+   "if_no": 0.125
   },
   {
    "id": "E07",
    "p": 0.627,
    "if_yes": 0.227,
-   "if_no": 0.141
+   "if_no": 0.14
   },
   {
    "id": "E03",
    "p": 0.881,
    "if_yes": 0.204,
-   "if_no": 0.131
+   "if_no": 0.13
   }
  ],
  "engine": "2026.11b",
  "approval": {
-  "approve": 32.2,
-  "disapprove": 64.5,
-  "pollsters": 3,
-  "polls": 5,
+  "approve": 31.4,
+  "disapprove": 65.5,
+  "pollsters": 4,
+  "polls": 8,
   "from": "2026-10-27",
   "to": "2026-11-25",
   "year_ago": {
@@ -853,10 +853,10 @@
    "to": "2025-11-30"
   },
   "midterm": {
-   "approve": 31.6,
-   "disapprove": 65.4,
-   "pollsters": 4,
-   "polls": 6,
+   "approve": 31.1,
+   "disapprove": 66.0,
+   "pollsters": 5,
+   "polls": 9,
    "from": "2026-10-01",
    "to": "2026-11-30"
   }
@@ -870,18 +870,18 @@
  "data_through": {
   "monthly": "October 2026",
   "quarterly": "2026 Q3",
-  "prices": "2026-11-23"
+  "prices": "2026-11-24"
  },
  "if": [
   {
    "what": "recession in 20% of runs",
    "mean": 0.412,
-   "above_half": 0.222
+   "above_half": 0.221
   },
   {
    "what": "recession in 40% of runs",
    "mean": 0.376,
-   "above_half": 0.167
+   "above_half": 0.166
   },
   {
    "what": "a rougher nomination season",
@@ -896,7 +896,7 @@
   {
    "what": "no chance that disapproval falls below half",
    "mean": 0.391,
-   "above_half": 0.183
+   "above_half": 0.182
   },
   {
    "what": "an 8% chance that it does",
