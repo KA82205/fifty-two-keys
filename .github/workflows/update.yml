@@ -37,8 +37,11 @@ jobs:
       - name: Fetch the latest figures, check them, rerun 2028, archive, rebuild the page
         id: update
         continue-on-error: true
+        timeout-minutes: 25
         env:
           TRUST: ${{ inputs.trust }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}      # optional: without it FRED is read through its download links
+          PYTHONUNBUFFERED: "1"
         run: python update.py --trust "$TRUST"
 
       - name: Save to the repository

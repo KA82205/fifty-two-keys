@@ -15,13 +15,14 @@ The rules it keeps
     Every run that changes anything is written to archive/ under its own time stamp, with the figures, assumptions and
     versions behind it. Archive files are never rewritten.
 """
-import csv, datetime, hashlib, io, json, os, subprocess, sys, time, urllib.error, urllib.request
+import csv, datetime, hashlib, io, json, os, subprocess, sys, time, urllib.error, urllib.parse, urllib.request
 from zoneinfo import ZoneInfo
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 D = os.path.join(HERE, 'data')
 ARCHIVE = os.path.join(HERE, 'archive')
 FRED = 'https://fred.stlouisfed.org/graph/fredgraph.csv'
+FRED_API = 'https://api.stlouisfed.org/fred/series/observations'
 VOTEHUB = 'https://api.votehub.com/polls?poll_type=approval&subject=donald-trump'
 AGENT = {'User-Agent': 'fifty-two-keys/1.0 (weekly update)'}
 FIRST = '2025-12-01'                                   # the first month kept in data/latest_monthly.csv
@@ -54,31 +55,51 @@ class Held(Exception):
     """A figure that failed a check. It is not used."""
 
 
-def get(url, tries=4, wait=4.0):
-    """Read a URL. A server error or a timeout is tried again; a request the server rejects (HTTP 4xx) is not."""
+DOWN = {}                                              # hosts that did not answer in this run: they are not asked again
+
+
+def get(url, tries=3, wait=2.0, timeout=20):
+    """Read a URL. A server error or a timeout is tried again; a request the server rejects (HTTP 4xx) is not. A host that
+    fails to answer twice in a row is left alone for the rest of the run, so one dead source cannot hold the run up."""
+    host = urllib.parse.urlsplit(url).netloc
+    if DOWN.get(host, 0) >= 2:
+        raise ConnectionError(f'{host} did not answer earlier in this run')
     for attempt in range(tries):
         try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=AGENT), timeout=45) as r:
-                return r.read().decode('utf-8-sig')
+            with urllib.request.urlopen(urllib.request.Request(url, headers=AGENT), timeout=timeout) as r:
+                text = r.read().decode('utf-8-sig')
+            DOWN[host] = 0
+            return text
         except urllib.error.HTTPError as err:
             if (err.code < 500 and err.code != 429) or attempt == tries - 1:
                 raise
-        except (urllib.error.URLError, TimeoutError, ConnectionError):
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
             if attempt == tries - 1:
+                DOWN[host] = DOWN.get(host, 0) + 1
                 raise
         time.sleep(wait * 2 ** attempt)
 
 
 def fred(series, start, monthly_average=False):
-    """[(YYYY-MM-DD, value)] for one FRED series. A missing value ('.' or blank) is left out, never read as zero."""
-    url = f'{FRED}?id={series}&cosd={start}' + ('&fq=Monthly&fam=avg' if monthly_average else '')
-    rows = list(csv.reader(io.StringIO(get(url))))
-    if not rows or len(rows[0]) != 2 or rows[0][1].strip() != series:
-        raise Held(f'{series}: the download is not a table of this series (first line: {rows[0] if rows else "empty"})')
+    """[(YYYY-MM-DD, value)] for one FRED series. A missing value ('.' or blank) is left out, never read as zero.
+    With a key in FRED_API_KEY the series is read from FRED's API; without one, from the download link behind its charts."""
+    key = os.environ.get('FRED_API_KEY', '').strip()
+    if key:
+        q = {'series_id': series, 'api_key': key, 'file_type': 'json', 'observation_start': start}
+        if monthly_average:
+            q.update(frequency='m', aggregation_method='avg')
+        obs = json.loads(get(FRED_API + '?' + urllib.parse.urlencode(q)))['observations']
+        pairs = [(o['date'], o['value']) for o in obs]
+    else:
+        url = f'{FRED}?id={series}&cosd={start}' + ('&fq=Monthly&fam=avg' if monthly_average else '')
+        rows = list(csv.reader(io.StringIO(get(url))))
+        if not rows or len(rows[0]) != 2 or rows[0][1].strip() != series:
+            raise Held(f'{series}: the download is not a table of this series (first line: {rows[0] if rows else "empty"})')
+        pairs = [(r[0], r[1]) for r in rows[1:] if len(r) == 2]
     out = []
-    for r in rows[1:]:
-        if len(r) == 2 and r[1].strip() not in ('', '.'):
-            datetime.date.fromisoformat(r[0]); out.append((r[0], float(r[1])))
+    for d, v in pairs:
+        if v.strip() not in ('', '.'):
+            datetime.date.fromisoformat(d); out.append((d, float(v)))
     return out
 
 
@@ -324,11 +345,13 @@ def main(argv):
     latest_path = os.path.join(D, 'latest.json')
     latest = json.load(open(latest_path))
     if not offline:
-        refresh_table(os.path.join(D, 'latest_monthly.csv'), MONTHLY, today, trust, report, monthly=True)
-        refresh_table(os.path.join(D, 'quarterly.csv'), QUARTERLY, today, trust, report, monthly=False)
-        refresh_prices(latest, today, trust, report)
-        refresh_states(os.path.join(D, 'state_index_this_term.csv'), trust, report)
-        refresh_polls(os.path.join(D, 'approval_polls.json'), today, trust, report)
+        say = lambda what: print(f"{what}: {len(report['read'])} read, {len(report['held'])} held back, {len(report['failed'])} not reached", flush=True)
+        print('FRED is read ' + ('through its API, with a key' if os.environ.get('FRED_API_KEY', '').strip() else 'through its download links, without a key'), flush=True)
+        refresh_table(os.path.join(D, 'latest_monthly.csv'), MONTHLY, today, trust, report, monthly=True); say('monthly series')
+        refresh_table(os.path.join(D, 'quarterly.csv'), QUARTERLY, today, trust, report, monthly=False); say('quarterly series')
+        refresh_prices(latest, today, trust, report); say('prices')
+        refresh_states(os.path.join(D, 'state_index_this_term.csv'), trust, report); say('state indexes')
+        refresh_polls(os.path.join(D, 'approval_polls.json'), today, trust, report); say('approval polls')
         latest['as_of'] = str(today)
         json.dump(latest, open(latest_path, 'w'), indent=1)
     for line in report['held'] + report['failed']:
