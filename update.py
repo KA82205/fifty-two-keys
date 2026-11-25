@@ -40,8 +40,8 @@ MONTHLY = {
 }
 AVERAGED = ('SP500', 'ICSA')                           # daily and weekly series, averaged by month: only finished months are kept
 QUARTERLY = {
-    # growth rates, annualised: 2020 and 2021 hold swings of 63 and 67 points from one quarter to the next
-    'A191RL1Q225SBEA': ((-40, 40), ('points', 70), ('points', 4)),    'A067RL1Q156SBEA': ((-40, 65), ('points', 75), ('points', 6)),
+    # growth rates, annualised: 2020 and 2021 hold swings of 63 points (output) and 86 points (income) from one quarter to the next
+    'A191RL1Q225SBEA': ((-40, 40), ('points', 70), ('points', 4)),    'A067RL1Q156SBEA': ((-40, 65), ('points', 95), ('points', 6)),
     'B230RC0Q173SBEA': ((320000, 370000), 0.005, 0.005),               'A939RX0Q048SBEA': ((55000, 90000), 0.12, 0.03),
     'A229RX0Q048SBEA': ((40000, 70000), 0.15, 0.04),
 }
