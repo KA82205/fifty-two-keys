@@ -1,0 +1,147 @@
+{
+ "outlook": {
+  "recession_share": 0.3,
+  "unemployment": 4.2,
+  "jobs_a_month": [
+   90,
+   90,
+   65,
+   65,
+   65,
+   49,
+   49,
+   49,
+   51,
+   51,
+   51,
+   51,
+   51,
+   51,
+   50,
+   50,
+   50,
+   50,
+   50,
+   50
+  ],
+  "gdp": [
+   2.3,
+   2.1,
+   2.2,
+   2.2,
+   2.1,
+   2.1,
+   2.1
+  ],
+  "income": [
+   2.0,
+   2.0,
+   2.0,
+   2.0,
+   2.0,
+   2.0,
+   2.0
+  ],
+  "cpi_quarters": [
+   4.0,
+   2.6,
+   2.4,
+   2.4,
+   2.4,
+   2.3,
+   2.3,
+   2.3
+  ],
+  "population": 0.25,
+  "industrial_production": 1.0,
+  "spending": 2.2,
+  "hourly_pay": 3.8,
+  "factory_jobs": 0.0,
+  "oil": [
+   [
+    1,
+    84.0
+   ],
+   [
+    8,
+    80.0
+   ],
+   [
+    14,
+    72.0
+   ],
+   [
+    20,
+    70.0
+   ]
+  ],
+  "sentiment": [
+   [
+    1,
+    51.5
+   ],
+   [
+    8,
+    57.0
+   ],
+   [
+    20,
+    60.0
+   ]
+  ]
+ },
+ "outlook_note": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Entered by hand when a new survey is out.",
+ "politics": {
+  "surge": 0.03,
+  "net_given_surge": 0.6,
+  "fifty_given_net": 0.7,
+  "slump_in_recession": 0.5,
+  "no_third_candidate": 0.88,
+  "nominee_wins_nh": 0.68,
+  "two_thirds_if_won": 0.82,
+  "two_thirds_if_lost": 0.6,
+  "dem_on_ballot": 0.85,
+  "dem_nominee_wins_nh": 0.42,
+  "dem_write_in_win": 0.1
+ },
+ "polls": {
+  "rubio": 35.4,
+  "vance": 34.0,
+  "nh_vance": 39.0,
+  "nh_rubio": 27.3
+ },
+ "settled": {
+  "D01": {
+   "value": 0,
+   "why": "Republicans will hold at most 178 House seats, against 222 after the 2022 midterm."
+  },
+  "D02": {
+   "value": 0,
+   "why": "Democrats won the House on November 3, 2026."
+  },
+  "D03": {
+   "value": 0,
+   "why": "Democrats won the Senate, 56 seats to 44."
+  },
+  "D04": {
+   "value": 0,
+   "why": "Trump won 49.8% of all votes in 2024."
+  },
+  "D05": {
+   "value": 0,
+   "why": "Republicans went from 220 House seats to at most 178."
+  },
+  "D06": {
+   "value": 0,
+   "why": "Republicans went from 53 Senate seats to 44."
+  },
+  "E01": {
+   "value": 0,
+   "why": "Trump cannot run for a third term."
+  },
+  "E02": {
+   "value": 1,
+   "why": "Republicans are in their first term back in the White House."
+  }
+ }
+}

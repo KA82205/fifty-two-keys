@@ -1,72 +1,56 @@
-"""2028, run ahead: where the 44 open keys are likely to land. Writes projection_2028.json.
+"""2028, run ahead: where the open keys are likely to land. Writes projection_2028.json.
 
 THIS IS NOT THE MODEL. The model scores each key by its rule once the June 2028 figures exist. This file estimates,
-on November 22, 2026, how likely each open key is to go the party's way, and from that where the count may end up.
-Nothing here changes a key, a group or a rule, and nothing here was checked against an election result.
+from the figures published so far, how likely each open key is to go the party's way, and from that where the count
+may end up. Nothing here changes a key, a group or a rule, and nothing here was checked against an election result.
+update.py reruns it every week with fresh figures.
 
 How the economy keys are run (33 keys)
-  1 Start from the latest figures (FRED, November 22, 2026) and the outlook forecasters hold today (OUTLOOK below).
-  2 Take every stretch of 20 months since 1964 that began, like now, with unemployment at or below its normal rate
-    and no recession under way. Measure how each series moved in that stretch against its own pace over the three
-    years before (or, for prices, oil, stocks, housing, claims and sentiment, simply how it moved).
-  3 Lay each stretch over today's outlook, so the middle of the stretches that had no recession sits on the outlook,
+  1 Start from the figures published so far (FRED) and the outlook forecasters hold (data/outlook.json).
+  2 Take every stretch of 20 months since 1964 that began, like October 2026, with unemployment at or below its
+    normal rate and no recession under way. Measure how each series moved in that stretch against its own pace over
+    the three years before (or, for prices, oil, stocks, housing, claims and sentiment, simply how it moved).
+  3 Lay each stretch over the outlook, so the middle of the stretches that had no recession sits on the outlook,
     and score all 33 keys on the result. One stretch gives one complete set of keys, so keys that move together in
     real life move together here: a recession hits all of them at once.
   4 Stretches that ran into a recession are weighted to 30% of the total. History alone gives more and forecasters
     give less.
+  5 As new months are published they replace the run. Each series follows its published figures as far as they go,
+    and only the months still ahead are run, from the latest figure, on what the same stretches did over those same
+    months. Once a key's June 2028 figures are out nothing is left to run, and the key has landed.
   Three series are handled apart. Unemployment is put halfway between the forecasters' flat path and its drift in the
   past stretches, and never below 3.4%. Payroll jobs follow the outlook and unemployment, because past job booms came
   with a fast-growing workforce. The two state keys use a stand-in for the state indexes fitted on 1980 to 2024.
 
-How the other keys are run (11 keys): by the odds in POLITICS below, set from polls and from how these keys went in
-the 19 elections since 1952. They are judgment, and the README lists what each rests on.
+How the other keys are run (11 keys): by the odds in data/outlook.json, set from polls and from how these keys went
+in the 19 elections since 1952. They are judgment, and the README lists what each rests on. The six approval keys
+land on their own once the June 2028 polls are in; the nomination keys are entered by hand as they are settled.
 """
-import csv, json, math, os, random, statistics as st, sys
+import csv, datetime, json, math, os, random, statistics as st, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 D = os.path.join(HERE, 'data')
 sys.path.insert(0, HERE)
 from build import GROUPS, ALL                         # noqa: E402
+import states as SK                                   # noqa: E402
 
-AS_OF = 'November 22, 2026'
+CFG = json.load(open(os.path.join(D, 'outlook.json')))          # the outlook and the odds: entered by hand, with what each rests on in the README
+LATEST = json.load(open(os.path.join(D, 'latest.json')))        # the date of the run and the latest daily prices: written by update.py
+OUTLOOK, POLITICS, POLLS = CFG['outlook'], CFG['politics'], CFG['polls']
+TODAY = datetime.date.fromisoformat(LATEST['as_of'])
+AS_OF = f"{TODAY:%B} {TODAY.day}, {TODAY.year}"
 ym = lambda y, m: y * 12 + (m - 1)
-NOW, H = ym(2026, 10), 20                             # October 2026 is the last month of data; June 2028 is 20 months on
+START, H = ym(2026, 10), 20                           # the run starts from October 2026; June 2028 is 20 months on
 QEND = [2, 5, 8, 11, 14, 17, 20]                      # quarter ends from December 2026 to June 2028
-RUNS, SEED = 200000, 2028
-
-# ------------------------------------------------------------------ the outlook, and what it rests on
-OUTLOOK = {
-    'recession_share': 0.30,      # stretches that ran into a recession: 33% in history; forecasters put the risk of a falling quarter near 20%
-    'unemployment': 4.2,          # Survey of Professional Forecasters (Nov. 16, 2026): 4.2 to 4.3 through 2028; Federal Reserve (Sept.): 4.1
-    'jobs_a_month': [90, 90, 65, 65, 65, 49, 49, 49, 51, 51, 51, 51, 51, 51, 50, 50, 50, 50, 50, 50],     # the same survey, thousands
-    'gdp': [2.3, 2.1, 2.2, 2.2, 2.1, 2.1, 2.1],     # the same survey, annual rates, 2026 Q4 to 2028 Q2
-    'income': [2.0] * 7,          # real disposable income: no survey; a little under GDP, as it has run this term
-    'cpi_quarters': [4.0, 2.6, 2.4, 2.4, 2.4, 2.3, 2.3, 2.3],     # the same survey, annual rates, 2026 Q4 on
-    'population': 0.25,           # percent a year, the pace of the past year
-    'industrial_production': 1.0, 'spending': 2.2, 'hourly_pay': 3.8, 'factory_jobs': 0.0,     # percent a year
-    'oil': [(1, 84.0), (8, 80.0), (14, 72.0), (20, 70.0)],     # dollars: now; June and December 2027; June 2028. Futures, the EIA's November outlook
-    'sentiment': [(1, 51.5), (8, 57.0), (20, 60.0)],            # the November reading, then a partial recovery as the oil shock fades
-    'housing_starts': 1300.0, 'claims': 205000.0,                # held at their recent levels
-    'sp500_now': 6910.39,         # close of November 20, 2026
-}
-POLITICS = {
-    'surge': 0.03,                # disapproval falls below half by June 2028 (it is 60% now)
-    'net_given_surge': 0.6, 'fifty_given_net': 0.7,
-    'slump_in_recession': 0.5,    # in a recession, half the time none of the three "approval is rising" keys holds
-    'no_third_candidate': 0.88,   # a third candidate reached 10% in June polls in 4 of 19 elections; none is near it now
-    'nominee_wins_nh': 0.68,      # Republican nominees won New Hampshire in 8 of 11 open contests; Vance leads there, the race is level nationally
-    'two_thirds_if_won': 0.82, 'two_thirds_if_lost': 0.60,
-    'dem_on_ballot': 0.85,        # New Hampshire and the Democratic National Committee are in dispute over the date
-    'dem_nominee_wins_nh': 0.42,  # Democratic nominees won New Hampshire in 4 of 10 open contests
-    'dem_write_in_win': 0.10,
-}
+Q0 = 2026 * 4 + 3                                     # 2026 Q4, the first quarter of the run
+RUNS, SEED = int(os.environ.get('KEYS_RUNS', 200000)), 2028     # KEYS_RUNS: fewer runs, for the tests only
+ENGINE = '2026.11b'                                   # the version of this run-ahead method; a change to the method changes it, new data do not
 # what the three "approval is rising" keys (C03, C04, C05) did in each election since 1952; years without the president on the ticket count double
 CYCLES = {1952: (1, 0, 1), 1956: (1, 1, 0), 1960: (0, 1, 0), 1964: (1, 1, 0), 1968: (0, 0, 0), 1972: (1, 1, 1), 1976: (0, 0, 0), 1980: (1, 0, 0),
           1984: (1, 1, 1), 1988: (0, 0, 0), 1992: (0, 0, 0), 1996: (1, 1, 1), 2000: (1, 0, 0), 2004: (0, 0, 0), 2008: (0, 0, 0), 2012: (1, 1, 1),
           2016: (1, 1, 1), 2020: (0, 0, 0), 2024: (0, 0, 0)}
 OPEN_SEAT = {1952, 1960, 1968, 1988, 2000, 2008, 2016}
-SETTLED = {'D01': 0, 'D02': 0, 'D03': 0, 'D04': 0, 'D05': 0, 'D06': 0, 'E01': 0, 'E02': 1}
-POLLS = dict(approve=37.9, disapprove=59.8, approve_midterm=38.5, rubio=35.4, vance=34.0, nh_vance=39.0, nh_rubio=27.3)     # RealClearPolitics averages, Nov. 21, 2026
+SETTLED = {k: v['value'] for k, v in CFG['settled'].items()}     # settled by events: the midterms, the term limit, and later the nominations
 
 RECESSIONS = [((1960, 4), (1961, 2)), ((1969, 12), (1970, 11)), ((1973, 11), (1975, 3)), ((1980, 1), (1980, 7)), ((1981, 7), (1982, 11)),
               ((1990, 7), (1991, 3)), ((2001, 3), (2001, 11)), ((2007, 12), (2009, 6)), ((2020, 2), (2020, 4))]
@@ -91,13 +75,15 @@ def load_monthly():
                 x = r[head.index(name)]
                 if x != '':
                     P[s][ym(int(yr), int(mo))] = float(x)
-    for r in csv.DictReader(open(os.path.join(D, 'latest_monthly_2026-11.csv'))):
+    for r in csv.DictReader(open(os.path.join(D, 'latest_monthly.csv'))):
         y, m, _ = r['observation_date'].split('-')
         for name, (s, col) in MD.items():
             if r[col] != '':
                 P[s][ym(int(y), int(m))] = float(r[col])
     for s, d in P.items():                                # October 2025 was not collected; sentiment was quarterly before 1978
-        ts = sorted(d)
+        for t in [t for t in d if t > START + H]:
+            del d[t]
+        ts = sorted(t for t in d if t <= START)
         for a, b in zip(ts, ts[1:]):
             for t in range(a + 1, b):
                 w = (t - a) / (b - a)
@@ -112,7 +98,7 @@ def load_quarterly():
     for r in csv.DictReader(open(os.path.join(D, 'course', 'fred_econ.csv'))):
         g, i = r['GDP_growth_quarterly'], r['RDPI_growth_quarterly']
         Q[int(r['year']) * 4 + int(r['quarter']) - 1] = {'gdp': None if g in ('', 'NA') else float(g), 'rdpi': None if i in ('', 'NA') else float(i)}
-    for r in csv.DictReader(open(os.path.join(D, 'quarterly_2016-2026.csv'))):
+    for r in csv.DictReader(open(os.path.join(D, 'quarterly.csv'))):
         y, m, _ = r['observation_date'].split('-'); q = int(y) * 4 + (int(m) - 1) // 3
         Q[q] = {'gdp': float(r['A191RL1Q225SBEA']), 'rdpi': float(r['A067RL1Q156SBEA'])}
         level[(int(y), (int(m) - 1) // 3 + 1)] = {'pop': float(r['B230RC0Q173SBEA']), 'gdp_pc': float(r['A939RX0Q048SBEA']), 'rdpi_pc': float(r['A229RX0Q048SBEA'])}
@@ -135,6 +121,32 @@ R = {k: LEVEL[q]['rdpi_pc'] for k, q in (('q20', (2020, 4)), ('q24', (2024, 4)),
 BAR = dict(gdp=(100 * ((G['q24'] / G['q20']) ** 0.25 - 1) + 100 * ((G['q20'] / G['q16']) ** 0.25 - 1)) / 2, rdpi=100 * ((R['q24'] / R['q20']) ** 0.25 - 1))
 POP_Q = (1 + OUTLOOK['population'] / 100) ** 0.25
 
+# How far the published figures reach. K: months past October 2026 for each monthly series (spending runs a month behind).
+# KQ: quarters from 2026 Q4 (so -1 while 2026 Q3 is the latest). MONTH_NOW: the month the latest daily prices fall in.
+def reach(s):
+    k = -1 if START not in P[s] else 0                # spending runs a month behind the rest
+    while k < H and START + k + 1 in P[s]:
+        k += 1
+    return k
+
+
+K = {s: reach(s) for s in ('u', 'jobs', 'man', 'cpi', 'ip', 'wage', 'pce', 'houst', 'claims', 'oil', 'ics', 'sp')}
+QKEY = lambda q: ((Q0 + q) // 4, (Q0 + q) % 4 + 1)
+KQ = min(6, max(y * 4 + q - 1 for y, q in LEVEL) - Q0)
+MONTH_NOW = min(H, ym(TODAY.year, TODAY.month) - START)
+# the latest price of oil and of the S&P 500, and the month it stands for: today's price until that month's average is published
+ANCHOR = {s: (MONTH_NOW, LATEST[name]['value']) if MONTH_NOW > K[s] else (K[s], P[s][START + K[s]]) for s, name in (('oil', 'oil'), ('sp', 'sp500'))}
+# the month from which each series is still run rather than read
+AT = dict({s: max(K[s], 0) for s in ('cpi', 'man', 'ip', 'pce', 'houst', 'claims', 'u', 'ics')}, rwage=max(min(K['wage'], K['cpi']), 0), roil=ANCHOR['oil'][0])
+# what each economy key waits for: it has landed when these are published through June 2028 (the two state keys are scored from the state indexes)
+NEEDS = {'A01': ['gdp'], 'A02': ['gdp'], 'A03': ['ip'], 'A04': ['pce', 'gdp'], 'A05': ['u'], 'A06': ['jobs'], 'A07': ['man'], 'A08': ['claims'], 'A09': ['u'],
+         'A10': ['gdp'], 'A11': ['wage', 'cpi'], 'A12': ['cpi'], 'A13': ['oil', 'cpi'], 'A14': ['sp'], 'A15': ['sp'], 'A16': ['ics'], 'A17': ['houst'],
+         'B01': ['gdp'], 'B02': ['ip'], 'B03': ['pce', 'gdp'], 'B04': ['u'], 'B05': ['jobs'], 'B06': ['man'], 'B07': ['claims'], 'B08': ['gdp'],
+         'B09': ['wage', 'cpi'], 'B10': ['cpi'], 'B11': ['oil', 'cpi'], 'B12': ['sp', 'cpi'], 'B13': ['ics'], 'B14': ['houst']}
+published = lambda name: KQ >= 6 if name == 'gdp' else K[name] >= H
+LANDED = {k for k, needs in NEEDS.items() if all(published(n) for n in needs)}
+POP28 = LEVEL[QKEY(KQ)]['pop'] * POP_Q ** (6 - KQ)             # the population in 2028 Q2
+
 
 def normal_rate(t):
     y = t / 12
@@ -146,7 +158,7 @@ def normal_rate(t):
 
 def stretch(t0):
     """What happened over the 20 months after month t0, as moves from t0 (growth series net of their own pace before it)."""
-    if t0 + H > max(P['pce']):
+    if t0 + H > START - 1:                                # the stretches are history: all of them ended before the run began, so new months never change the set
         return None
     out = {'t0': t0, 'recession': any(t in REC for t in range(t0 + 1, t0 + H + 1))}
     for s, months in PACE.items():
@@ -166,7 +178,7 @@ def stretch(t0):
 
 def stretches(gap=0.3):
     res = []
-    for t0 in range(ym(1964, 1), NOW):
+    for t0 in range(ym(1964, 1), START):
         if (t0 % 12) % 3 or t0 in REC or P['u'][t0] - normal_rate(t0) > gap:        # a quarter's first month, like October; no recession; low unemployment
             continue
         if ym(2018, 7) <= t0 <= ym(2020, 1):                                          # the 2020 shutdown is left out: it was not a business cycle
@@ -185,24 +197,36 @@ def interp(points, h):
 
 
 def outlook_paths():
-    o, last = {}, {s: P[s][NOW] for s in ('u', 'jobs', 'man', 'cpi', 'ip', 'wage')}
-    o['u'] = [last['u'], (last['u'] + OUTLOOK['unemployment']) / 2] + [OUTLOOK['unemployment']] * (H - 1)
-    j = [last['jobs']]
-    for g in OUTLOOK['jobs_a_month']:
+    """Each series from October 2026 to June 2028: its published figures as far as they go, then the forecasters' path from the latest one."""
+    A = lambda s, h: P[s][START + h]
+    path = lambda points: (lambda h: interp(points, max(h, points[0][0])))
+    o = {}
+    k, flat = K['u'], OUTLOOK['unemployment']
+    o['u'] = ([A('u', h) for h in range(k + 1)] + [(A('u', k) + flat) / 2] + [flat] * H)[:H + 1]
+    j = [A('jobs', h) for h in range(K['jobs'] + 1)]
+    for g in OUTLOOK['jobs_a_month'][K['jobs']:]:
         j.append(j[-1] + g)
     o['jobs'] = j
-    grow = lambda x0, rate, lead=0: [x0 * (1 + rate / 100) ** ((h + lead) / 12) for h in range(H + 1)]
-    o['man'], o['ip'], o['wage'] = grow(last['man'], OUTLOOK['factory_jobs']), grow(last['ip'], OUTLOOK['industrial_production']), grow(last['wage'], OUTLOOK['hourly_pay'])
-    o['pce'] = grow(P['pce'][NOW - 1], OUTLOOK['spending'], 1)                       # spending is known to September
-    qa = [m3('cpi', 2026, (7, 8, 9))]
+    grow = lambda s, rate: [A(s, h) if h <= K[s] else A(s, K[s]) * (1 + rate / 100) ** ((h - K[s]) / 12) for h in range(H + 1)]
+    o['man'], o['ip'], o['wage'] = grow('man', OUTLOOK['factory_jobs']), grow('ip', OUTLOOK['industrial_production']), grow('wage', OUTLOOK['hourly_pay'])
+    o['pce'] = grow('pce', OUTLOOK['spending'])
+    qa = [m3('cpi', 2026, (7, 8, 9))]                                                # the survey gives quarterly averages, from 2026 Q4
     for r in OUTLOOK['cpi_quarters']:
         qa.append(qa[-1] * (1 + r / 100) ** 0.25)
-    nd = (3 * qa[1] - last['cpi']) / 2                                               # November and December, given October
-    pts = [(0, last['cpi']), (1, nd), (2, nd)] + [(1 + 3 * (k - 1), qa[k]) for k in range(2, 9)]      # quarterly averages sit on the middle month
-    o['cpi'] = [math.exp(interp([(a, math.log(v)) for a, v in pts], h)) for h in range(H + 1)]
-    o['oil'] = [P['oil'][NOW]] + [interp(OUTLOOK['oil'], h) for h in range(1, H + 1)]
-    o['ics'] = [P['ics'][NOW]] + [interp(OUTLOOK['sentiment'], h) for h in range(1, H + 1)]
-    o['houst'], o['claims'] = [OUTLOOK['housing_starts']] * (H + 1), [OUTLOOK['claims']] * (H + 1)
+    c0 = P['cpi'][START]
+    nd = (3 * qa[1] - c0) / 2                                                        # November and December 2026, given October
+    pts = [(0, c0), (1, nd), (2, nd)] + [(1 + 3 * (q - 1), qa[q]) for q in range(2, 9)]      # quarterly averages sit on the middle month
+    first = [math.exp(interp([(a, math.log(v)) for a, v in pts], h)) for h in range(H + 1)]
+    k = K['cpi']
+    o['cpi'] = first if k == 0 else [A('cpi', h) if h <= k else A('cpi', k) * first[h] / first[k] for h in range(H + 1)]
+    # oil and sentiment: the latest figure, carried along the shape of the outlook (oil by the same percentage, sentiment by the same number of points)
+    c, k, (a, v) = path(OUTLOOK['oil']), K['oil'], ANCHOR['oil']
+    o['oil'] = [A('oil', h) if h <= k else v * c(h) / c(a) if h >= a else math.exp(interp([(k, math.log(A('oil', k))), (a, math.log(v))], h)) for h in range(H + 1)]
+    c, k = path(OUTLOOK['sentiment']), K['ics']
+    o['ics'] = [A('ics', h) if h <= k else A('ics', k) + c(h) - c(k) for h in range(H + 1)]
+    for s, span in (('houst', 6), ('claims', 3)):                                    # held at their recent level: the average of the last six and three months
+        level = avg([A(s, K[s] - i) for i in range(span)])
+        o[s] = [A(s, h) if h <= K[s] else level for h in range(H + 1)]
     return o
 
 
@@ -218,25 +242,30 @@ def middle(S):
 
 
 def economy_keys(s, med, rnd):
-    d = lambda k, h: s[k][h] - med[k][h]
+    def d(k, h):                                          # how this stretch moved from the latest published month on, against the middle stretch
+        a = AT[k]
+        return 0.0 if h <= a else (s[k][h] - med[k][h]) - (s[k][a] - med[k][a])
     cpi = [O['cpi'][h] * math.exp(d('cpi', h)) for h in range(H + 1)]
     lv = {k: [O[k][h] * math.exp(d(k, h)) for h in range(H + 1)] for k in ('man', 'ip', 'pce', 'houst', 'claims')}
     rw = [O['wage'][h] / O['cpi'][h] * math.exp(d('rwage', h)) for h in range(H + 1)]
-    ro = [None] + [O['oil'][h] / O['cpi'][h] * math.exp(d('roil', h) - d('roil', 1)) for h in range(1, H + 1)]
-    sp = [None] + [OUTLOOK['sp500_now'] * math.exp(s['rsp'][h] - s['rsp'][1]) * cpi[h] / cpi[1] for h in range(1, H + 1)]
-    ur = [max(3.4, 0.5 * (O['u'][h] + d('u', h)) + 0.5 * (O['u'][0] + s['u'][h])) for h in range(H + 1)]      # halfway; not below 3.4%
+    ro = [O['oil'][h] / O['cpi'][h] * math.exp(d('roil', h)) for h in range(H + 1)]
+    a, v = ANCHOR['sp']
+    sp = [P['sp'][START + h] if h <= K['sp'] else v if h <= a else v * math.exp(s['rsp'][h] - s['rsp'][a]) * cpi[h] / cpi[a] for h in range(H + 1)]
+    k = K['u']                                            # halfway between the outlook and the drift of past stretches; not below 3.4%
+    ur = [O['u'][h] if h <= k else max(3.4, 0.5 * (O['u'][h] + d('u', h)) + 0.5 * (O['u'][k] + s['u'][h] - s['u'][k])) for h in range(H + 1)]
     u = [round(x, 1) for x in ur]
     lf = rnd.gauss(0, 0.004)                                                          # the workforce may grow a little faster or slower than expected
-    jobs = [O['jobs'][h] * (1 - 0.0104 * (ur[h] - O['u'][h]) + lf * h / 12) for h in range(H + 1)]
-    ics = [None] + [round(min(110, max(40, O['ics'][h] + d('ics', h) - d('ics', 1))), 1) for h in range(1, H + 1)]
-    g = [OUTLOOK['gdp'][q] + s['gdp'][q] - med['gdp'][q] for q in range(7)]
-    r = [OUTLOOK['income'][q] + s['rdpi'][q] - med['rdpi'][q] for q in range(7)]
-    per = lambda rates: [(1 + x / 100) ** 0.25 / POP_Q for x in rates]
-    gpc, rpc = per(g), per(r)
+    k = K['jobs']
+    jobs = [O['jobs'][h] if h <= k else O['jobs'][h] * (1 - 0.0104 * (ur[h] - O['u'][h]) + lf * (h - k) / 12) for h in range(H + 1)]
+    ics = [O['ics'][h] if h <= K['ics'] else round(min(110, max(40, O['ics'][h] + d('ics', h))), 1) for h in range(H + 1)]
+    g = [QS[Q0 + q]['gdp'] if q <= KQ else OUTLOOK['gdp'][q] + s['gdp'][q] - med['gdp'][q] for q in range(7)]
+    r = [QS[Q0 + q]['rdpi'] if q <= KQ else OUTLOOK['income'][q] + s['rdpi'][q] - med['rdpi'][q] for q in range(7)]
+    per = lambda rates, name: [LEVEL[QKEY(q)][name] / LEVEL[QKEY(q - 1)][name] if q <= KQ else (1 + x / 100) ** 0.25 / POP_Q for q, x in enumerate(rates)]
+    gpc, rpc = per(g, 'gdp_pc'), per(r, 'rdpi_pc')
     spring = lambda xs, hs: avg([xs[h] for h in hs])
     u3 = lambda h: (u[h] + u[h - 1] + u[h - 2]) / 3
     ann = lambda ratio, months: 100 * (ratio ** (12 / months) - 1)
-    pop28 = BASE['pop_26q3'] * POP_Q ** 7
+    pop28 = POP28
     w = [0.55 ** (15 - q) for q in range(9, 15)]
     wavg = lambda xs: sum(a * b for a, b in zip(w, xs)) / sum(w)
     # a stand-in for the electoral-vote-weighted state measure, fitted on the twelve elections from 1980 (see README)
@@ -283,85 +312,209 @@ def other_keys(rnd, recession):
 
 def run(runs=RUNS, seed=SEED, share=None, gap=0.3):
     share = OUTLOOK['recession_share'] if share is None else share
-    S = stretches(gap); med = middle(S); rnd = random.Random(seed)
+    S = stretches(gap); med = middle(S); rnd = random.Random(seed); polled = dict(approval_keys(), **STATES['keys'])
     econ = [economy_keys(s, med, rnd) for s in S]
     rec = [s['recession'] for s in S]; seen = avg(rec)
     w = [share / seen if r else (1 - share) / (1 - seen) for r in rec]
     size = {g: len(ks) for g, ks in GROUPS.items()}
     tally, index, by_group, calm_index = {}, [], {g: [] for g in GROUPS}, []
+    yes_rec, n_rec = {}, 0
+    yes_above, hits, draws, sums = {}, [0] * len(S), [0] * len(S), [0.0] * len(S)      # for the keys that matter most, and for the range of the estimate
     for i in rnd.choices(range(len(S)), weights=w, k=runs):
-        k = dict(econ[i]); k.update(other_keys(rnd, rec[i])); k.update({a: bool(b) for a, b in SETTLED.items()})
+        k = dict(econ[i]); k.update(other_keys(rnd, rec[i])); k.update(polled); k.update({a: bool(b) for a, b in SETTLED.items()})
+        sh = {g: sum(v for a, v in k.items() if a[0] == g) / size[g] for g in GROUPS}
+        ix = avg(list(sh.values())); above = ix > 0.5
         for a, b in k.items():
             tally[a] = tally.get(a, 0) + b
-        sh = {g: sum(v for a, v in k.items() if a[0] == g) / size[g] for g in GROUPS}
+            if b and above:
+                yes_above[a] = yes_above.get(a, 0) + 1
+            if b and rec[i]:
+                yes_rec[a] = yes_rec.get(a, 0) + 1
+        n_rec += rec[i]
         for g in GROUPS:
             by_group[g].append(sh[g])
-        index.append(avg(list(sh.values())))
+        index.append(ix); draws[i] += 1; hits[i] += above; sums[i] += ix
         if not rec[i]:
-            calm_index.append(index[-1])
+            calm_index.append(ix)
+    n_above = sum(hits)
+    # for each key: the share of runs above one half when it is yes, and when it is no
+    split = {a: (yes_above.get(a, 0) / tally[a] if tally[a] else None, (n_above - yes_above.get(a, 0)) / (runs - tally[a]) if runs - tally[a] else None) for a in tally}
+    per = [{'t0': s['t0'], 'recession': r, 'above': hits[i] / draws[i] if draws[i] else None, 'mean': sums[i] / draws[i] if draws[i] else None} for i, (s, r) in enumerate(zip(S, rec))]
     return dict(p={a: tally[a] / runs for a in sorted(tally)}, index=index, by_group=by_group, calm=calm_index, stretches=len(S), with_recession=sum(rec),
-                first=S[0]['t0'] // 12, last=S[-1]['t0'] // 12)
+                first=S[0]['t0'] // 12, last=S[-1]['t0'] // 12, split=split, per=per,
+                p_rec={a: yes_rec.get(a, 0) / n_rec for a in tally} if n_rec else {}, p_calm={a: (tally[a] - yes_rec.get(a, 0)) / (runs - n_rec) for a in tally} if runs > n_rec else {})
+
+
+def spread(per, share, rnd, reps=4000, years=4):
+    """How far the headline figures could move with a different draw of history. The 20-month stretches overlap, so they are
+    resampled in blocks of four calendar years, and the recession share is drawn between 20% and 40% rather than held at one value.
+    Returns the middle 80% of the share of runs above one half, and of the average count."""
+    blocks = {}
+    for x in per:
+        if x['above'] is not None:
+            blocks.setdefault((x['t0'] // 12) // years, []).append(x)
+    names, out = sorted(blocks), []
+    for _ in range(reps):
+        pick = [x for b in rnd.choices(names, k=len(names)) for x in blocks[b]]
+        r, c = [x for x in pick if x['recession']], [x for x in pick if not x['recession']]
+        if not r or not c:
+            continue
+        sh = rnd.uniform(share - 0.10, share + 0.10)
+        out.append((sh * avg([x['above'] for x in r]) + (1 - sh) * avg([x['above'] for x in c]), sh * avg([x['mean'] for x in r]) + (1 - sh) * avg([x['mean'] for x in c])))
+    q = lambda v, p: sorted(v)[min(len(v) - 1, int(p * len(v)))]
+    return {'above_half': [round(q([a for a, _ in out], .1), 3), round(q([a for a, _ in out], .9), 3)], 'mean': [round(q([m for _, m in out], .1), 3), round(q([m for _, m in out], .9), 3)],
+            'blocks': len(names), 'block_years': years}
+
+
+def approval():
+    """Approval of the president among all adults, and the readings the six approval keys compare.
+
+    One reading is the average over pollsters of each pollster's own average, from the polls of all adults that finished
+    in the window (no campaign or party internals). Polls come from VoteHub (data/approval_polls.json, refreshed by update.py).
+    """
+    polls = [p for p in json.load(open(os.path.join(D, 'approval_polls.json')))['polls']
+             if p['population'] == 'a' and not p.get('internal') and p['approve'] is not None and p['disapprove'] is not None]
+
+    def reading(lo, hi):
+        by = {}
+        for p in polls:
+            if str(lo) <= p['end'] <= str(hi):
+                by.setdefault(p['pollster'], []).append(p)
+        if not by:
+            return None
+        side = lambda k: round(avg([avg([p[k] for p in ps]) for ps in by.values()]), 1)
+        return {'approve': side('approve'), 'disapprove': side('disapprove'), 'pollsters': len(by), 'polls': sum(map(len, by.values())), 'from': str(lo), 'to': str(hi)}
+    day = datetime.timedelta(days=1)
+    month = lambda y, m: reading(datetime.date(y, m, 1), datetime.date(y + m // 12, m % 12 + 1, 1) - day)
+    now = next((r for r in (reading(TODAY - n * day, TODAY) for n in (29, 59, 89)) if r), None)      # the last 30 days; 60 or 90 if no poll finished in them
+    if now is None:
+        raise SystemExit('no poll of all adults in the last 90 days: the approval keys cannot be read')
+    out = dict(now, year_ago=month(TODAY.year - 1, TODAY.month), midterm=reading('2026-10-01', '2026-11-30'), june27=month(2027, 6),
+               jan28=month(2028, 1) or month(2027, 12), june28=month(2028, 6) or month(2028, 5))
+    # the June 2028 polls are in a week after the month ends, if every reading the keys compare exists
+    out['in'] = TODAY >= datetime.date(2028, 7, 8) and all(out[k] for k in ('june28', 'june27', 'jan28', 'midterm'))
+    return out
+
+
+APPROVAL = approval()
+
+
+def approval_keys():
+    """The six approval keys, by their rules, once the June 2028 polls are in. Until then they are open, never false by default."""
+    a = APPROVAL
+    if not a['in']:
+        return {}
+    j, dis = a['june28']['approve'], a['june28']['disapprove']
+    return {'C01': j >= 50, 'C02': j > dis, 'C03': j > a['june27']['approve'], 'C04': j > a['midterm']['approve'], 'C05': j > a['jan28']['approve'], 'C06': dis < 50}
+
+
+def state_figures():
+    """The two state keys. Until the state indexes run through June 2028 this gives only where the states stand so far
+    (a reading, used in the notes); once they do, it scores A18 and B15 by the model's own rule in states.py."""
+    idx = {}
+    for r in csv.DictReader(open(os.path.join(D, 'state_index_this_term.csv'))):
+        if r['index'] != '':
+            idx.setdefault(r['state'], {})[r['month']] = float(r['index'])
+    idx['DC'] = {m: (x + idx['VA'][m]) / 2 for m, x in idx['MD'].items() if m in idx['VA']}
+    ev, W = SK.electoral_votes(), SK.measures()
+    now, last = SK.so_far()
+    out = {'through': last, 'growing': sum(1 for x in now if now[x] > 0), 'growing_ev': sum(ev[2028][x] for x in now if now[x] > 0),
+           'faster_ev': sum(ev[2028][x] for x in now if now[x] > W[(x, 2024)]), 'keys': {}}
+    ends = SK.quarter_ends(2028)[0]
+    if len(idx) == 51 and all(e in idx[x] for x in idx for e in ends):
+        for x in idx:
+            W[(x, 2028)] = SK.weighted_growth(idx[x], 2028)
+        a18, b15, fig = SK.state_keys(2028, W, ev)
+        out['keys'] = {'A18': bool(a18), 'B15': bool(b15)}; out['final'] = fig
+    return out
+
+
+STATES = state_figures()
 
 
 def notes():
-    """Where each open key stands today, in a sentence."""
-    now = {s: P[s][NOW] for s in P if NOW in P[s]}
-    yr = lambda s, t=NOW: 100 * (P[s][t] / P[s][t - 12] - 1)
+    """Where each open key stands on the latest figures, in a sentence."""
+    last = {s: START + K[s] for s in K}                                               # the latest published month of each series
+    now = {s: P[s][last[s]] for s in K}
+    name = lambda t: f"{datetime.date(t // 12, t % 12 + 1, 1):%B %Y}"
+    yr = lambda s, back=0: 100 * (P[s][last[s] - back] / P[s][last[s] - back - 12] - 1)
     ann = lambda ratio, months: 100 * (ratio ** (12 / months) - 1)
-    term_gdp, term_inc = 100 * ((G['now'] / G['q24']) ** (4 / 7) - 1), 100 * ((R['now'] / R['q24']) ** (4 / 7) - 1)
-    sp_real = 100 * ((OUTLOOK['sp500_now'] / now['cpi']) / (BASE['sp_jan25'] / BASE['cpi_jan25']) - 1)
+    up = lambda x, a='above', b='below': a if x >= 0 else b
+    lq, nq = QKEY(KQ), 8 + KQ                                                         # the latest quarter, and how many quarters of the term it closes
+    term_gdp, term_inc = 100 * ((LEVEL[lq]['gdp_pc'] / G['q24']) ** (4 / nq) - 1), 100 * ((LEVEL[lq]['rdpi_pc'] / R['q24']) ** (4 / nq) - 1)
+    inc_year = 100 * (LEVEL[lq]['rdpi_pc'] / LEVEL[(lq[0] - 1, lq[1])]['rdpi_pc'] - 1)
+    sp_now, oil_now, oil_at = ANCHOR['sp'][1], ANCHOR['oil'][1], ANCHOR['oil'][0]
+    sp_real = 100 * ((sp_now / now['cpi']) / (BASE['sp_jan25'] / BASE['cpi_jan25']) - 1)
     oil_then = BASE['oil_jan25'] * now['cpi'] / BASE['cpi_jan25']
+    oil_28 = O['oil'][H] / O['cpi'][H] - BASE['oil_jan25'] / BASE['cpi_jan25']        # the outlook for mid-2028 against the start of the term, after inflation
     pce_need = 100 * (((1 + ann((BASE['pce_jan25'] / BASE['pop_25q1']) / (BASE['pce_jan21'] / BASE['pop_21q1']), 48) / 100) ** (41 / 12)
-                       * BASE['pce_jan25'] * (BASE['pop_26q3'] * POP_Q ** 7 / BASE['pop_25q1']) / P['pce'][NOW - 1]) ** (12 / 21) - 1)
-    starts = avg([P['houst'][NOW - i] for i in range(6)])
-    claims = avg([P['claims'][NOW - i] for i in range(3)])
-    oil = OUTLOOK['oil']
+                       * BASE['pce_jan25'] * (POP28 / BASE['pop_25q1']) / now['pce']) ** (12 / max(1, START + H - last['pce'])) - 1)
+    starts = lambda back=0: avg([P['houst'][last['houst'] - back - i] for i in range(6)])
+    claims = lambda back=0: avg([P['claims'][last['claims'] - back - i] for i in range(3)])
+    u3 = lambda t: avg([P['u'][t - i] for i in range(3)])
+    signal = u3(last['u']) - min(u3(last['u'] - i) for i in range(1, 13))
+    cpi_back = 1 if last['cpi'] - 12 == ym(2025, 10) else 0                           # October 2025 was not collected
+    months = lambda s: last[s] - ym(2025, 1)
+    jobs_ahead = avg(OUTLOOK['jobs_a_month'][max(8, K['jobs']):]) if K['jobs'] < H else 0
+    man6 = 1000 * (now['man'] - P['man'][last['man'] - 6])
+    a = APPROVAL
     n = {
-        'A01': f"Forecasters expect growth of about {OUTLOOK['gdp'][6]}% a year in spring 2028. It was 3.4% last quarter.",
-        'A02': f"Forecast growth is about 2% a year, and the population is growing about {OUTLOOK['population']}%.",
-        'A03': f"Up {yr('ip'):.1f}% in the past year.",
-        'A04': f"Real spending is up {yr('pce', NOW - 1):.1f}% in the past year, ahead of the population.",
+        'A01': f"Forecasters expect growth of about {OUTLOOK['gdp'][6]}% a year in spring 2028. It was {QS[Q0 + KQ]['gdp']}% in the latest quarter.",
+        'A02': f"Forecast growth is about {avg(OUTLOOK['gdp'][3:]):.0f}% a year, and the population is growing about {OUTLOOK['population']}%.",
+        'A03': f"{up(yr('ip'), 'Up', 'Down')} {abs(yr('ip')):.1f}% in the past year.",
+        'A04': f"Real spending is up {yr('pce'):.1f}% in the past year, {up(yr('pce') - OUTLOOK['population'], 'ahead of', 'behind')} the population.",
         'A05': f"It is {now['u']}% now. Forecasters expect about {OUTLOOK['unemployment']}% through 2028, and a tie counts as no.",
-        'A06': "Forecasters expect about 50,000 new jobs a month, a slow pace that a weak year could turn negative.",
-        'A07': f"Factory jobs have risen {1000 * (now['man'] - P['man'][ym(2025, 12)]):,.0f} since December after falling through 2025.",
-        'A08': f"Claims are about {claims / 1000:.0f},000 a week, already low.",
-        'A09': "No signal now. It would take a rise of about half a point in unemployment.",
-        'A10': f"Up {100 * (R['now'] / LEVEL[(2025, 3)]['rdpi_pc'] - 1):.1f}% in the past year, held back by the jump in prices.",
-        'A11': f"Pay is rising {yr('wage'):.1f}% a year and inflation is forecast to slow to about 2.4%.",
-        'A12': f"Inflation is {yr('cpi', NOW - 1):.1f}% now. This year's oil shock lifts the mid-2027 figure that mid-2028 is compared with.",
-        'A13': f"About ${oil[0][1]:.0f} a barrel now. Futures and forecasts point to about ${oil[1][1]:.0f} in mid-2027 and ${oil[3][1]:.0f} in mid-2028.",
+        'A06': f"Forecasters expect about {5 * round(jobs_ahead / 5):.0f},000 new jobs a month, a slow pace that a weak year could turn negative.",
+        'A07': f"Factory jobs have {up(man6, 'risen', 'fallen')} {abs(man6):,.0f} in the past six months.",
+        'A08': f"Claims are about {claims() / 1000:.0f},000 a week, {up(claims() - claims(12))} the {claims(12) / 1000:.0f},000 of a year earlier.",
+        'A09': f"The signal is at {max(0, signal):.2f} now. It takes 0.50, a rise of about half a point in unemployment.",
+        'A10': f"{up(inc_year, 'Up', 'Down')} {abs(inc_year):.1f}% in the past year.",
+        'A11': f"Pay is rising {yr('wage'):.1f}% a year, and forecasters expect inflation of about {st.median(OUTLOOK['cpi_quarters'][1:])}%.",
+        'A12': f"Inflation is {yr('cpi', cpi_back):.1f}% now." + (" This year's oil shock lifts the mid-2027 figure that mid-2028 is compared with." if last['cpi'] < ym(2027, 6) else ''),
+        'A13': (f"About ${oil_now:.0f} a barrel now. Futures and forecasts point to about ${O['oil'][8]:.0f} in mid-2027 and ${O['oil'][20]:.0f} in mid-2028." if oil_at < 8 else
+                f"About ${oil_now:.0f} a barrel now. It averaged ${O['oil'][8]:.0f} in June 2027."),
         'A14': "The S&P 500 was higher than a year before in about seven years of ten, and lower in recessions.",
         'A15': "Higher than six months before in about two years of three.",
-        'A16': f"The index is {OUTLOOK['sentiment'][0][1]}, near its record low, which leaves room to recover.",
-        'A17': f"Starts are running near {starts / 1000:.2f} million a year, with borrowing costs high.",
-        'A18': "State economies are growing in 49 of 51 now. This key has failed only in sharp downturns (1980, 2020).",
+        'A16': f"The index is {now['ics']}" + (", near its record low, which leaves room to recover." if now['ics'] < 55 else '.'),
+        'A17': f"Starts are running near {starts() / 1000:.2f} million a year, against {starts(12) / 1000:.2f} million a year earlier.",
+        'A18': f"State economies are growing in {STATES['growing']} of 51 now. This key has failed only in sharp downturns (1980, 2020).",
         'B01': f"So far this term: {term_gdp:.2f}% a year. The bar, the average of the last two terms, is {BAR['gdp']:.2f}%.",
-        'B02': f"Up {100 * (now['ip'] / BASE['ip_jan25'] - 1):.1f}% since January 2025, against {ann(BASE['ip_jan25'] / BASE['ip_jan21'], 48):.1f}% a year last term.",
+        'B02': f"{up(now['ip'] - BASE['ip_jan25'], 'Up', 'Down')} {abs(100 * (now['ip'] / BASE['ip_jan25'] - 1)):.1f}% since January 2025, against {ann(BASE['ip_jan25'] / BASE['ip_jan21'], 48):.1f}% a year last term.",
         'B03': f"It would take real spending growth of {pce_need:.1f}% a year from here.",
         'B04': f"It was {BASE['u_jan25']}% in January 2025 and is {now['u']}% now.",
-        'B05': f"Out of reach: jobs grew {ann(BASE['jobs_jan25'] / BASE['jobs_jan21'], 48):.1f}% a year last term and {ann(now['jobs'] / BASE['jobs_jan25'], 21):.1f}% a year so far in this one.",
+        'B05': f"Out of reach: jobs grew {ann(BASE['jobs_jan25'] / BASE['jobs_jan21'], 48):.1f}% a year last term and {ann(now['jobs'] / BASE['jobs_jan25'], months('jobs')):.1f}% a year so far in this one.",
         'B06': f"{now['man'] / 1000:.2f} million now against {BASE['man_jan25'] / 1000:.2f} million in January 2025.",
-        'B07': f"About {claims / 1000:.0f},000 a week now against {BASE['claims_q1_25'] / 1000:.0f},000 at the start of the term.",
+        'B07': f"About {claims() / 1000:.0f},000 a week now against {BASE['claims_q1_25'] / 1000:.0f},000 at the start of the term.",
         'B08': f"So far this term: {term_inc:.1f}% a year. Last term: {BAR['rdpi']:.1f}%.",
-        'B09': f"Pay after inflation is {100 * ((now['wage'] / now['cpi']) / (BASE['wage_jan25'] / BASE['cpi_jan25']) - 1):.1f}% above its January 2025 level.",
-        'B10': f"Inflation has averaged {ann(now['cpi'] / BASE['cpi_jan25'], 21):.1f}% a year this term against {ann(BASE['cpi_jan25'] / BASE['cpi_jan21'], 48):.1f}% last term.",
-        'B11': f"Oil is about ${oil[0][1]:.0f} now. January 2025's price is ${oil_then:.0f} in today's dollars, and forecasts have oil below that by 2028.",
-        'B12': f"After November's fall the S&P 500 is {sp_real:.0f}% above its start-of-term level, after inflation.",
-        'B13': f"The index is {OUTLOOK['sentiment'][0][1]}. It was {BASE['ics_jan25']} in January 2025.",
-        'B14': f"Starts average {starts / 1000:.2f} million against {BASE['houst_q1_25'] / 1000:.2f} million at the start of the term.",
-        'B15': "So far this term, growth is above its 2024 pace in states holding 414 electoral votes.",
-        'C01': f"{POLLS['approve']:.0f}% approve now, in the RealClearPolitics average.",
-        'C02': f"{POLLS['approve']:.0f}% approve and {POLLS['disapprove']:.0f}% disapprove now.",
-        'C03': "Approval has fallen in each year of this term. It rose in the last year for 3 of the 7 presidents who were not running again.",
-        'C04': f"Approval averaged {POLLS['approve_midterm']}% around the midterms, its low for the term. It was higher by June in 8 of 19 cycles.",
+        'B09': f"Pay after inflation is {abs(100 * ((now['wage'] / now['cpi']) / (BASE['wage_jan25'] / BASE['cpi_jan25']) - 1)):.1f}% {up(now['wage'] / now['cpi'] - BASE['wage_jan25'] / BASE['cpi_jan25'])} its January 2025 level.",
+        'B10': f"Inflation has averaged {ann(now['cpi'] / BASE['cpi_jan25'], months('cpi')):.1f}% a year this term against {ann(BASE['cpi_jan25'] / BASE['cpi_jan21'], 48):.1f}% last term.",
+        'B11': f"Oil is about ${oil_now:.0f} now. January 2025's price is ${oil_then:.0f} in today's dollars, and forecasts have oil {up(oil_28)} that by 2028.",
+        'B12': f"The S&P 500 is {abs(sp_real):.0f}% {up(sp_real)} its start-of-term level, after inflation.",
+        'B13': f"The index is {now['ics']}. It was {BASE['ics_jan25']} in January 2025.",
+        'B14': f"Starts average {starts() / 1000:.2f} million against {BASE['houst_q1_25'] / 1000:.2f} million at the start of the term.",
+        'B15': f"So far this term, growth is above its 2024 pace in states holding {STATES['faster_ev']:.0f} electoral votes.",
+        'C01': f"{a['approve']:.0f}% approve now, in polls of all adults from the past month ({a['pollsters']} pollsters).",
+        'C02': f"{a['approve']:.0f}% approve and {a['disapprove']:.0f}% disapprove now.",
+        'C03': f"{a['approve']:.0f}% approve now" + (f" against {a['year_ago']['approve']:.0f}% a year ago" if a['year_ago'] else '') + ". Approval rose in the last year for 3 of the 7 presidents who were not running again.",
+        'C04': f"Approval averaged {a['midterm']['approve']:.0f}% in the polls around the midterms. It was higher by June in 8 of 19 cycles.",
         'C05': "It rose from January to June of the election year in 6 of 19 cycles.",
-        'C06': f"{POLLS['disapprove']:.0f}% disapprove now.",
+        'C06': f"{a['disapprove']:.0f}% disapprove now.",
         'E03': "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections.",
         'E04': f"Rubio ({POLLS['rubio']:.0f}%) and Vance ({POLLS['vance']:.0f}%) are level in national polls, which points to a real contest.",
         'E05': f"Vance leads Rubio in New Hampshire polls, {POLLS['nh_vance']:.0f}% to {POLLS['nh_rubio']:.0f}%, and the nomination is open.",
         'E06': "Two candidates dominate the Republican race, and the Democratic field is split five ways.",
         'E07': "The Democratic field is split, and New Hampshire is in dispute with the national party over its date.",
     }
+    # a key that has landed says what settled it
+    if STATES['keys']:
+        f = STATES['final']
+        n.update({'A18': f"State economies were growing in {f['states_growing_n']} of 51, holding {f['states_growing_ev']:.0f} of 538 electoral votes.",
+                  'B15': f"Growth was faster than four years earlier in {f['states_better_n']} of 51 states, holding {f['states_better_ev']:.0f} of 538 electoral votes."})
+    if a['in']:
+        j, dis = a['june28']['approve'], a['june28']['disapprove']
+        n.update({'C01': f"{j:.0f}% approved in the June 2028 polls.", 'C02': f"{j:.0f}% approved and {dis:.0f}% disapproved in the June 2028 polls.",
+                  'C03': f"{j:.0f}% approved in June 2028 against {a['june27']['approve']:.0f}% a year earlier.", 'C04': f"{j:.0f}% approved in June 2028 against {a['midterm']['approve']:.0f}% at the midterms.",
+                  'C05': f"{j:.0f}% approved in June 2028 against {a['jan28']['approve']:.0f}% in January.", 'C06': f"{dis:.0f}% disapproved in the June 2028 polls."})
     return n
 
 
@@ -373,6 +526,7 @@ def main():
     above = sum(1 for x in ix if x > 0.5) / n
     size = {g: len(ks) for g, ks in GROUPS.items()}
     likely = {a: Rn['p'][a] >= 0.5 for a in Rn['p']}
+    note, landed = notes(), LANDED | set(approval_keys()) | set(STATES['keys'])
     lk = {g: sum(v for a, v in likely.items() if a[0] == g) for g in GROUPS}
     out = {
         'as_of': AS_OF, 'runs': RUNS, 'stretches': {'n': Rn['stretches'], 'with_recession': Rn['with_recession'], 'first': Rn['first'], 'last': Rn['last']},
@@ -383,14 +537,24 @@ def main():
         'hist': [{'lo': b, 'share': round(sum(1 for x in ix if b <= 100 * x < b + 5) / n, 4)} for b in range(0, 100, 5)],
         'groups': {g: {'mean': round(avg(v), 3), 'p10': round(q(sorted(v), .1), 3), 'p90': round(q(sorted(v), .9), 3), 'likely': lk[g], 'n': size[g]} for g, v in Rn['by_group'].items()},
         'likely': {'in_favor': sum(likely.values()), 'index': round(avg([lk[g] / size[g] for g in GROUPS]), 3)},
-        'keys': {a: {'p': round(v, 3), 'note': notes().get(a, '')} for a, v in Rn['p'].items() if a not in SETTLED},
+        'keys': {a: {'p': round(v, 3), 'p_calm': round(Rn['p_calm'].get(a, v), 3), 'p_recession': round(Rn['p_rec'].get(a, v), 3), 'note': note[a], 'landed': a in landed}
+                 for a, v in Rn['p'].items() if a not in SETTLED},
         'outlook': {k: v for k, v in OUTLOOK.items()}, 'politics': POLITICS, 'polls': POLLS,
+        'range': spread(Rn['per'], OUTLOOK['recession_share'], random.Random(SEED + 1)),
+        'decisive': sorted(({'id': a, 'p': round(Rn['p'][a], 3), 'if_yes': round(y, 3), 'if_no': round(n, 3)} for a, (y, n) in Rn['split'].items()
+                            if a not in SETTLED and y is not None and n is not None), key=lambda d: d['if_no'] - d['if_yes']),
+        'engine': ENGINE,
+        'approval': {k: APPROVAL[k] for k in ('approve', 'disapprove', 'pollsters', 'polls', 'from', 'to', 'year_ago', 'midterm')},
+        'states': {k: STATES[k] for k in ('through', 'growing', 'growing_ev', 'faster_ev')},
+        'data_through': {'monthly': f"{datetime.date((START + K['u']) // 12, (START + K['u']) % 12 + 1, 1):%B %Y}", 'quarterly': f"{QKEY(KQ)[0]} Q{QKEY(KQ)[1]}",
+                         'prices': LATEST['sp500']['date']},
     }
+    assert all(out['keys'][a]['p'] in (0, 1) for a in landed), 'a key that has landed is the same in every run'
     assert set(out['keys']) | set(SETTLED) == set(full) and all(out['keys'][a]['note'] for a in out['keys'])
     # how far the answer moves when the main assumptions do
     vary = []
     def also(label, **kw):
-        r = run(runs=60000, **kw); v = r['index']
+        r = run(runs=min(60000, RUNS), **kw); v = r['index']
         vary.append({'what': label, 'mean': round(avg(v), 3), 'above_half': round(sum(1 for x in v if x > 0.5) / len(v), 3)})
     also('recession in 20% of runs', share=0.20); also('recession in 40% of runs', share=0.40)
     keep = dict(POLITICS)
