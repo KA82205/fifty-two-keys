@@ -180,7 +180,125 @@
     -6.9,
     1952
    ]
-  ]
+  ],
+  "votes": [
+   {
+    "year": 1952,
+    "est": 51.6,
+    "actual": 44.7,
+    "miss": -6.9
+   },
+   {
+    "year": 1956,
+    "est": 54.4,
+    "actual": 57.8,
+    "miss": 3.3
+   },
+   {
+    "year": 1960,
+    "est": 48.0,
+    "actual": 49.9,
+    "miss": 1.9
+   },
+   {
+    "year": 1964,
+    "est": 58.3,
+    "actual": 61.3,
+    "miss": 3.1
+   },
+   {
+    "year": 1968,
+    "est": 50.2,
+    "actual": 49.6,
+    "miss": -0.6
+   },
+   {
+    "year": 1972,
+    "est": 54.0,
+    "actual": 61.8,
+    "miss": 7.8
+   },
+   {
+    "year": 1976,
+    "est": 48.2,
+    "actual": 48.9,
+    "miss": 0.7
+   },
+   {
+    "year": 1980,
+    "est": 45.9,
+    "actual": 44.8,
+    "miss": -1.0
+   },
+   {
+    "year": 1984,
+    "est": 58.3,
+    "actual": 59.1,
+    "miss": 0.8
+   },
+   {
+    "year": 1988,
+    "est": 50.7,
+    "actual": 53.8,
+    "miss": 3.2
+   },
+   {
+    "year": 1992,
+    "est": 45.5,
+    "actual": 46.4,
+    "miss": 0.8
+   },
+   {
+    "year": 1996,
+    "est": 55.9,
+    "actual": 54.8,
+    "miss": -1.1
+   },
+   {
+    "year": 2000,
+    "est": 54.7,
+    "actual": 50.3,
+    "miss": -4.4
+   },
+   {
+    "year": 2004,
+    "est": 53.0,
+    "actual": 51.3,
+    "miss": -1.7
+   },
+   {
+    "year": 2008,
+    "est": 43.9,
+    "actual": 46.2,
+    "miss": 2.3
+   },
+   {
+    "year": 2012,
+    "est": 55.5,
+    "actual": 51.9,
+    "miss": -3.6
+   },
+   {
+    "year": 2016,
+    "est": 53.3,
+    "actual": 51.2,
+    "miss": -2.1
+   },
+   {
+    "year": 2020,
+    "est": 47.2,
+    "actual": 47.7,
+    "miss": 0.6
+   },
+   {
+    "year": 2024,
+    "est": 51.2,
+    "actual": 49.2,
+    "miss": -1.9
+   }
+  ],
+  "rmse": 3.2,
+  "within3": 12
  },
  "tried": {
   "own_group": {

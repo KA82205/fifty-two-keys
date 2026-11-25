@@ -1,0 +1,35 @@
+{
+ "as_of": "November 22, 2026",
+ "party_in_office": "R",
+ "keys": 52,
+ "settled": 8,
+ "likely": {
+  "in_favor": 27,
+  "index": 0.42
+ },
+ "mean": 0.395,
+ "median": 0.405,
+ "p25": 0.306,
+ "p75": 0.483,
+ "sd": 0.131,
+ "above_half": 0.197,
+ "above_half_range": [
+  0.151,
+  0.241
+ ],
+ "vote_estimate": {
+  "party_in_office": 48.3,
+  "line": [
+   38.07,
+   24.42
+  ],
+  "typical_miss": 2.5
+ },
+ "record": {
+  "right": 15,
+  "n": 19
+ },
+ "engine": "2026.11b",
+ "page": "https://ka82205.github.io/fifty-two-keys/",
+ "note": "likely: the count if every open key lands the way it leans. above_half: the share of runs in which the count ends above one half; it is not a chance of winning."
+}

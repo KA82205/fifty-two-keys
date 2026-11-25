@@ -2,10 +2,14 @@
 
 Fifty-two yes-or-no questions about the party that holds the White House, each answered by a fixed rule
 from public data. When more than half go its way, the keys say it wins the election. Inspired by Allan
-Lichtman's 13 Keys to the White House. A separate project from Tipping Point; nothing here is used by the
-Nowcast.
+Lichtman's 13 Keys to the White House. A separate project from Tipping Point: nothing here is used by the
+Nowcast, and nothing here reads from it.
 
-Working version of November 22, 2026. The key list is not frozen yet. The name follows the count.
+The 2028 page is rebuilt every week from the latest figures. The key list is not frozen yet. The name follows the count.
+
+**Read the audit first.** `research/audit.md` ([on the site](https://ka82205.github.io/fifty-two-keys/audit.html)) sets out what the record does and does not show, where hindsight
+enters, and what should change before 2028. The short version: 15 of 19 is the record as built; a one-fact rule
+calls as many; without two keys rated after the fact it is 13; and no election has been called in advance yet.
 
 ## What it is
 
@@ -197,7 +201,7 @@ average of polls of all adults for 2028.
 ## 2028, run ahead
 
 `run_2028.py` estimates how the 44 open keys are likely to land and writes `projection_2028.json`. It is an
-estimate made on November 22, 2026. It is not part of the model, it changes no key, and it was not checked against
+estimate, rerun every week (see "Weekly update, archive and tests"). It is not part of the model, it changes no key, and it was not checked against
 any election result. The page shows it under "The run ahead".
 
 | | |
@@ -217,7 +221,7 @@ every time the keys were between 35% and 45% (1960, 1976, 2020).
 
 ### How the economy keys are run (33 keys)
 
-1. Start from the latest figures (FRED, November 22, 2026) and the outlook forecasters hold today.
+1. Start from the figures published so far (FRED) and the outlook forecasters hold (`data/outlook.json`).
 2. Take every stretch of 20 months since 1964 that began, like now, with unemployment at or below its normal
    rate and no recession under way: 117 stretches, 39 of which ran into a recession.
 3. Lay each stretch over today's outlook and score all 33 keys on the result. One stretch gives one complete
@@ -241,7 +245,8 @@ the change in unemployment (R-squared 0.98 without 2020).
 
 These are odds set by judgment from polls and from the 19 elections, and they are the softest part.
 
-- **Approval.** 38% approve and 60% disapprove (RealClearPolitics average, November 21, 2026). The three keys
+- **Approval.** The reading is the average, pollster by pollster, of the polls of all adults that finished in the past 30
+  days, from VoteHub's listing (32% approve and 65% disapprove on November 22, 2026, from three pollsters). The three keys
   that need half the country on side get a 1% to 3% chance. The three that ask whether approval is rising
   are drawn from what they did in the 19 cycles, with years when the president was not running counted double.
 - **Third candidate.** 88% that none reaches 10% in June polls. One did in 4 of 19 elections.
@@ -281,7 +286,7 @@ Sources: [Survey of Professional Forecasters, fourth quarter 2026](https://www.p
 [oil futures strip of October 15, 2026](https://baratelliinstitute.com/oil-futures-curve);
 [Surveys of Consumers](https://www.sca.isr.umich.edu/);
 [market close of November 20, 2026](https://investrade.com/market-review-november-20-2026/);
-RealClearPolitics averages for [approval](https://www.realclearpolling.com/polls/approval/donald-trump/approval-rating-2nd-term),
+VoteHub's listing of approval polls (api.votehub.com); RealClearPolitics averages for
 the [Republican](https://www.realclearpolling.com/polls/president/republican-primary/2028/national) and
 [Democratic](https://www.realclearpolling.com/polls/president/democratic-primary/2028/national) nominations, and New Hampshire
 ([Republican](https://www.realclearpolling.com/polls/president/republican-primary/2028/new-hampshire),
@@ -342,13 +347,62 @@ not on the page. The three changes that were taken out for overfitting are liste
   vice president for those years.
 - The model makes one call, who wins the election. Earlier versions scored the national vote.
 
+## Weekly update, archive and tests
+
+`update.py` runs every Monday (`.github/workflows/update.yml`) and can be started by hand.
+
+1. **Fetch.** Twelve monthly and five quarterly series, the latest S&P 500 and oil prices and the 50 state indexes from
+   FRED; approval polls from VoteHub.
+2. **Check.** Each series must be a table of that series, in order, inside wide limits, with no jump or revision larger
+   than the series makes (`MONTHLY`, `QUARTERLY`, `DAILY`, `STATE_RULE` in `update.py`). A series that fails is **held
+   back**: the figures already in the repository stay, the run goes on with them, and it ends as failed so that
+   somebody looks. `--trust SERIES` accepts a held series after it has been looked at.
+3. **Run.** `run_2028.py` reads the published months and runs only the months still ahead. A key **lands** when the
+   figures it is scored on are published through June 2028: the economy keys from FRED, the six approval keys from the
+   June 2028 polls, the two state keys from the state indexes by the rule in `states.py`. The nomination keys are
+   entered in `data/outlook.json` when they are settled. A key with a missing figure stays open. It is never scored as
+   no.
+4. **Archive.** Each run that differs from the last is written to `archive/` under its own time stamp, with the
+   figures' fingerprints, the assumptions, the checks, the versions, and a list of what changed and why. Archive files
+   are opened for writing once and never again. `archive/index.json` is the list; the page shows it as "Forecast
+   history".
+5. **Build.** `make_page.py` rebuilds the page, the downloads in `docs/data/`, and `docs/keys.json`, a small feed of
+   the headline figures.
+
+The outlook (the Survey of Professional Forecasters) and the odds for the approval and nomination keys are still typed
+in by hand, in `data/outlook.json`. Between entries the latest figures are carried along the shape of the last outlook.
+
+Tests (`tests/`, run before every update): the key table against the locked copy; that a missing figure stays
+missing; the checks; the archive; and the run ahead on made-up future figures, where keys must land when June 2028 is
+published and not before, and a hole in the figures must leave a key open.
+
+On November 25, 2026 the run ahead was changed to work this way (version `2026.11b`). On the same figures it gave the
+same answer as the version of November 22, key for key. Two things then changed the numbers a little: housing starts
+and jobless claims are now held at the average of their latest months rather than at a typed-in level, and approval is
+read from polls of all adults (32% approve) rather than from an average of all polls (38%).
+
+### The run ahead, tried on the past
+
+`research.py` runs the stretch method at the same distance before each election from 1968 to 2024, on 13
+year-over-year keys, with stretches that do not overlap the months being forecast. Across 195 cases it picked the
+right side in 123 (each key's plain record: 97), but its error was barely lower (Brier 0.238 against 0.243). Chances
+from 60% to 80% held up; chances under 40% came true more often than not. So the run ahead knows which way a key
+usually goes and little more, and the page gives ranges, not decimals. Resampling the history in four-year blocks, with
+the recession share between 20% and 40%, moves the share of runs above one half between 15% and 24%.
+
+That share is not a chance of winning. In the record a party with 50% to 60% of the keys won one time in three. A
+logistic curve through the 19 elections puts the 2028 chance of winning near 8% (1% to 16%). It is research and is
+shown as such.
+
 ## Run it
 
 ```
 python states.py       # optional: prints the state measure and writes state_economy.csv
 python build.py        # scores the keys: keys_table.csv, keys_raw_values.csv
 python test.py         # the record and the checks: results.json (needs numpy)
-python run_2028.py     # optional: the run ahead for 2028, projection_2028.json (about ten seconds)
+python run_2028.py     # the run ahead for 2028, projection_2028.json (about fifteen seconds)
+python research.py     # the audit's numbers: research.json
+python update.py       # the weekly update: fetch, check, run, archive, build (--offline to skip the fetch)
 python make_page.py    # docs/index.html, from template.html (checks what the page says against results.json)
 ```
 
@@ -385,14 +439,19 @@ requests and can be put on any static host as it is.
   and the oil price, read from FRED's series pages (INDPRO, MANEMP, CES0600000008, WTISPLC).
 - `data/state_coincident_index.csv`: the Philadelphia Fed's State Coincident Indexes, read from FRED
   (series ALPHCI to WYPHCI) in November 2026: the quarter-end values for the six quarters before each
-  election from 1980 to 2024, plus June 2025 and June 2026. The last two match the copy in the Tipping
-  Point pipeline for all 50 states.
+  election from 1980 to 2024, plus June 2025 and June 2026. 
 - `data/state_index_this_term.csv`: the same indexes month by month from December 2024 to September 2026,
-  copied from the Tipping Point pipeline's cache. Used only for the reading of the current term.
+  read from FRED by `update.py` every week. Used for the reading of the current term and, once it runs through June 2028,
+  to score the two state keys.
 - `data/fred_md_2026-09.csv`: the FRED-MD monthly database, September 2026 vintage, as shared at
   https://github.com/ThevinSilva/Fred-MD. Used only by the run ahead.
-- `data/latest_monthly_2026-11.csv`, `data/quarterly_2016-2026.csv`: the latest monthly and quarterly figures,
-  read from FRED on November 22, 2026 (UNRATE, PAYEMS, MANEMP, CPIAUCSL, INDPRO, DPCERA3M086SBEA,
+- `data/approval_polls.json`: polls of presidential approval as listed by VoteHub (api.votehub.com), refreshed by `update.py`.
+  Only polls of all adults count toward the reading; campaign and party internals are left out.
+- `data/outlook.json`: the forecasters' outlook, the odds for the approval and nomination keys, and the keys already
+  settled with the reason for each. Entered by hand.
+- `archive/`: every published run. See "Weekly update, archive and tests".
+- `data/latest_monthly.csv`, `data/quarterly.csv`, `data/latest.json`: the latest monthly and quarterly figures and daily
+  prices, read from FRED by `update.py` (UNRATE, PAYEMS, MANEMP, CPIAUCSL, INDPRO, DPCERA3M086SBEA,
   CES0600000008, HOUST, UMCSENT, MCOILWTICO, SP500, ICSA; A191RL1Q225SBEA, A067RL1Q156SBEA, B230RC0Q173SBEA,
   A939RX0Q048SBEA, A229RX0Q048SBEA). Used only by the run ahead.
 - `data/congress_seats.csv`: Wikipedia, "Party divisions of United States Congresses". Senators who caucus

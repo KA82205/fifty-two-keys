@@ -196,7 +196,10 @@ def main():
         m = np.arange(len(rows)) != i; b1, b0 = np.polyfit(xs[m], ys[m], 1); left.append(float(ys[i] - (b0 + b1 * xs[i])))
     out['sure'] = {'bands': sure, 'r_vote': round(float(np.corrcoef(xs, ys)[0, 1]), 2), 'line': [round(float(icept), 2), round(float(slope), 2)],
                    'at_half': round(float(icept + slope / 2), 1), 'miss': round(float(np.mean(np.abs(left))), 1),
-                   'largest': sorted(((round(e, 1), r['year']) for e, r in zip(left, rows)), key=lambda t: -abs(t[0]))[:2]}
+                   'largest': sorted(((round(e, 1), r['year']) for e, r in zip(left, rows)), key=lambda t: -abs(t[0]))[:2],
+                   # each election's vote estimated from the line through the other eighteen, so no election helps to estimate itself
+                   'votes': [{'year': r['year'], 'est': round(float(r['y'] - e), 1), 'actual': round(float(r['y']), 1), 'miss': round(float(e), 1)} for e, r in zip(left, rows)],
+                   'rmse': round(float(np.sqrt(np.mean(np.square(left)))), 1), 'within3': int(sum(1 for e in left if abs(e) <= 3))}
     print('HOW SURE (the party in office, by its share of keys; a description of the record, not a rule):')
     for b in sure:
         print(f"  {100 * b['lo']:.0f}% to {min(100, 100 * b['hi']):.0f}%, {b['label']}: won {b['won']} of {b['n']} {b['years']}, average share of the vote {b['share']}")

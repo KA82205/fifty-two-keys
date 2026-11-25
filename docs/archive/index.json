@@ -1,0 +1,21 @@
+[
+ {
+  "as_of": "November 22, 2026",
+  "mean": 0.395,
+  "median": 0.406,
+  "p25": 0.306,
+  "p75": 0.483,
+  "above_half": 0.2,
+  "in_favor": 27,
+  "likely": 0.42,
+  "vote": 48.3,
+  "landed": [],
+  "open": 44,
+  "file": "2026-11-22T185400Z.json",
+  "made": "2026-11-22T18:54:00Z",
+  "engine": "2026.11a",
+  "changes": [
+   "The first published run. Recovered from the repository history; the time is that of the commit that published it."
+  ]
+ }
+]

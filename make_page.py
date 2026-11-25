@@ -1,7 +1,7 @@
 """Writes docs/index.html from template.html: one self-contained page (data, script and typefaces inside it)
 showing where 2028 stands, the record, every key in every election and the full key list.
 Run after build.py and test.py. The figures printed on the page are checked against results.json before writing."""
-import base64, csv, json, os, sys
+import base64, csv, json, os, shutil, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -87,21 +87,28 @@ NOMINEES = {1952: ('Stevenson', 'Eisenhower'), 1956: ('Eisenhower', 'Stevenson')
             1968: ('Humphrey', 'Nixon'), 1972: ('Nixon', 'McGovern'), 1976: ('Ford', 'Carter'), 1980: ('Carter', 'Reagan'), 1984: ('Reagan', 'Mondale'),
             1988: ('Bush', 'Dukakis'), 1992: ('Bush', 'Clinton'), 1996: ('Clinton', 'Dole'), 2000: ('Gore', 'Bush'), 2004: ('Bush', 'Kerry'),
             2008: ('McCain', 'Obama'), 2012: ('Obama', 'Romney'), 2016: ('Clinton', 'Trump'), 2020: ('Trump', 'Biden'), 2024: ('Harris', 'Trump')}
-# 2028: the party in office is Republican. What is already settled, and why.
-S2028 = {
- 'D01': (0, "Republicans will hold at most 178 House seats, against 222 after the 2022 midterm."),
- 'D02': (0, "Democrats won the House on November 3, 2026."),
- 'D03': (0, "Democrats won the Senate, 56 seats to 44."),
- 'D04': (0, "Trump won 49.8% of all votes in 2024."),
- 'D05': (0, "Republicans went from 220 House seats to at most 178."),
- 'D06': (0, "Republicans went from 53 Senate seats to 44."),
- 'E01': (0, "Trump cannot run for a third term."),
- 'E02': (1, "Republicans are in their first term back in the White House."),
-}
+# 2028: the party in office is Republican. What is already settled, and why, is kept in data/outlook.json.
+S2028 = {k: (v['value'], v['why']) for k, v in json.load(open(os.path.join(HERE, 'data', 'outlook.json')))['settled'].items()}
 WHEN = {'A': 'Scored in June 2028', 'B': 'Scored in June 2028', 'C': 'Scored in June 2028', 'E03': 'Scored in June 2028',
         'E04': 'Settled by the convention', 'E05': 'Settled once the nominees are known', 'E06': 'Settled once the nominees are known',
         'E07': 'Settled once the nominees are known'}
-BUILT = 'November 22, 2026'
+SITE = 'https://ka82205.github.io/fifty-two-keys/'
+# where each key's figures come from
+_S = {'gdp': 'Bureau of Economic Analysis, real GDP (FRED series A191RL1Q225SBEA and A939RX0Q048SBEA)', 'ip': 'Federal Reserve, industrial production (FRED INDPRO)',
+      'pce': 'Bureau of Economic Analysis, real consumer spending (FRED DPCERA3M086SBEA) and population', 'u': 'Bureau of Labor Statistics, unemployment rate (FRED UNRATE)',
+      'jobs': 'Bureau of Labor Statistics, payroll employment (FRED PAYEMS)', 'man': 'Bureau of Labor Statistics, manufacturing employment (FRED MANEMP)',
+      'claims': 'Department of Labor, initial claims for unemployment insurance (FRED ICSA)', 'inc': 'Bureau of Economic Analysis, real disposable income per person (FRED A229RX0Q048SBEA)',
+      'wage': 'Bureau of Labor Statistics, hourly earnings in goods-producing industries (FRED CES0600000008) and consumer prices (CPIAUCSL)',
+      'cpi': 'Bureau of Labor Statistics, consumer price index (FRED CPIAUCSL)', 'oil': 'West Texas Intermediate crude oil (FRED MCOILWTICO) and consumer prices',
+      'sp': 'S&P 500, monthly average of daily closes', 'spr': 'S&P 500, monthly average of daily closes, and consumer prices', 'ics': 'University of Michigan, index of consumer sentiment (FRED UMCSENT)',
+      'houst': 'Census Bureau, housing starts (FRED HOUST)', 'state': 'Federal Reserve Bank of Philadelphia, state coincident indexes',
+      'app': 'Gallup for 1952 to 2024. For 2028, polls of all adults listed by VoteHub, averaged by pollster.',
+      'seats': 'House and Senate seats by party after each election (data/congress_seats.csv)', 'vote': 'The national vote for president at the previous election',
+      'fact': 'A fact of the calendar', 'lich': "Allan Lichtman's published ratings of his own keys (data/lichtman13_wikipedia.csv)", 'nh': 'New Hampshire primary results (data/nh_primaries.csv)'}
+SOURCE = dict(zip(['A%02d' % i for i in range(1, 19)], ['gdp', 'gdp', 'ip', 'pce', 'u', 'jobs', 'man', 'claims', 'u', 'inc', 'wage', 'cpi', 'oil', 'sp', 'sp', 'ics', 'houst', 'state']))
+SOURCE.update(zip(['B%02d' % i for i in range(1, 16)], ['gdp', 'ip', 'pce', 'u', 'jobs', 'man', 'claims', 'inc', 'wage', 'cpi', 'oil', 'spr', 'ics', 'houst', 'state']))
+SOURCE.update({'C%02d' % i: 'app' for i in range(1, 7)})
+SOURCE.update(D01='seats', D02='seats', D03='seats', D04='vote', D05='seats', D06='seats', E01='fact', E02='fact', E03='lich', E04='lich', E05='nh', E06='nh', E07='nh')
 
 
 def f1(x, d=1, plus=True):
@@ -191,9 +198,12 @@ def main():
         i = k[:3]; e = res['each_key'][k]
         s = S2028.get(i)
         est = run['keys'].get(i) if run else None
-        keys.append({'id': i, 'g': i[0], 't': TEXT[i][0], 'r': TEXT[i][1], 'tag': TAG.get(i, ''), 'n': e['n'], 'true': e['true'],
+        if est and est.get('landed'):                    # its June 2028 figures are published: scored, with the figure that settled it
+            s = (int(est['p'] >= 0.5), est['note'])
+        keys.append({'id': i, 'g': i[0], 't': TEXT[i][0], 'r': TEXT[i][1], 'tag': TAG.get(i, ''), 'n': e['n'], 'true': e['true'], 'agree': e['agree'], 'src': _S[SOURCE[i]],
                      's': None if s is None else s[0], 'why': '' if s is None else s[1], 'when': WHEN.get(i, WHEN.get(i[0], '')),
-                     'est': chance(est['p']) if est else '', 'note': est['note'] if est else ''})
+                     'est': chance(est['p']) if est and s is None else '', 'note': est['note'] if est and s is None else '',
+                     'p': None if est is None or s is not None else est['p'], 'pc': est and est.get('p_calm'), 'pr': est and est.get('p_recession')})
     if run:
         assert set(run['keys']) == {k[:3] for k in ALL} - set(S2028), 'the run ahead covers exactly the open keys'
     assert all(i in TEXT for i in ids) and len(keys) == len(ALL)
@@ -206,6 +216,7 @@ def main():
     assert call['split'] == [2000, 2016], 'the page says the party in office won the most votes and lost the Electoral College in 2000 and 2016'
     assert call['said_lose']['right'] == call['said_lose']['n'], 'the page says every miss was a call to win'
     assert all(S2028[k[:3]][0] == 0 for k in GROUPS['D']), 'the page says party strength is 0 of 6'
+    BUILT = run['as_of'] if run else ''
     left = [v['year'] for v in raw if not v['nh_nominee_ran']]
     assert left == [1952, 1968, 2024] and all(y in left for y in (1952, 2024)), 'the page says the president left the race in 1952 and 2024 and the nominee had not run in the primaries'
     for r in rows:                                               # "an unpopular president", "a strong economy", in 1952 and 2024
@@ -244,14 +255,36 @@ def main():
         assert run['groups']['D']['mean'] == 0 and run['calm']['above_half'] > above
         shares = [sum(h['share'] for h in run['hist'] if round(100 * b['lo']) <= h['lo'] < round(100 * min(b['hi'], 1))) for b in sure['bands']]
         assert abs(sum(shares) - 1) < 0.01
-        payload['sure']['run'] = {'shares': [round(x, 3) for x in shares], 'vote': round(sure['line'][0] + sure['line'][1] * ix['mean'], 1)}
+        line_at = lambda v: round(sure['line'][0] + sure['line'][1] * v, 1)
+        payload['sure']['run'] = {'shares': [round(x, 3) for x in shares], 'vote': line_at(ix['mean']), 'vote_likely': line_at(run['likely']['index']),
+                                  'vote_low': line_at(ix['p25']), 'vote_high': line_at(ix['p75'])}
         payload['run'] = {'mean': ix['mean'], 'median': ix['median'], 'p25': ix['p25'], 'p75': ix['p75'], 'above': above, 'odds': odds, 'runs': f"{run['runs']:,}",
                           'hist': run['hist'], 'hmax': max(b['share'] for b in run['hist']), 'groups': run['groups'], 'likely': run['likely']['index'], 'likely_for': run['likely']['in_favor'],
                           'stretches': run['stretches']['n'], 'recession': run['recession_share'], 'n_econ': len(GROUPS['A']) + len(GROUPS['B']),
                           'take': ("To finish above one half the Republicans would need most things outside Congress to break their way at once: no recession, "
-                                   "approval rising through 2028 and a smooth nomination. With party strength at 0 of 6 and approval near 38%, a normal economy is not enough. "
+                                   f"approval rising through 2028 and a smooth nomination. With party strength at 0 of 6 and approval near {run['approval']['approve']:.0f}%, a normal economy is not enough. "
                                    f"Without a recession the chance is about {5 * round(20 * run['calm']['above_half']):d}%; with one it is close to nil.")}
     assert len(GROUPS) == 5, 'the page says five groups, and that the other four must make up for party strength'
+    rs_path = os.path.join(HERE, 'research.json')
+    rs = json.load(open(rs_path)) if os.path.exists(rs_path) else None
+    index_path = os.path.join(HERE, 'archive', 'index.json')
+    history = json.load(open(index_path)) if os.path.exists(index_path) else []
+    if run:
+        payload['run'].update(range=run.get('range'), decisive=run.get('decisive'), through=run.get('data_through'), approval=run.get('approval'), as_of=run['as_of'],
+                              calm=run['calm']['above_half'], engine=run.get('engine'))
+        payload['lab'] = {'line': sure['line'], 'bands': [[b['lo'], min(b['hi'], 1), b['label'], b['n'], b['won']] for b in sure['bands']], 'miss': sure['miss']}
+    payload['history'] = [{k: h.get(k) for k in ('made', 'as_of', 'file', 'mean', 'median', 'above_half', 'in_favor', 'likely', 'vote', 'changes', 'engine')} for h in history]
+    if rs:
+        al, en = rs['alike'], rs['engine']
+        assert al['ids'] == ids
+        payload['research'] = {
+            'matrix': al['matrix'], 'top': al['top'], 'same': al['same_always'], 'at07': al['pairs_at_07'], 'at05': al['pairs_at_05'], 'pairs': al['pairs'], 'within': al['within'],
+            'between': al['between'], 'eff': al['effective_keys'], 'clusters': al['clusters'], 'weight': al['weight'], 'answered': al['answered'],
+            'base': rs['baselines'], 'vote': rs['vote'], 'sample': rs['sample'], 'exp': {k: {'right': v['right'], 'name': v['name']} for k, v in rs['experiments'].items() if 'right' in v},
+            'curve': rs['experiments']['win_curve'], 'win': rs['experiments']['win_2028'],
+            'engine': {k: en[k] for k in ('n', 'brier', 'brier_base', 'brier_half', 'bins', 'right_side', 'base_right_side', 'elections', 'keys', 'blocks')}, 'approval': {k: v for k, v in rs['approval'].items() if k != 'moves'},
+            'regroup': res['regroupings']['right'], 'norate': nr['right'], 'halves': res['halves_call'], 'one_key': [ok['min'], ok['max']], 'since84': call['since_1984']}
+        assert payload['research']['base'][-1]['right'] == call['right'] and rs['sample']['right'] == call['right'], 'research.json is out of date: run research.py'
 
     # how the states stand so far this term (a reading, not a key)
     now, last = S.so_far(); ev = S.electoral_votes()[2028]
@@ -277,8 +310,33 @@ def main():
         html = html.replace(token, text)
     assert '{{' not in html
     html = html.replace('/*DATA*/null', json.dumps(payload, separators=(',', ':')))
-    os.makedirs(os.path.join(HERE, 'docs'), exist_ok=True)
-    open(os.path.join(HERE, 'docs', 'index.html'), 'w').write(html)
+    docs = os.path.join(HERE, 'docs')
+    os.makedirs(os.path.join(docs, 'data'), exist_ok=True)
+    open(os.path.join(docs, 'index.html'), 'w').write(html)
+    # the data and the research behind the page, to download
+    for name in ('keys_table.csv', 'keys_raw_values.csv', 'locked_keys.csv', 'locked_index.csv', 'results.json', 'research.json', 'projection_2028.json'):
+        if os.path.exists(os.path.join(HERE, name)):
+            shutil.copyfile(os.path.join(HERE, name), os.path.join(docs, 'data', name))
+    for name in ('latest_monthly.csv', 'quarterly.csv', 'outlook.json', 'approval_polls.json'):
+        shutil.copyfile(os.path.join(HERE, 'data', name), os.path.join(docs, 'data', name))
+    if os.path.isdir(os.path.join(HERE, 'archive')):
+        shutil.copytree(os.path.join(HERE, 'archive'), os.path.join(docs, 'archive'), dirs_exist_ok=True)
+    if run:                                              # a small feed of the headline figures, for anything that wants to follow the count
+        iqr = run['index']['p75'] - run['index']['p25']
+        feed = {'as_of': run['as_of'], 'party_in_office': 'R', 'keys': len(ALL), 'settled': sum(1 for k in keys if k['s'] is not None),
+                'likely': run['likely'], 'mean': run['index']['mean'], 'median': run['index']['median'], 'p25': run['index']['p25'], 'p75': run['index']['p75'],
+                'sd': round(iqr / 1.349, 3), 'above_half': run['index']['above_half'], 'above_half_range': (run.get('range') or {}).get('above_half'),
+                'vote_estimate': {'party_in_office': payload['sure']['run']['vote_likely'], 'line': sure['line'], 'typical_miss': sure['miss']},
+                'record': {'right': call['right'], 'n': call['n']}, 'engine': run.get('engine'), 'page': SITE,
+                'note': 'likely: the count if every open key lands the way it leans. above_half: the share of runs in which the count ends above one half; it is not a chance of winning.'}
+        json.dump(feed, open(os.path.join(docs, 'keys.json'), 'w'), indent=1)
+    audit = os.path.join(HERE, 'research', 'audit.md')
+    if os.path.exists(audit):
+        import markdown
+        body = markdown.markdown(open(audit).read(), extensions=['tables', 'fenced_code'])
+        page = open(os.path.join(HERE, 'research', 'page.html')).read().replace('{{BODY}}', body).replace('{{TITLE}}', title).replace('{{FONT_DISPLAY}}', b64('besley-latin-wght-normal.woff2')).replace('{{FONT_TEXT}}', b64('libre-franklin-latin-wght-normal.woff2'))
+        open(os.path.join(docs, 'audit.html'), 'w').write(page)
+        shutil.copyfile(audit, os.path.join(docs, 'data', 'audit.md'))
     print('docs/index.html', len(html), 'bytes;', len(elections), 'elections;', len(keys), 'keys')
 
 

@@ -426,14 +426,160 @@ footer a{color:var(--board-ink)}
   .links{margin-left:auto}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ================= a publication, not a dashboard: rules and space in place of boxes, no gradients, no shadows ================= */
+.run,.sub,.glist,.steps li,.panel,.define,.cols3 > div,.gridwrap,.fig{background:none;border:0;border-radius:0;box-shadow:none}
+.board{border-radius:6px;box-shadow:none;background:var(--board)}
+.gauge{border-radius:6px;background:rgba(255,255,255,.045)}
+.sec-head h2::before{width:100%;height:2px;border-radius:0;background:var(--ink);margin-bottom:22px}
+.band .sec-head h2::before{background:var(--ink)}
+.run{margin-top:56px;padding:24px 0 0;border-top:2px solid var(--ink)}
+.sub{margin:56px 0 0;padding:22px 0 0;border-top:1px solid var(--ink)}
+.sub > h3,.run > h3{font-size:1.4rem}
+.glist{margin:44px 0 0;padding:20px 0 0;border-top:1px solid var(--ink)}
+.steps{gap:28px 48px}
+.steps li{border-top:1px solid var(--ink);padding:16px 0 0}
+.steps li::before{display:block;width:auto;height:auto;border-radius:0;background:none;color:var(--brass-ink);font:800 2.1rem/1 var(--display);margin-bottom:10px}
+.define{border-left:0;padding:0;margin-top:34px;max-width:74ch}
+.panel{padding:20px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cols3{gap:28px 48px}
+.cols3 > div{padding:16px 0 0;border-top:1px solid var(--ink)}
+.gridwrap{padding:0 0 8px}
+.grow .lab{background:var(--bg,var(--paper))}
+.band .grow .lab{background:var(--band)}
+.grow.sel,.grow.sel .lab,.band .grow.sel .lab{background:var(--paper-2)}
+.figs{gap:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}
+.fig{padding:20px 24px 22px 0;margin-right:24px;border-right:1px solid var(--line)}
+.fig:last-child{border-right:0;margin-right:0}
+.fig.lead{background:none;color:inherit}
+.fig.lead strong{color:var(--brass-ink)}
+.fig.lead span{color:var(--muted)}
+.links a{border-radius:3px}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:8px;top:8px;z-index:20;background:var(--ink);color:var(--paper);padding:8px 12px;border-radius:3px}
+.scroll{overflow-x:auto}
+.sub-h{font:700 1.05rem/1.3 var(--display);margin:34px 0 6px}
+.cmp tr.us td{font-weight:600}
+.cmp .yrs{color:var(--muted);font-size:.92rem}
+.cmp td small{display:block;font:400 .8rem var(--text);color:var(--muted);margin-top:2px}
+.cmp td small.in{display:inline;margin-left:6px}
+.cmp tr.next td{background:var(--paper-2)}
+.cmp tr.next td:first-child{padding-left:10px}
+.cmp tr.next td:last-child{padding-right:10px}
+.votes-t td.v,.cal-t td.v,.hist-t td.v,.kd-t td{font:500 .96rem var(--text);font-variant-numeric:tabular-nums}
+.votes-t td.big{color:var(--miss);font-weight:700}
+.votes-t,.cal-t{max-width:820px}
+.cal-t{max-width:460px}
+.hist-t{min-width:760px}
+.hist-t td.why{font-size:.92rem;min-width:300px;max-width:440px;white-space:normal}
+.hist-t td.why span{display:block;margin-bottom:5px}
+.hist-t td a{font-weight:600}
+
+/* the keys that travel with the result */
+.dk{margin-top:30px;padding-top:18px;border-top:1px solid var(--line)}
+.dk h4{font:700 1.05rem var(--display);margin:0 0 6px}
+.dk .note{max-width:74ch;margin:0 0 16px}
+.dk-row,.dk-axis{display:grid;grid-template-columns:minmax(0,340px) minmax(120px,1fr) 190px;gap:8px 18px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.dk-axis{border-bottom:0;padding:0 0 2px}
+.dk-scale{position:relative;height:16px;font-size:.76rem;color:var(--muted)}
+.dk-scale i{position:absolute;top:0;font-style:normal;transform:translateX(-50%);white-space:nowrap}
+.dk-scale i:first-child{transform:none}
+.dk-scale i:last-child{transform:translateX(-100%)}
+.dk-name b{font-family:var(--display);margin-right:4px}
+.dk-track{position:relative;height:18px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.dk-track i{position:absolute;top:50%}
+.dk-all{top:0 !important;bottom:0;width:1px;background:var(--muted);opacity:.55}
+.dk-line{height:2px;margin-top:-1px;background:var(--ink)}
+.dk-no,.dk-yes{width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;box-sizing:border-box;border:2px solid var(--ink);background:var(--paper)}
+.band .dk-no{background:var(--band)}
+.dk-yes{background:var(--brass-ink);border-color:var(--brass-ink)}
+.dk-val{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+
+/* scenario lab */
+.pre{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.pre button{font:500 .93rem var(--text);color:var(--ink);background:none;border:1px solid var(--ink);border-radius:3px;padding:8px 13px;cursor:pointer}
+.pre button:hover{background:var(--paper-2)}
+.pre button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.pre button:focus-visible,.unlock input:focus-visible{outline:2px solid var(--brass-ink);outline-offset:2px}
+.lab-board{margin-top:0}
+.lab-board .board-main{grid-template-columns:minmax(0,1fr) 330px}
+.lab-board .kk.lock{opacity:.5;cursor:default}
+.lab-board .kk.lock::before{display:none}
+.lab-out{align-self:stretch;padding:4px 0 4px 28px;border-left:1px solid var(--rail);font-size:.96rem}
+.lab-out p{max-width:none;margin:0 0 12px}
+.lab-call{font:800 2.2rem/1.05 var(--display);color:var(--brass);margin-bottom:8px !important}
+.lab-num b{font-family:var(--display);font-size:1.15rem}
+.lab-out .gbars{margin:16px 0;font-size:.86rem}
+.lab-out .gb{grid-template-columns:104px 1fr 58px}
+.lab-out .gb .track{background:var(--rail)}
+.lab-out .gb .track i{background:var(--brass)}
+.lab-out .gb span:last-child{color:var(--board-muted)}
+.lab-vote,.lab-key{color:var(--board-muted)}
+.lab-vote b,.lab-key b{color:var(--board-ink)}
+.lab-key{min-height:4.4em;margin-top:14px !important;padding-top:12px;border-top:1px solid var(--rail)}
+.unlock{display:inline-flex;align-items:center;gap:8px;margin-left:auto;color:var(--board-ink);cursor:pointer}
+.unlock input{width:16px;height:16px;accent-color:var(--brass)}
+
+/* a key's research panel */
+.key .kd{grid-column:2 / -1;margin-top:6px;font-size:.93rem}
+.kd summary{cursor:pointer;color:var(--muted);width:max-content;max-width:100%;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.kd summary:hover{color:var(--ink)}
+.kd[open] summary{color:var(--ink);margin-bottom:10px}
+.kd p{max-width:74ch;margin:0 0 8px}
+.kd-t{max-width:780px;margin:6px 0 12px;font-size:.9rem}
+.kd-t th,.kd-t td{padding:6px 14px 6px 0}
+
+/* how alike the keys are */
+.heat-wrap{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:24px 44px;align-items:start;margin-top:18px}
+.heat svg{display:block;width:100%;height:auto}
+.heat rect{cursor:crosshair}
+.heat rect:hover{stroke:var(--brass-ink);stroke-width:1.5}
+.heat .hl{font:700 11px var(--display);fill:var(--muted)}
+.heat .hg{stroke:var(--ink);stroke-width:1}
+.heat-read{min-height:7.5em;margin:0 0 14px;font-size:.95rem;max-width:none}
+.heat-key{display:flex;align-items:center;gap:10px;font-size:.8rem;color:var(--muted)}
+.heat-key i{flex:1;max-width:220px;height:10px;background:linear-gradient(90deg,#a3301d,#f5f6f1 50%,#1f3d31)}
+.same{list-style:none;margin:0;padding:0;font-size:.92rem}
+.same li{padding:8px 0;border-bottom:1px solid var(--line)}
+.same li i{color:var(--muted)}
+.same small{color:var(--muted);white-space:nowrap;margin-left:6px}
+.dl{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 44px;max-width:none}
+.dl li{padding:10px 0;border-bottom:1px solid var(--line);max-width:none}
+.dl a{font-weight:600}
+.dl span{display:block;color:var(--muted);font-size:.9rem}
+@media (max-width:900px){
+  .lab-board .board-main,.heat-wrap{grid-template-columns:1fr}
+  .lab-out{border-left:0;padding-left:0;border-top:1px solid var(--rail);padding-top:16px}
+  .dk-row,.dk-axis{grid-template-columns:1fr 1fr}
+  .dk-name{grid-column:1 / -1}
+  .dk-axis span:first-child{display:none}
+  .dk-axis .dk-scale{grid-column:1}
+  .figs{grid-template-columns:1fr 1fr}
+  .fig{margin-right:0;padding-right:16px}
+  .fig:nth-child(2n){border-right:0}
+  .fig:nth-child(n+3){border-top:1px solid var(--line)}
+  .unlock{margin-left:0}
+}
+@media (max-width:560px){
+  .key .kd{grid-column:1 / -1}
+  .dk-val{text-align:left}
+}
+
+.lab-board .rail{grid-template-columns:150px 1fr}
+.cmp td.v + td:not(.v),.cmp th.v + th:not(.v){padding-left:32px}
+.hist-t td:first-child{white-space:nowrap}
+.heat-key i{background:linear-gradient(90deg,var(--miss),var(--band) 50%,var(--board))}
+@media (prefers-color-scheme:dark){.heat-key i{background:linear-gradient(90deg,#e27860,var(--band) 50%,#96cdaf)}}
+@media (min-width:761px){.key .hist,.key .now{grid-row:1 / span 2}.key .kd{grid-column:2;grid-row:2;margin-top:8px}}
+@media (max-width:760px){.key .kd{grid-column:2}.lab-board .rail{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d31"/><path d="M32.00 8.80L32.00 4.40M34.80 8.97L35.33 4.60M37.55 9.47L38.61 5.20M40.23 10.31L41.79 6.19M42.78 11.46L44.83 7.56M45.18 12.91L47.68 9.29M47.38 14.63L50.30 11.34M49.37 16.62L52.66 13.70M51.09 18.82L54.71 16.32M52.54 21.22L56.44 19.17M53.69 23.77L57.81 22.21M54.53 26.45L58.80 25.39M55.03 29.20L59.40 28.67M55.20 32.00L59.60 32.00M55.03 34.80L59.40 35.33M54.53 37.55L58.80 38.61M53.69 40.23L57.81 41.79M52.54 42.78L56.44 44.83M51.09 45.18L54.71 47.68M49.37 47.38L52.66 50.30M47.38 49.37L50.30 52.66M45.18 51.09L47.68 54.71M42.78 52.54L44.83 56.44M40.23 53.69L41.79 57.81M37.55 54.53L38.61 58.80M34.80 55.03L35.33 59.40M32.00 55.20L32.00 59.60M29.20 55.03L28.67 59.40M26.45 54.53L25.39 58.80M23.77 53.69L22.21 57.81M21.22 52.54L19.17 56.44M18.82 51.09L16.32 54.71M16.62 49.37L13.70 52.66M14.63 47.38L11.34 50.30M12.91 45.18L9.29 47.68M11.46 42.78L7.56 44.83M10.31 40.23L6.19 41.79M9.47 37.55L5.20 38.61M8.97 34.80L4.60 35.33M8.80 32.00L4.40 32.00M8.97 29.20L4.60 28.67M9.47 26.45L5.20 25.39M10.31 23.77L6.19 22.21M11.46 21.22L7.56 19.17M12.91 18.82L9.29 16.32M14.63 16.62L11.34 13.70M16.62 14.63L13.70 11.34M18.82 12.91L16.32 9.29M21.22 11.46L19.17 7.56M23.77 10.31L22.21 6.19M26.45 9.47L25.39 5.20M29.20 8.97L28.67 4.60" stroke="#d2aa45" stroke-width="1.5" stroke-linecap="round" fill="none"/><path transform="translate(24 14) scale(.8)" fill="#d2aa45" fill-rule="evenodd" d="M8 19.26A8.5 8.5 0 1 1 12 19.26V30H16.5V33.5H12V36H15V39H12V41A2 2 0 0 1 8 41ZM10 5.2A2.8 2.8 0 1 0 10 10.8A2.8 2.8 0 1 0 10 5.2Z"/></symbol><symbol id="key" viewBox="0 0 20 44"><path fill-rule="evenodd" d="M8 19.26A8.5 8.5 0 1 1 12 19.26V30H16.5V33.5H12V36H15V39H12V41A2 2 0 0 1 8 41ZM10 5.2A2.8 2.8 0 1 0 10 10.8A2.8 2.8 0 1 0 10 5.2Z"/></symbol></svg>
 
 <nav class="top" aria-label="Sections"><div class="wrap top-in">
-  <a class="mark" href="#top"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>{{TITLE}}</span></a>
-  <div class="links"><a href="#now">2028</a><a href="#run">Run ahead</a><a href="#how">How it works</a><a href="#record">Track record</a><a href="#history">Every election</a><a href="#keys">The keys</a><a href="#notes">Fine print</a></div>
+  <a class="skip" href="#now">Skip to the 2028 count</a><a class="mark" href="#top"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>{{TITLE}}</span></a>
+  <div class="links"><a href="#now">2028</a><a href="#lab">Scenario lab</a><a href="#archive">Forecast history</a><a href="#record">Track record</a><a href="#history">Every election</a><a href="#keys">The keys</a><a href="#research">Research</a><a href="#notes">Fine print</a></div>
 </div></nav>
 
 <div class="wrap">
@@ -443,7 +589,7 @@ footer a{color:var(--board-ink)}
   <h1>{{TITLE}}</h1>
   <p class="lede">{{Count}} yes-or-no questions about the party that holds the White House. A fixed rule answers each one from public data. When more than half of them go that party's way, the keys say it wins the election.</p>
   <p class="credit">Inspired by <a href="https://en.wikipedia.org/wiki/The_Keys_to_the_White_House">Allan Lichtman's 13 Keys to the White House</a>.</p>
-  <p class="note">Working version of {{DATE}}. The key list is not frozen yet.</p>
+  <p class="note">Updated {{DATE}}, and rerun every week on the latest figures. The key list is not frozen yet.</p>
   </div>
   <div class="emblem" id="emblem" aria-hidden="true"></div>
   </div>
@@ -497,8 +643,45 @@ footer a{color:var(--board-ink)}
       </div>
     </div>
     <p id="run-sure" style="max-width:74ch;margin:6px 0 14px"></p>
+    <p id="run-not" style="max-width:74ch;margin:6px 0 14px"></p>
+    <div class="dk">
+      <h4>The keys that travel with the result</h4>
+      <p class="note">Each row splits the runs by how one key lands: the share that end above one half when the key is no (open dot) and when it is yes (filled dot). Keys move together, so a row shows what a key signals, not what turning it alone would do. For that, use the scenario lab.</p>
+      <div id="decisive"></div>
+    </div>
+    <p class="note" id="run-through" style="margin-top:14px"></p>
     <p class="note" style="margin-top:6px">The chance for each open key is shown on the key board above and in the list of keys below. Sources and method are in the fine print.</p>
   </div>
+</section>
+
+<section id="lab" class="band">
+  <div class="sec-head">
+    <h2>Scenario lab</h2>
+    <p>Set the open keys yourself and read what the count would say. The model's own rule is applied, nothing else: five groups, each counting the same, and a call at one half. The keys already settled are locked.</p>
+  </div>
+  <div class="pre" id="lab-pre" role="group" aria-label="Start from a scenario"></div>
+  <div class="board lab-board">
+    <div class="board-main">
+      <div id="lab-rack"></div>
+      <div class="lab-out" id="lab-out" aria-live="polite"></div>
+    </div>
+    <div class="legend">
+      <span><i class="kk t"><svg viewBox="0 0 20 44" aria-hidden="true"><use href="#key"/></svg></i>Yes</span>
+      <span><i class="kk f"><svg viewBox="0 0 20 44" aria-hidden="true"><use href="#key"/></svg></i>No</span>
+      <span><i class="kk t lock"><svg viewBox="0 0 20 44" aria-hidden="true"><use href="#key"/></svg></i>Settled, locked</span>
+      <label class="unlock"><input type="checkbox" id="lab-unlock"> Unlock the settled keys</label>
+    </div>
+  </div>
+  <p class="note" style="margin-top:14px;max-width:74ch">The lab says what a set of answers adds up to. It does not say how likely that set is; the run ahead does. The scenarios take each key the way it went in most runs of that kind, so "a recession" is the typical recession run, not the worst one. A rough nomination season means a contested Republican nomination and a lost or weak New Hampshire primary.</p>
+</section>
+
+<section id="archive">
+  <div class="sec-head">
+    <h2>Forecast history</h2>
+    <p>Every run is kept as it was published, with the figures, assumptions and versions behind it. Nothing in the archive is rewritten. The newest run is first.</p>
+  </div>
+  <div class="scroll"><table class="cmp hist-t" id="hist"></table></div>
+  <p class="note" style="margin-top:12px;max-width:74ch" id="hist-note"></p>
 </section>
 
 <section id="how" class="band">
@@ -517,6 +700,16 @@ footer a{color:var(--board-ink)}
     <p>The keys make one call per election: the party in office wins, or it loses. This is how that call would have done in the <span id="n-el"></span> elections from 1952 to 2024.</p>
   </div>
   <div class="figs" id="headline"></div>
+
+  <div class="sub" id="bear">
+    <h3>How much weight the record can bear</h3>
+    <p>Fifteen of 19 is the record of the model as built. These checks say how far to trust it.</p>
+    <div class="scroll"><table class="cmp" id="base"></table></div>
+    <p class="body-p" id="bear-1"></p>
+    <p class="body-p" style="margin-top:10px" id="bear-2"></p>
+    <p class="body-p" style="margin-top:10px" id="bear-3"></p>
+    <p class="note" style="margin-top:12px;max-width:74ch">All of this comes from the <a href="audit.html">methodology audit</a>, which also lists the changes it proposes. None has been made: the model on this page is the locked one.</p>
+  </div>
 
   <div class="sub">
     <h3>Every election, ranked by the share of keys in favor</h3>
@@ -541,6 +734,9 @@ footer a{color:var(--board-ink)}
     <div class="sc" id="sc"></div>
     <p class="body-p" id="sure-ec"></p>
     <p class="body-p" style="margin-top:10px" id="sure-pv"></p>
+    <h4 class="sub-h">The vote the count implies, election by election</h4>
+    <p class="note" style="max-width:74ch">Each election's share is estimated from a line fitted to the other 18, so no election helps to estimate itself. Shares are of the two-party vote, for the party in office.</p>
+    <div class="scroll"><table class="cmp votes-t" id="votes"></table></div>
     <p class="note" style="margin-top:12px;max-width:74ch">The ranges in the ranking above are every ten points, round numbers that were not tuned. They describe the record and change nothing in the model: the call is still made at one half.</p>
   </div>
 
@@ -583,7 +779,39 @@ footer a{color:var(--board-ink)}
   <div id="list"></div>
 </section>
 
-<section id="notes" class="band">
+<section id="research" class="band">
+  <div class="sec-head">
+    <h2>Research</h2>
+    <p>Work on the model itself. None of it changes the 52 keys or the rule: it is here so the model can be judged. The full write-up is the <a href="audit.html">methodology audit</a>.</p>
+  </div>
+  <div class="sub">
+    <h3>How alike the keys are</h3>
+    <p id="alike-lede"></p>
+    <div class="heat-wrap">
+      <div class="heat" id="heat"></div>
+      <div class="heat-side">
+        <p class="heat-read" id="heat-read" aria-live="polite">Point at a square, or tap it, to read the two keys and how often they agreed.</p>
+        <div class="heat-key"><span>Opposite</span><i></i><span>Alike</span></div>
+        <h4 class="sub-h">Keys that have never disagreed</h4>
+        <ul class="same" id="same"></ul>
+      </div>
+    </div>
+    <p class="body-p" id="alike-1"></p>
+  </div>
+  <div class="sub">
+    <h3>The run ahead, tried on the past</h3>
+    <p id="eng-lede"></p>
+    <div class="scroll"><table class="cmp cal-t" id="cal"></table></div>
+    <p class="body-p" id="eng-1"></p>
+  </div>
+  <div class="sub">
+    <h3>Data and documents</h3>
+    <p>Everything behind this page can be downloaded and rerun.</p>
+    <ul class="dl" id="dl"></ul>
+  </div>
+</section>
+
+<section id="notes">
   <div class="sec-head"><h2>The fine print</h2></div>
   <div class="cols3">
     <div>
@@ -615,7 +843,7 @@ footer a{color:var(--board-ink)}
         <li><b>The figures are today's revised ones,</b> not the first estimates published before each election.</li>
         <li><b>The two state keys begin in 1980 and 1984.</b> The state indexes start in 1979, so earlier elections are scored without them.</li>
         <li><b>Left out on purpose:</b> head-to-head polls, and anything that needs a judgment call.</li>
-        <li><b>The run ahead is an estimate, not part of the model.</b> The economy keys are run by laying {{RUN_STRETCHES}} past stretches of 20 months over today's forecasts, with a recession in {{RUN_REC}}% of runs. The approval and nomination keys use odds set from polls and from the {{N_EL}} elections here, which is judgment. Sources: the Philadelphia Fed's Survey of Professional Forecasters and the Federal Reserve's projections (growth, jobs, unemployment, prices), the Energy Information Administration and futures prices (oil), FRED and the Bureau of Economic Analysis (latest figures), the University of Michigan (sentiment) and RealClearPolitics averages (approval and primaries).</li>
+        <li><b>The run ahead is an estimate, not part of the model.</b> The economy keys are run by laying {{RUN_STRETCHES}} past stretches of 20 months over today's forecasts, with a recession in {{RUN_REC}}% of runs. The approval and nomination keys use odds set from polls and from the {{N_EL}} elections here, which is judgment. Sources: the Philadelphia Fed's Survey of Professional Forecasters and the Federal Reserve's projections (growth, jobs, unemployment, prices), the Energy Information Administration and futures prices (oil), FRED and the Bureau of Economic Analysis (latest figures, read automatically every week and checked before use), the University of Michigan (sentiment), VoteHub's listing of polls of all adults (approval, averaged by pollster) and RealClearPolitics averages (the primaries). The outlook and the odds are entered by hand and listed in the downloads; every run is kept in the forecast history.</li>
       </ul>
     </div>
   </div>
@@ -642,6 +870,7 @@ const DATA = /*DATA*/null;
   const KEY = '<svg viewBox="0 0 20 44" aria-hidden="true"><use href="#key"/></svg>';
   const party = p => p === 'D' ? 'Democrats' : 'Republicans';
   const cls = s => s === 'T' ? 't' : s === '.' ? 'f' : 'n';
+  const SUREV = DATA.sure && DATA.sure.votes;
 
   // moves focus between siblings that share a selector, with the arrow keys
   function rove(root, sel, move) {
@@ -782,7 +1011,7 @@ const DATA = /*DATA*/null;
     const now = Rn ? S.bands.find(b => Rn.likely >= b.lo && Rn.likely < b.hi) : null, wins = Rn && Rn.likely > 0.5;
     $('gauge').innerHTML = (Rn ? '<div class="gz-head"><div><span class="gz-kick">The 2028 prediction, as things stand</span><strong>' + now.label.charAt(0).toUpperCase() + now.label.slice(1) + '</strong></div><p>The keys say the Republicans <b>' + (wins ? 'win' : 'lose') +
       '</b> the 2028 election. If every open key lands the way it leans, ' + Rn.likely_for + ' of ' + K.length + ' go their way, which scores <b>' + pc(Rn.likely) + '</b> group by group. Parties in office in that range have ' +
-      (now.won === 0 ? 'lost all ' + word(now.n) + ' times' : now.won === now.n ? 'won all ' + word(now.n) + ' times' : 'won ' + word(now.won) + ' times in ' + word(now.n)) + ' since ' + E[0].y + '.</p><div class="gz-odds"><strong>' + pc(Rn.above) + '</strong><span>chance the keys end up saying the Republicans win: the share of ' + Rn.runs + ' runs that finish above one half.' + '</span></div></div>' : '') +
+      (now.won === 0 ? 'lost all ' + word(now.n) + ' times' : now.won === now.n ? 'won all ' + word(now.n) + ' times' : 'won ' + word(now.won) + ' times in ' + word(now.n)) + ' since ' + E[0].y + '.</p><div class="gz-odds"><strong>' + pc(Rn.above) + '</strong><span>of ' + Rn.runs + ' runs end with the count above one half' + (Rn.range ? ' (' + pc(Rn.range.above_half[0]) + ' to ' + pc(Rn.range.above_half[1]) + ' on other draws of history)' : '') + '. That is the keys calling a Republican win. It is not the chance of one.' + '</span></div></div>' : '') +
       '<div class="gz-plot"><div class="gz-dots">' + dots + (Rn ? '<div class="gz-now" style="left:' + (100 * Rn.likely).toFixed(1) + '%"><span>2028</span></div>' : '') +
       '</div><div class="gz-track">' + segs + (Rn ? '<div class="gz-iqr" style="left:' + (100 * Rn.p25).toFixed(1) + '%;width:' + (100 * (Rn.p75 - Rn.p25)).toFixed(1) + '%"></div>' : '') + '</div><div class="gz-edges">' + edges + '</div><div class="gz-labs">' + labs + '</div></div><ul class="gz-list">' + list + '</ul>' +
       '<p class="gz-cap"><span><i class="gz-d won"></i>An election the party in office won</span><span><i class="gz-d"></i>One it lost</span>' + (Rn ? '<span><i class="gz-bar"></i>Half of the ' + Rn.runs + ' runs of 2028 end here</span>' : '') + '</p>';
@@ -870,10 +1099,157 @@ const DATA = /*DATA*/null;
       const strip = E.map(e => '<i class="' + cls(e.k[c]) + '" title="' + e.y + ': ' + (e.k[c] === 'T' ? 'yes' : e.k[c] === '.' ? 'no' : 'no data') + '"></i>').join('');
       const now = k.s === null ? '<b>Open</b>' + esc(k.when) + (k.est ? '<span class="est"><b>Run ahead: ' + esc(k.est) + '.</b> ' + esc(k.note) + '</span>' : '') : '<b><i class="sq ' + (k.s ? 't' : 'f') + '"></i>' + (k.s ? 'Yes' : 'No') + '</b>' + esc(k.why);
       s += '<div class="key"><span class="id">' + k.id + '</span><span><span class="q">' + esc(k.t) + '</span><span class="rule">' + esc(k.r) + '</span>' + (k.tag ? '<span class="tag">' + esc(k.tag) + '</span>' : '') +
-        '</span><span class="hist"><span class="strip" role="img" aria-label="Yes in ' + k.true + ' of ' + k.n + ' elections">' + strip + '</span>Yes in ' + k.true + ' of ' + k.n + '</span><span class="now">' + now + '</span></div>';
+        '</span><span class="hist"><span class="strip" role="img" aria-label="Yes in ' + k.true + ' of ' + k.n + ' elections">' + strip + '</span>Yes in ' + k.true + ' of ' + k.n + '</span><span class="now">' + now + '</span>' +
+        '<details class="kd" data-c="' + c + '"><summary>Record, figures and source</summary><div></div></details></div>';
     });
     listEl.insertAdjacentHTML('beforeend', s + '</div>');
   });
+  // a key's panel is built when it is first opened
+  listEl.addEventListener('toggle', ev => {
+    const d = ev.target; if (!d.classList || !d.classList.contains('kd') || !d.open || d.dataset.done) return;
+    d.dataset.done = 1;
+    const c = +d.dataset.c, k = K[c], had = E.filter(e => e.k[c] !== '?');
+    const yesWon = had.filter(e => e.k[c] === 'T' && e.w).length, yes = had.filter(e => e.k[c] === 'T').length, noLost = had.filter(e => e.k[c] === '.' && !e.w).length, no = had.length - yes;
+    let h = '<p><b>Source.</b> ' + esc(k.src) + '.</p><p><b>On its own.</b> ' + (yes ? 'When the answer was yes the party in office won ' + yesWon + ' of ' + yes + ' times' : 'The answer was never yes') +
+      (no ? '; when it was no the party lost ' + noLost + ' of ' + no : '') + '. Its answer matched the result in ' + (yesWon + noLost) + ' of ' + had.length + ' elections.' +
+      (E.length > had.length ? ' No figures for ' + list(E.filter(e => e.k[c] === '?').map(e => String(e.y))) + ', so the key is left out of those counts.' : '') +
+      (DATA.research ? ' Weight in the count: ' + (100 * DATA.research.weight[k.id]).toFixed(1) + '%.' : '') + '</p>';
+    h += '<div class="scroll"><table class="cmp kd-t"><thead><tr><th scope="col">Election</th><th scope="col">Answer</th><th scope="col">The figure</th><th scope="col">Party in office</th></tr></thead><tbody>' +
+      E.map(e => '<tr><td>' + e.y + '</td><td>' + (e.k[c] === 'T' ? 'Yes' : e.k[c] === '.' ? 'No' : 'No figures') + '</td><td>' + esc(e.d[c] || '') + '</td><td>' + (e.w ? 'won' : 'lost') + '</td></tr>').join('') +
+      '<tr class="next"><td>2028</td><td>' + (k.s === null ? 'Open' : k.s ? 'Yes' : 'No') + '</td><td>' + esc(k.s === null ? (k.est ? cap(k.est) + '. ' + k.note : k.when) : k.why) + '</td><td></td></tr></tbody></table></div>';
+    d.lastElementChild.innerHTML = h;
+  }, true);
+
+  // ================================================================ the run ahead: a share of runs, and the keys that travel with it
+  const RS = DATA.research, pct = x => Math.round(100 * x) + '%';
+  if (RUN && RUN.range) {
+    $('run-not').innerHTML = '<b>A share of runs, not a chance of winning.</b> In ' + pct(RUN.above) + ' of runs the count ends above one half. Drawing the history behind the runs differently moves that between ' +
+      pct(RUN.range.above_half[0]) + ' and ' + pct(RUN.range.above_half[1]) + ', so read it as about one in five. It describes the count, not the election.' +
+      (RS ? ' In the record a count just above one half has not meant even odds: parties between 50% and 60% won one time in three. A rough calibration on the ' + R.n + ' elections puts the chance of winning itself near ' +
+        pct(RS.win.chance) + ', somewhere between ' + pct(RS.win.range[0]) + ' and ' + pct(RS.win.range[1]) + '. That figure is research, not part of the model; the <a href="audit.html">audit</a> explains it.' : '');
+    const dk = (RUN.decisive || []).filter(d => d.p >= 0.1 && d.p <= 0.9).sort((a, b) => (b.if_yes - b.if_no) - (a.if_yes - a.if_no)).slice(0, 10);
+    const top = Math.ceil(Math.max(...dk.map(d => d.if_yes), 0.3) * 10) / 10, X = v => (100 * v / top).toFixed(1) + '%';
+    $('decisive').innerHTML = '<div class="dk-axis"><span></span><span class="dk-scale"><i style="left:0">0%</i><i style="left:' + X(RUN.above) + '" class="all">all runs ' + pct(RUN.above) + '</i><i style="left:100%">' + pct(top) + '</i></span></div>' +
+      dk.map(d => { const k = K.find(x => x.id === d.id);
+        return '<div class="dk-row"><span class="dk-name"><b>' + d.id + '</b> ' + esc(k.t) + '</span><span class="dk-track" role="img" aria-label="' + pct(d.if_no) + ' of runs end above one half when this key is no, ' + pct(d.if_yes) + ' when it is yes">' +
+          '<i class="dk-all" style="left:' + X(RUN.above) + '"></i><i class="dk-line" style="left:' + X(Math.min(d.if_no, d.if_yes)) + ';width:' + X(Math.abs(d.if_yes - d.if_no)) + '"></i><i class="dk-no" style="left:' + X(d.if_no) + '"></i><i class="dk-yes" style="left:' + X(d.if_yes) + '"></i></span>' +
+          '<span class="dk-val">' + pct(d.if_no) + ' if no, ' + pct(d.if_yes) + ' if yes</span></div>'; }).join('');
+    const th = RUN.through || {};
+    $('run-through').textContent = 'Figures in this run: monthly through ' + th.monthly + ', quarterly through ' + th.quarterly + ', prices to ' + new Date(th.prices + 'T12:00:00').toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) + '. Approval: ' + RUN.approval.approve.toFixed(0) + '% approve and ' +
+      RUN.approval.disapprove.toFixed(0) + '% disapprove among all adults, from ' + RUN.approval.polls + ' polls by ' + RUN.approval.pollsters + ' pollsters in the past month.';
+  }
+
+  // ================================================================ scenario lab
+  (function () {
+    const LB = DATA.lab; if (!LB) return;
+    const lean = k => k.s !== null ? k.s === 1 : k.p >= 0.5;
+    const PRE = [['lean', 'As each key leans', lean], ['calm', 'No recession', k => k.pc >= 0.5], ['rec', 'A recession', k => k.pr >= 0.5],
+      ['appr', 'Approval turns up', k => /^C0[345]$/.test(k.id) || lean(k)], ['nom', 'A rough nomination season', k => !/^E0[4567]$/.test(k.id) && lean(k)],
+      ['yes', 'Every open key yes', () => true], ['no', 'Every open key no', () => false]];
+    const rackEl = $('lab-rack'), out = $('lab-out'), pre = $('lab-pre');
+    let unlocked = false, cur = 'lean', seen = null;
+    const sel = K.map(k => lean(k) ? 1 : 0);
+    pre.innerHTML = PRE.map(p => '<button type="button" data-p="' + p[0] + '">' + p[1] + '</button>').join('');
+    let h = '', i = 0;
+    G.forEach(g => { h += '<div class="rail"><div class="rail-name"><b>' + esc(g.name) + '</b><span data-g="' + g.id + '"></span></div><div class="hooks">';
+      byG(g.id).forEach(() => { h += '<button type="button" class="kk" data-i="' + i + '">' + KEY + '</button>'; i++; }); h += '</div></div>'; });
+    rackEl.innerHTML = h;
+    const btn = [...rackEl.querySelectorAll('.kk')];
+    function draw() {
+      let idx = 0, tot = 0, bars = '';
+      G.forEach(g => { const ks = K.map((k, j) => [k, j]).filter(x => x[0].g === g.id), t = ks.filter(x => sel[x[1]]).length; idx += t / ks.length / G.length; tot += t;
+        rackEl.querySelector('[data-g="' + g.id + '"]').textContent = t + ' of ' + ks.length + ' yes';
+        bars += '<div class="gb"><span>' + esc(g.name === 'Incumbency and nominations' ? 'Incumbency' : g.name) + '</span><span class="track"><i style="width:' + (100 * t / ks.length).toFixed(1) + '%"></i></span><span>' + t + ' of ' + ks.length + '</span></div>'; });
+      btn.forEach((b, j) => { const k = K[j], locked = k.s !== null && !unlocked;
+        b.className = 'kk ' + (sel[j] ? 't' : 'f') + (locked ? ' lock' : '') + (seen === j ? ' on' : ''); b.setAttribute('aria-pressed', sel[j] ? 'true' : 'false'); b.setAttribute('aria-disabled', locked ? 'true' : 'false');
+        b.setAttribute('aria-label', k.id + ': ' + k.t + '. ' + (sel[j] ? 'Yes' : 'No') + (locked ? ', settled.' : '. Press to change.')); });
+      [...pre.children].forEach(b => b.setAttribute('aria-pressed', b.dataset.p === cur ? 'true' : 'false'));
+      const band = LB.bands.find(b => idx >= b[0] && idx < b[1]) || LB.bands[LB.bands.length - 1], win = idx > 0.5, vote = LB.line[0] + LB.line[1] * idx;
+      const was = band[4] === 0 ? 'lost all ' + word(band[3]) + ' times' : band[4] === band[3] ? 'won all ' + word(band[3]) + ' times' : 'won ' + word(band[4]) + ' of ' + word(band[3]) + ' times';
+      const k = seen === null ? null : K[seen];
+      out.innerHTML = '<p class="lab-call">' + esc(cap(band[2])) + '</p><p class="lab-num"><b>' + (100 * idx).toFixed(1) + '%</b> of the keys, group by group. ' + tot + ' of ' + K.length + (tot === 1 ? ' is' : ' are') + ' yes.</p>' +
+        '<p>The keys would say the Republicans <b>' + (win ? 'win' : 'lose') + '</b>. Parties in office in this range have ' + was + ' since ' + E[0].y + '.</p>' +
+        '<div class="gbars">' + bars + '</div><p class="lab-vote">The count lines up with about <b>' + vote.toFixed(1) + '%</b> of the two-party vote for the Republicans, give or take ' + LB.miss.toFixed(1) + ' points.</p>' +
+        '<p class="lab-key">' + (k ? '<b>' + k.id + '</b> ' + esc(k.t) + '? ' + (k.s !== null ? 'Settled: ' + (k.s ? 'yes' : 'no') + '. ' + esc(k.why) : 'Run ahead: ' + esc(k.est) + '.') : 'Point at a key to read it. Click or press Enter to turn it.') + '</p>';
+    }
+    function setPre(id) { const f = PRE.find(p => p[0] === id)[2]; K.forEach((k, j) => { sel[j] = k.s !== null && !unlocked ? k.s : (k.s !== null ? (id === 'yes' ? 1 : id === 'no' ? 0 : k.s) : (f(k) ? 1 : 0)); }); cur = id; draw(); }
+    pre.addEventListener('click', ev => { const b = ev.target.closest('button'); if (b) setPre(b.dataset.p); });
+    rackEl.addEventListener('click', ev => { const b = ev.target.closest('.kk'); if (!b) return; const j = +b.dataset.i; seen = j;
+      if (K[j].s === null || unlocked) { sel[j] = sel[j] ? 0 : 1; cur = ''; } draw(); btn[j].focus(); });
+    const look = ev => { const b = ev.target.closest('.kk'); if (b && seen !== +b.dataset.i) { seen = +b.dataset.i; draw(); } };
+    rackEl.addEventListener('mouseover', look); rackEl.addEventListener('focusin', look);
+    rove(rackEl, '.kk', (t, key) => { const j = +t.dataset.i; return key === 'ArrowRight' || key === 'ArrowDown' ? btn[j + 1] : key === 'ArrowLeft' || key === 'ArrowUp' ? btn[j - 1] : null; });
+    $('lab-unlock').addEventListener('change', ev => { unlocked = ev.target.checked; if (!unlocked) K.forEach((k, j) => { if (k.s !== null) sel[j] = k.s; }); draw(); });
+    draw();
+  })();
+
+  // ================================================================ forecast history
+  (function () {
+    const Hs = (DATA.history || []).slice().reverse(); if (!Hs.length) return;
+    const day = h => new Date(h.made).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York'});
+    $('hist').innerHTML = '<thead><tr><th scope="col">Run</th><th scope="col" class="v">As each key leans</th><th scope="col" class="v">Average of runs</th><th scope="col" class="v">Runs above one half</th><th scope="col" class="v">Implied vote</th><th scope="col">What changed</th></tr></thead><tbody>' +
+      Hs.map(h => '<tr><td><a href="archive/' + esc(h.file) + '">' + day(h) + '</a></td><td class="v">' + h.in_favor + ' of ' + K.length + '<small>' + (100 * h.likely).toFixed(1) + '%</small></td><td class="v">' + (100 * h.mean).toFixed(1) + '%</td><td class="v">' +
+        pct(h.above_half) + '</td><td class="v">' + h.vote.toFixed(1) + '%</td><td class="why">' + (h.changes || []).map(c => '<span>' + esc(c) + '</span>').join('') + '</td></tr>').join('') + '</tbody>';
+    $('hist-note').innerHTML = 'Each date opens the archived run: every key\'s chance, the figures it used and the assumptions behind it. "Implied vote" is the Republicans\' share of the two-party vote that the count lines up with. The list is also a file: <a href="archive/index.json">archive/index.json</a>.';
+  })();
+
+  // ================================================================ how much weight the record can bear
+  if (RS) {
+    $('base').innerHTML = '<thead><tr><th scope="col">Rule</th><th scope="col" class="v">Called the winner</th><th scope="col">Missed</th></tr></thead><tbody>' +
+      RS.base.map(b => '<tr' + (b.kind === 'the model' ? ' class="us"' : '') + '><td>' + esc(b.name) + '</td><td class="v">' + b.right + ' of ' + b.n + '</td><td class="yrs">' + (b.misses.length > 8 ? b.misses.length + ' elections' : b.misses.join(', ')) + '</td></tr>').join('') + '</tbody>';
+    const rg = RS.regroup, all = Object.values(rg).reduce((a, b) => a + b, 0), worse = Object.keys(rg).filter(n => +n < R.right).reduce((a, n) => a + rg[n], 0);
+    $('bear-1').innerHTML = '<b>Simple rules do about as well.</b> One fact, whether the party has held the White House for one term or more, calls as many elections as the ' + DATA.word + ' keys. An equation with three figures, tested on elections it was not fitted to, calls one more. Nineteen elections cannot separate them: ' +
+      R.right + ' of ' + R.n + ' is consistent with a true hit rate anywhere from ' + pct(RS.sample.interval[0]) + ' to ' + pct(RS.sample.interval[1]) + '.';
+    $('bear-2').innerHTML = '<b>The record is in hindsight.</b> The keys were chosen knowing every result, and no election has yet been called in advance. Two keys use Lichtman\'s own ratings, which he made after the vote; without them the record is ' + RS.norate + ' of ' + R.n +
+      '. Of ' + all.toLocaleString('en-US') + ' other ways to group the same keys, ' + pct(worse / all) + ' do worse than the grouping used here, which is what a favorable draw looks like. Random halves of the keys call ' + RS.halves.median + ' in the typical case.';
+    $('bear-3').innerHTML = '<b>All four misses lean the same way.</b> Each was a call for the party in office. In the record, the count at which that party has been as likely to win as lose is about ' + pct(RS.curve.even_at) + ', not 50%. The line stays at one half because it was fixed in advance, but a count between 50% and 60% is a toss-up at best. The economy keys are also scored on today\'s revised figures, not on what was published at the time; how much that matters has not been measured.';
+
+    // ---- how alike the keys are
+    const M = RS.matrix, n = M.length, cell = 11, pad = 34, W = pad + n * cell + 2;
+    const mix = (a, b, t) => 'rgb(' + a.map((v, j) => Math.round(v + (b[j] - v) * t)).join(',') + ')';
+    const dark = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+    const base = dark ? [12, 16, 14] : [232, 236, 225], pos = dark ? [150, 205, 175] : [31, 61, 49], neg = dark ? [226, 120, 96] : [163, 48, 29];
+    const col = v => v === null ? (dark ? '#1b2320' : '#d9ded1') : v >= 0 ? mix(base, pos, Math.min(1, v)) : mix(base, neg, Math.min(1, -v));
+    let sv = '<svg viewBox="0 0 ' + W + ' ' + W + '" role="img" aria-label="How alike each pair of keys is across the elections. Keys in the same group are mostly alike; keys in different groups mostly are not.">';
+    for (let a = 0; a < n; a++) for (let b = 0; b <= a; b++) sv += '<rect data-a="' + a + '" data-b="' + b + '" x="' + (pad + b * cell) + '" y="' + (a * cell) + '" width="' + (cell - 1) + '" height="' + (cell - 1) + '" fill="' + (a === b ? col(1) : col(M[a][b])) + '"/>';
+    let at = 0;
+    G.forEach(g => { sv += '<text x="' + (pad - 8) + '" y="' + ((at + g.n / 2) * cell + 4) + '" text-anchor="end" class="hl">' + g.id + '</text>' + (at ? '<line x1="' + pad + '" x2="' + (pad + at * cell - 1) + '" y1="' + (at * cell - .5) + '" y2="' + (at * cell - .5) + '" class="hg"/><line y1="' + (at * cell) + '" y2="' + (n * cell) + '" x1="' + (pad + at * cell - .5) + '" x2="' + (pad + at * cell - .5) + '" class="hg"/>' : ''); at += g.n; });
+    $('heat').innerHTML = sv + '</svg>';
+    const readPair = t => { if (!t || t.dataset.a === undefined) return; const a = +t.dataset.a, b = +t.dataset.b, v = M[a][b];
+      const both = E.filter(e => e.k[a] !== '?' && e.k[b] !== '?'), same = both.filter(e => e.k[a] === e.k[b]).length;
+      $('heat-read').innerHTML = a === b ? '<b>' + K[a].id + '</b> ' + esc(K[a].t) + '.' : '<b>' + K[a].id + '</b> ' + esc(K[a].t) + '<br><b>' + K[b].id + '</b> ' + esc(K[b].t) + '<br>' +
+        'Same answer in ' + same + ' of the ' + both.length + ' elections where both exist' + (v === null ? '. Too few to measure.' : '; correlation ' + v.toFixed(2) + '.'); };
+    $('heat').addEventListener('mouseover', ev => readPair(ev.target)); $('heat').addEventListener('click', ev => readPair(ev.target));
+    $('alike-lede').textContent = 'Each square compares two keys across the elections: dark green where they nearly always give the same answer, red where they tend to give opposite ones. The squares along the edge of each block are keys in the same group.';
+    $('same').innerHTML = RS.same.map(p => { const a = K.find(k => k.id === p[0]), b = K.find(k => k.id === p[1]); return '<li><b>' + p[0] + '</b> ' + esc(a.t) + ' <i>and</i> <b>' + p[1] + '</b> ' + esc(b.t) + ' <small>' + p[2] + ' elections</small></li>'; }).join('');
+    $('alike-1').innerHTML = '<b>Fifty-two keys, about ' + Math.round(RS.eff) + ' separate signals.</b> Of ' + RS.pairs.toLocaleString('en-US') + ' pairs, ' + RS.at07 + ' are alike at 0.7 or more. Inside the economy groups the keys repeat one another; across groups they mostly do not (average ' + RS.between.toFixed(2) +
+      '). Because each group counts the same, the repeats dilute themselves: an economy key weighs ' + (100 * RS.weight.A01).toFixed(1) + '% of the count and an approval or party-strength key ' + (100 * RS.weight.C01).toFixed(1) + '%. Counting every key equally, or counting each cluster of alike keys once, calls ' +
+      RS.exp.every_key_equal.right + ' and ' + RS.exp.one_concept_one_vote.right + ' of ' + R.n + ', so neither is a reason to change the model.';
+
+    // ---- the run ahead, tried on the past
+    const en = RS.engine;
+    $('eng-lede').textContent = 'The run ahead lays past stretches of 20 months over today\'s figures. To see how far that can be trusted, the same method was run at the same distance before each election from ' + en.elections[0] + ' to ' + en.elections[en.elections.length - 1] +
+      ', on ' + en.keys.length + ' year-over-year keys, using only stretches that do not overlap the months being forecast.';
+    $('cal').innerHTML = '<thead><tr><th scope="col">The method said</th><th scope="col" class="v">Cases</th><th scope="col" class="v">It happened</th></tr></thead><tbody>' +
+      en.bins.map(b => '<tr><td>' + (b.lo === 0 ? 'under ' + pct(b.hi) : b.hi >= 1 ? pct(b.lo) + ' or more' : pct(b.lo) + ' to ' + pct(b.hi)) + '</td><td class="v">' + b.n + '</td><td class="v">' + (b.happened === null ? '' : pct(b.happened)) + '</td></tr>').join('') + '</tbody>';
+    $('eng-1').innerHTML = '<b>It knows which way a key usually goes, and little more.</b> Across ' + en.n + ' cases the method picked the right side in ' + en.right_side + ', against ' + en.base_right_side + ' for each key\'s plain historical rate, but its error was barely lower (' + en.brier.toFixed(3) + ' against ' + en.brier_base.toFixed(3) +
+      ', where a flat 50% scores ' + en.brier_half.toFixed(3) + '). Chances from 60% to 80% held up. Chances under 40% did not: those keys came true more often than not. So a key shown at 15% leans no; it is not six to one against. The ' + RUN.runs + ' runs also rest on ' + en.blocks.stretches +
+      ' overlapping stretches and ' + en.blocks.recessions + ' recessions, which is why the page gives ranges and no decimals. No forecasters\' outlook exists for the past, so this checks the method, not the whole 2028 run.';
+    $('dl').innerHTML = [['audit.html', 'Methodology audit', 'what was checked, what was found, and the changes proposed'], ['data/keys_table.csv', 'The key table', 'every key for every election, 1952 to 2024, as locked'],
+      ['data/keys_raw_values.csv', 'The figures behind the keys', 'the raw value each key was scored from'], ['data/results.json', 'Validation results', 'the record and every robustness check'],
+      ['data/research.json', 'Research results', 'the numbers in this section and in the audit'], ['data/projection_2028.json', 'The latest run ahead', 'every open key\'s chance and the outlook used'],
+      ['archive/index.json', 'Forecast history', 'every archived run, in order'], ['data/outlook.json', 'Outlook and odds', 'the assumptions entered by hand, and the settled keys'],
+      ['data/approval_polls.json', 'Approval polls', 'the polls behind the approval reading'], ['keys.json', 'Headline feed', 'the current count in one small file'],
+      ['https://github.com/KA82205/fifty-two-keys', 'Code', 'everything needed to rebuild this page']].map(d => '<li><a href="' + d[0] + '">' + d[1] + '</a><span>' + d[2] + '</span></li>').join('');
+  }
+
+  // ================================================================ the vote the count implies
+  if (SUREV) {
+    const by = {}; E.forEach(e => { by[e.y] = e; });
+    $('votes').innerHTML = '<thead><tr><th scope="col">Election</th><th scope="col">Party in office</th><th scope="col" class="v">Keys in favor</th><th scope="col" class="v">Implied share</th><th scope="col" class="v">Actual share</th><th scope="col" class="v">Miss</th></tr></thead><tbody>' +
+      (RUN ? '<tr class="next"><td>2028</td><td>Republicans</td><td class="v">' + (100 * RUN.likely).toFixed(1) + '%<small>as each key leans</small></td><td class="v">' + DATA.sure.run.vote_likely.toFixed(1) + '%<small>' + DATA.sure.run.vote_low.toFixed(0) + '% to ' + DATA.sure.run.vote_high.toFixed(0) + '% in half of runs</small></td><td class="v"></td><td class="v"></td></tr>' : '') +
+      SUREV.slice().reverse().map(v => { const e = by[v.year]; return '<tr><td>' + v.year + '</td><td>' + party(e.p) + ' <small class="in">' + esc(e.c) + '</small></td><td class="v">' + (100 * e.i).toFixed(1) + '%</td><td class="v">' + v.est.toFixed(1) + '%</td><td class="v">' + v.actual.toFixed(1) + '%</td><td class="v' + (Math.abs(v.miss) > 5 ? ' big' : '') + '">' + (v.miss > 0 ? '+' : v.miss < 0 ? '−' : '') + Math.abs(v.miss).toFixed(1) + '</td></tr>'; }).join('') + '</tbody>';
+  }
 })();
 </script>
 </body>
