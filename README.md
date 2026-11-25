@@ -427,11 +427,19 @@ hand; `KEYS.md` lists all 52.
 Still entered, once each, in 2028: the nominee's share of pledged delegates when the primaries end (E04) and the New
 Hampshire primary line once both parties have a candidate with a majority of pledged delegates (E05 to E07). No free, open
 list of delegates or of New Hampshire's certified results exists to read. If a party has no such candidate by August 1,
-2028, its keys are left open and the count is closed without them. Also entered, with their dates: the parts of the
-outlook the survey does not give, the 30% share of runs with a recession, and the odds for the nomination keys.
+2028, its keys are left open and the count is closed without them. Also entered, with their date: the odds for the
+four nomination keys, until each is settled.
+
+No longer entered: income, hourly pay, spending, industrial production and factory jobs each follow their own pace over
+the last two years; oil and consumer sentiment stay where they last stood; the population grows as it did over the last
+year; and the share of runs with a recession is the record's own (the share of like stretches since 1964 in which one
+began in the months still ahead), so it falls by itself as the months run out. The figures typed in November 2026 are kept
+in each run's file beside the ones now used.
 
 The count is closed on August 1, 2028, on the figures published by then. A figure that comes out late is used as first
-published up to August 15; after that the key is left out and its group is the share of the keys that could be scored.
+published up to August 15. A key still without evidence then stays open and nothing is re-weighted: every group keeps all of
+its keys and its fifth of the count, the line stays at one half, the count is given as the lowest and the highest it could
+be, and the keys make a call only if both fall on the same side of one half.
 
 There is no estimate of the vote for 2028. The keys call a winner; a line from the count to the vote missed by 4.3 points of
 margin on average in 2008 to 2024, always in the Democrats' favor, and The Margin's forecast did better without it.

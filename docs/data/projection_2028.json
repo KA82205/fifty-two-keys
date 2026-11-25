@@ -8,309 +8,309 @@
   "first": 1964,
   "last": 2025
  },
- "recession_share": 0.3,
+ "recession_share": 0.333,
  "index": {
-  "mean": 0.404,
-  "median": 0.416,
-  "p5": 0.199,
-  "p25": 0.316,
-  "p75": 0.494,
-  "p95": 0.583,
-  "above_half": 0.23,
-  "p10": 0.238,
-  "p90": 0.552,
-  "sd": 0.118,
-  "expected_in_favor": 24.62
+  "mean": 0.389,
+  "median": 0.397,
+  "p5": 0.194,
+  "p25": 0.296,
+  "p75": 0.479,
+  "p95": 0.57,
+  "above_half": 0.192,
+  "p10": 0.228,
+  "p90": 0.538,
+  "sd": 0.117,
+  "expected_in_favor": 23.48
  },
  "index_dist": [
   [
    0.03,
-   1e-05
+   2e-05
   ],
   [
    0.04,
-   1e-05
+   3e-05
   ],
   [
    0.06,
-   0.00014
+   0.00016
   ],
   [
    0.07,
-   0.00018
+   0.00016
   ],
   [
    0.08,
-   8e-05
+   0.00018
   ],
   [
    0.09,
-   0.00089
+   0.00099
   ],
   [
    0.1,
-   0.00069
+   0.00067
   ],
   [
    0.11,
-   0.00167
+   0.00178
   ],
   [
    0.12,
-   0.00104
+   0.00163
   ],
   [
    0.13,
-   0.00161
+   0.00179
   ],
   [
    0.14,
-   0.00439
+   0.0043
   ],
   [
    0.15,
-   0.00505
+   0.00652
   ],
   [
    0.16,
-   0.00212
+   0.00284
   ],
   [
    0.17,
-   0.00831
+   0.00776
   ],
   [
    0.18,
-   0.00874
+   0.01229
   ],
   [
    0.19,
-   0.00706
+   0.01082
   ],
   [
    0.2,
-   0.01049
+   0.01001
   ],
   [
    0.21,
-   0.01266
+   0.01586
   ],
   [
    0.22,
-   0.00907
+   0.01544
   ],
   [
    0.23,
-   0.02199
-  ],
-  [
-   0.24,
-   0.01672
-  ],
-  [
-   0.25,
-   0.01052
-  ],
-  [
-   0.26,
-   0.02809
-  ],
-  [
-   0.27,
-   0.02153
-  ],
-  [
-   0.28,
-   0.00945
-  ],
-  [
-   0.29,
-   0.03179
-  ],
-  [
-   0.3,
-   0.01602
-  ],
-  [
-   0.31,
-   0.01919
-  ],
-  [
-   0.32,
-   0.01998
-  ],
-  [
-   0.33,
-   0.02653
-  ],
-  [
-   0.34,
-   0.01651
-  ],
-  [
-   0.35,
-   0.02021
-  ],
-  [
-   0.36,
-   0.03035
-  ],
-  [
-   0.37,
-   0.02635
-  ],
-  [
-   0.38,
-   0.02082
-  ],
-  [
-   0.39,
-   0.03177
-  ],
-  [
-   0.4,
-   0.02626
-  ],
-  [
-   0.41,
-   0.02439
-  ],
-  [
-   0.42,
-   0.03213
-  ],
-  [
-   0.43,
-   0.03703
-  ],
-  [
-   0.44,
-   0.03004
-  ],
-  [
-   0.45,
-   0.03305
-  ],
-  [
-   0.46,
-   0.03176
-  ],
-  [
-   0.47,
-   0.03278
-  ],
-  [
-   0.48,
-   0.02929
-  ],
-  [
-   0.49,
-   0.03754
-  ],
-  [
-   0.5,
-   0.02855
-  ],
-  [
-   0.51,
-   0.02364
-  ],
-  [
-   0.52,
-   0.02843
-  ],
-  [
-   0.53,
-   0.03251
-  ],
-  [
-   0.54,
-   0.02175
-  ],
-  [
-   0.55,
-   0.01738
-  ],
-  [
-   0.56,
    0.01843
   ],
   [
+   0.24,
+   0.02241
+  ],
+  [
+   0.25,
+   0.01761
+  ],
+  [
+   0.26,
+   0.02312
+  ],
+  [
+   0.27,
+   0.02261
+  ],
+  [
+   0.28,
+   0.0203
+  ],
+  [
+   0.29,
+   0.02851
+  ],
+  [
+   0.3,
+   0.01852
+  ],
+  [
+   0.31,
+   0.02697
+  ],
+  [
+   0.32,
+   0.02241
+  ],
+  [
+   0.33,
+   0.02049
+  ],
+  [
+   0.34,
+   0.02262
+  ],
+  [
+   0.35,
+   0.02973
+  ],
+  [
+   0.36,
+   0.02325
+  ],
+  [
+   0.37,
+   0.02687
+  ],
+  [
+   0.38,
+   0.02783
+  ],
+  [
+   0.39,
+   0.02864
+  ],
+  [
+   0.4,
+   0.02618
+  ],
+  [
+   0.41,
+   0.0291
+  ],
+  [
+   0.42,
+   0.03139
+  ],
+  [
+   0.43,
+   0.03154
+  ],
+  [
+   0.44,
+   0.02919
+  ],
+  [
+   0.45,
+   0.03637
+  ],
+  [
+   0.46,
+   0.0279
+  ],
+  [
+   0.47,
+   0.03081
+  ],
+  [
+   0.48,
+   0.03122
+  ],
+  [
+   0.49,
+   0.02974
+  ],
+  [
+   0.5,
+   0.02318
+  ],
+  [
+   0.51,
+   0.02427
+  ],
+  [
+   0.52,
+   0.02868
+  ],
+  [
+   0.53,
+   0.02114
+  ],
+  [
+   0.54,
+   0.01809
+  ],
+  [
+   0.55,
+   0.0207
+  ],
+  [
+   0.56,
+   0.01088
+  ],
+  [
    0.57,
-   0.0149
+   0.01161
   ],
   [
    0.58,
-   0.00979
+   0.01153
   ],
   [
    0.59,
-   0.01421
+   0.00709
   ],
   [
    0.6,
-   0.00837
+   0.00536
   ],
   [
    0.61,
-   0.00507
+   0.00488
   ],
   [
    0.62,
-   0.0063
+   0.00519
   ],
   [
    0.63,
-   0.00542
+   0.00331
   ],
   [
    0.64,
-   0.00235
+   0.00193
   ],
   [
    0.65,
-   0.0012
+   0.00134
   ],
   [
    0.66,
-   0.00118
+   0.00072
   ],
   [
    0.67,
-   0.0011
+   0.00072
   ],
   [
    0.68,
-   0.00057
+   0.00079
   ],
   [
    0.69,
-   0.00109
+   0.00042
   ],
   [
    0.7,
-   0.00047
+   0.00028
   ],
   [
    0.71,
-   0.00032
+   0.00026
   ],
   [
    0.72,
-   0.00036
+   0.00033
   ],
   [
    0.73,
-   0.00023
+   0.00026
   ],
   [
    0.74,
-   8e-05
+   5e-05
   ]
  ],
  "calm": {
-  "mean": 0.458,
-  "above_half": 0.326
+  "mean": 0.448,
+  "above_half": 0.286
  },
  "hist": [
   {
@@ -319,59 +319,59 @@
   },
   {
    "lo": 5,
-   "share": 0.0018
+   "share": 0.0021
   },
   {
    "lo": 10,
-   "share": 0.0102
+   "share": 0.0123
   },
   {
    "lo": 15,
-   "share": 0.0381
+   "share": 0.0429
   },
   {
    "lo": 20,
-   "share": 0.0663
+   "share": 0.0844
   },
   {
    "lo": 25,
-   "share": 0.1076
+   "share": 0.114
   },
   {
    "lo": 30,
-   "share": 0.0966
+   "share": 0.1163
   },
   {
    "lo": 35,
-   "share": 0.1335
+   "share": 0.1341
   },
   {
    "lo": 40,
-   "share": 0.1538
+   "share": 0.1548
   },
   {
    "lo": 45,
-   "share": 0.1621
+   "share": 0.147
   },
   {
    "lo": 50,
-   "share": 0.1291
+   "share": 0.1168
   },
   {
    "lo": 55,
-   "share": 0.0706
+   "share": 0.0519
   },
   {
    "lo": 60,
-   "share": 0.0241
+   "share": 0.019
   },
   {
    "lo": 65,
-   "share": 0.0047
+   "share": 0.0033
   },
   {
    "lo": 70,
-   "share": 0.0013
+   "share": 0.0011
   },
   {
    "lo": 75,
@@ -396,21 +396,21 @@
  ],
  "groups": {
   "A": {
-   "mean": 0.636,
+   "mean": 0.605,
    "p10": 0.222,
    "p90": 0.944,
-   "likely": 14,
+   "likely": 13,
    "n": 18
   },
   "B": {
-   "mean": 0.465,
-   "p10": 0.2,
-   "p90": 0.8,
+   "mean": 0.428,
+   "p10": 0.133,
+   "p90": 0.733,
    "likely": 7,
    "n": 15
   },
   "C": {
-   "mean": 0.23,
+   "mean": 0.226,
    "p10": 0.0,
    "p90": 0.5,
    "likely": 0,
@@ -424,7 +424,7 @@
    "n": 6
   },
   "E": {
-   "mean": 0.69,
+   "mean": 0.689,
    "p10": 0.429,
    "p90": 0.857,
    "likely": 6,
@@ -432,12 +432,12 @@
   }
  },
  "likely": {
-  "in_favor": 27,
-  "index": 0.42
+  "in_favor": 26,
+  "index": 0.409
  },
  "keys": {
   "A01": {
-   "p": 0.67,
+   "p": 0.657,
    "p_calm": 0.781,
    "p_recession": 0.408,
    "note": "Forecasters expect growth of about 2.1% a year in spring 2028. It was 4.3% in the latest quarter.",
@@ -445,39 +445,39 @@
    "status": "unresolved"
   },
   "A02": {
-   "p": 0.656,
-   "p_calm": 0.859,
-   "p_recession": 0.18,
-   "note": "Forecast growth is about 2% a year, and the population is growing about 0.25%.",
+   "p": 0.633,
+   "p_calm": 0.858,
+   "p_recession": 0.179,
+   "note": "Forecast growth is about 2% a year, and the population is growing about 0.24%.",
    "landed": false,
    "status": "unresolved"
   },
   "A03": {
    "p": 0.565,
-   "p_calm": 0.719,
+   "p_calm": 0.744,
    "p_recession": 0.203,
    "note": "Up 1.0% in the past year.",
    "landed": false,
    "status": "unresolved"
   },
   "A04": {
-   "p": 0.772,
+   "p": 0.787,
    "p_calm": 0.948,
-   "p_recession": 0.36,
+   "p_recession": 0.463,
    "note": "Real spending is up 2.5% in the past year, ahead of the population.",
    "landed": false,
    "status": "unresolved"
   },
   "A05": {
-   "p": 0.395,
-   "p_calm": 0.552,
+   "p": 0.377,
+   "p_calm": 0.551,
    "p_recession": 0.025,
    "note": "It is 4.1% now. Forecasters expect about 4.2% through 2028, and a tie counts as no.",
    "landed": false,
    "status": "unresolved"
   },
   "A06": {
-   "p": 0.586,
+   "p": 0.565,
    "p_calm": 0.783,
    "p_recession": 0.126,
    "note": "Forecasters expect about 50,000 new jobs a month, a slow pace that a weak year could turn negative.",
@@ -485,47 +485,47 @@
    "status": "unresolved"
   },
   "A07": {
-   "p": 0.4,
-   "p_calm": 0.528,
+   "p": 0.377,
+   "p_calm": 0.514,
    "p_recession": 0.1,
    "note": "Factory jobs have risen 84,000 in the past six months.",
    "landed": false,
    "status": "unresolved"
   },
   "A08": {
-   "p": 0.407,
-   "p_calm": 0.526,
+   "p": 0.395,
+   "p_calm": 0.527,
    "p_recession": 0.129,
    "note": "Claims are about 201,000 a week, below the 230,000 of a year earlier.",
    "landed": false,
    "status": "unresolved"
   },
   "A09": {
-   "p": 0.695,
+   "p": 0.668,
    "p_calm": 0.948,
-   "p_recession": 0.101,
+   "p_recession": 0.102,
    "note": "The signal is at 0.00 now. It takes 0.50, a rise of about half a point in unemployment.",
    "landed": false,
    "status": "unresolved"
   },
   "A10": {
-   "p": 0.763,
-   "p_calm": 0.87,
-   "p_recession": 0.512,
+   "p": 0.608,
+   "p_calm": 0.743,
+   "p_recession": 0.334,
    "note": "Up 1.0% in the past year.",
    "landed": false,
    "status": "unresolved"
   },
   "A11": {
-   "p": 0.847,
-   "p_calm": 0.922,
-   "p_recession": 0.671,
+   "p": 0.881,
+   "p_calm": 0.961,
+   "p_recession": 0.721,
    "note": "Pay is rising 4.4% a year, and forecasters expect inflation of about 2.4%.",
    "landed": false,
    "status": "unresolved"
   },
   "A12": {
-   "p": 0.721,
+   "p": 0.719,
    "p_calm": 0.744,
    "p_recession": 0.668,
    "note": "Inflation is 3.7% now. This year's oil shock lifts the mid-2027 figure that mid-2028 is compared with.",
@@ -533,39 +533,39 @@
    "status": "unresolved"
   },
   "A13": {
-   "p": 0.737,
-   "p_calm": 0.745,
-   "p_recession": 0.719,
-   "note": "About $82 a barrel now. Futures and forecasts point to about $78 in mid-2027 and $69 in mid-2028.",
+   "p": 0.615,
+   "p_calm": 0.615,
+   "p_recession": 0.614,
+   "note": "About $82 a barrel now. Futures and forecasts point to about $82 in mid-2027 and $82 in mid-2028.",
    "landed": false,
    "status": "unresolved"
   },
   "A14": {
-   "p": 0.696,
-   "p_calm": 0.86,
-   "p_recession": 0.31,
+   "p": 0.677,
+   "p_calm": 0.859,
+   "p_recession": 0.309,
    "note": "The S&P 500 was higher than a year before in about seven years of ten, and lower in recessions.",
    "landed": false,
    "status": "unresolved"
   },
   "A15": {
-   "p": 0.636,
+   "p": 0.625,
    "p_calm": 0.731,
-   "p_recession": 0.412,
+   "p_recession": 0.411,
    "note": "Higher than six months before in about two years of three.",
    "landed": false,
    "status": "unresolved"
   },
   "A16": {
-   "p": 0.627,
-   "p_calm": 0.73,
-   "p_recession": 0.386,
+   "p": 0.489,
+   "p_calm": 0.578,
+   "p_recession": 0.309,
    "note": "The index is 51.5, near its record low, which leaves room to recover.",
    "landed": false,
    "status": "unresolved"
   },
   "A17": {
-   "p": 0.413,
+   "p": 0.411,
    "p_calm": 0.436,
    "p_recession": 0.359,
    "note": "Starts are running near 1.29 million a year, against 1.33 million a year earlier.",
@@ -573,41 +573,41 @@
    "status": "unresolved"
   },
   "A18": {
-   "p": 0.854,
+   "p": 0.838,
    "p_calm": 1.0,
-   "p_recession": 0.51,
+   "p_recession": 0.511,
    "note": "State economies are growing in 49 of 51 now. This key has failed only in sharp downturns (1980, 2020).",
    "landed": false,
    "status": "unresolved"
   },
   "B01": {
-   "p": 0.383,
-   "p_calm": 0.515,
-   "p_recession": 0.074,
+   "p": 0.377,
+   "p_calm": 0.527,
+   "p_recession": 0.075,
    "note": "So far this term: 2.11% a year. The bar, the average of the last two terms, is 1.98%.",
    "landed": false,
    "status": "unresolved"
   },
   "B02": {
-   "p": 0.56,
-   "p_calm": 0.756,
-   "p_recession": 0.1,
+   "p": 0.582,
+   "p_calm": 0.807,
+   "p_recession": 0.127,
    "note": "Up 2.2% since January 2025, against 0.3% a year last term.",
    "landed": false,
    "status": "unresolved"
   },
   "B03": {
-   "p": 0.162,
-   "p_calm": 0.23,
+   "p": 0.179,
+   "p_calm": 0.268,
    "p_recession": 0.0,
    "note": "It would take real spending growth of 3.4% a year from here.",
    "landed": false,
    "status": "unresolved"
   },
   "B04": {
-   "p": 0.367,
-   "p_calm": 0.503,
-   "p_recession": 0.049,
+   "p": 0.352,
+   "p_calm": 0.502,
+   "p_recession": 0.05,
    "note": "It was 4.0% in January 2025 and is 4.1% now.",
    "landed": false,
    "status": "unresolved"
@@ -621,71 +621,71 @@
    "status": "unresolved"
   },
   "B06": {
-   "p": 0.4,
-   "p_calm": 0.528,
+   "p": 0.36,
+   "p_calm": 0.489,
    "p_recession": 0.1,
    "note": "12.68 million now against 12.67 million in January 2025.",
    "landed": false,
    "status": "unresolved"
   },
   "B07": {
-   "p": 0.536,
-   "p_calm": 0.744,
-   "p_recession": 0.051,
+   "p": 0.513,
+   "p_calm": 0.743,
+   "p_recession": 0.05,
    "note": "About 201,000 a week now against 221,000 at the start of the term.",
    "landed": false,
    "status": "unresolved"
   },
   "B08": {
-   "p": 0.39,
-   "p_calm": 0.502,
-   "p_recession": 0.128,
+   "p": 0.18,
+   "p_calm": 0.257,
+   "p_recession": 0.025,
    "note": "So far this term: 1.1% a year. Last term: 1.5%.",
    "landed": false,
    "status": "unresolved"
   },
   "B09": {
-   "p": 0.891,
+   "p": 0.882,
    "p_calm": 0.974,
-   "p_recession": 0.696,
+   "p_recession": 0.695,
    "note": "Pay after inflation is 1.7% above its January 2025 level.",
    "landed": false,
    "status": "unresolved"
   },
   "B10": {
-   "p": 0.954,
+   "p": 0.95,
    "p_calm": 1.0,
-   "p_recession": 0.847,
+   "p_recession": 0.848,
    "note": "Inflation has averaged 3.3% a year this term against 5.0% last term.",
    "landed": false,
    "status": "unresolved"
   },
   "B11": {
-   "p": 0.724,
-   "p_calm": 0.77,
-   "p_recession": 0.617,
+   "p": 0.564,
+   "p_calm": 0.577,
+   "p_recession": 0.54,
    "note": "Oil is about $82 now. January 2025's price is $80 in today's dollars, and forecasts have oil below that by 2028.",
    "landed": false,
    "status": "unresolved"
   },
   "B12": {
-   "p": 0.771,
-   "p_calm": 0.924,
+   "p": 0.754,
+   "p_calm": 0.923,
    "p_recession": 0.413,
    "note": "The S&P 500 is 14% above its start-of-term level, after inflation.",
    "landed": false,
    "status": "unresolved"
   },
   "B13": {
-   "p": 0.09,
-   "p_calm": 0.128,
+   "p": 0.009,
+   "p_calm": 0.013,
    "p_recession": 0.0,
    "note": "The index is 51.5. It was 71.7 in January 2025.",
    "landed": false,
    "status": "unresolved"
   },
   "B14": {
-   "p": 0.181,
+   "p": 0.179,
    "p_calm": 0.203,
    "p_recession": 0.128,
    "note": "Starts average 1.29 million against 1.40 million at the start of the term.",
@@ -693,17 +693,17 @@
    "status": "unresolved"
   },
   "B15": {
-   "p": 0.565,
-   "p_calm": 0.796,
+   "p": 0.539,
+   "p_calm": 0.794,
    "p_recession": 0.025,
    "note": "So far this term, growth is above its 2024 pace in states holding 414 electoral votes.",
    "landed": false,
    "status": "unresolved"
   },
   "C01": {
-   "p": 0.021,
-   "p_calm": 0.025,
-   "p_recession": 0.013,
+   "p": 0.02,
+   "p_calm": 0.024,
+   "p_recession": 0.012,
    "note": "31% approve now, in polls of all adults from the past month (4 pollsters).",
    "landed": false,
    "status": "unresolved"
@@ -717,15 +717,15 @@
    "status": "unresolved"
   },
   "C03": {
-   "p": 0.425,
-   "p_calm": 0.501,
-   "p_recession": 0.249,
+   "p": 0.415,
+   "p_calm": 0.497,
+   "p_recession": 0.25,
    "note": "31% approve now against 39% a year ago. Neither June reading the key compares exists yet, so it is close to a coin toss.",
    "landed": false,
    "status": "unresolved"
   },
   "C04": {
-   "p": 0.435,
+   "p": 0.427,
    "p_calm": 0.512,
    "p_recession": 0.256,
    "note": "Approval averaged 31% in the polls around the midterms and is 31% now. It has moved about 2.19 points a month in this term.",
@@ -733,57 +733,57 @@
    "status": "unresolved"
   },
   "C05": {
-   "p": 0.426,
-   "p_calm": 0.5,
-   "p_recession": 0.252,
+   "p": 0.418,
+   "p_calm": 0.501,
+   "p_recession": 0.251,
    "note": "Neither reading the key compares exists yet, so it is close to a coin toss.",
    "landed": false,
    "status": "unresolved"
   },
   "C06": {
-   "p": 0.043,
+   "p": 0.042,
    "p_calm": 0.051,
-   "p_recession": 0.024,
+   "p_recession": 0.026,
    "note": "66% disapprove now.",
    "landed": false,
    "status": "unresolved"
   },
   "E03": {
-   "p": 0.882,
-   "p_calm": 0.882,
-   "p_recession": 0.882,
+   "p": 0.881,
+   "p_calm": 0.881,
+   "p_recession": 0.881,
    "note": "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
   "E04": {
-   "p": 0.749,
+   "p": 0.748,
    "p_calm": 0.748,
-   "p_recession": 0.752,
+   "p_recession": 0.748,
    "note": "Rubio (35%) and Vance (34%) are level in national polls, which points to a real contest. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
   "E05": {
-   "p": 0.681,
-   "p_calm": 0.68,
-   "p_recession": 0.684,
+   "p": 0.68,
+   "p_calm": 0.682,
+   "p_recession": 0.677,
    "note": "Vance leads Rubio in New Hampshire polls, 39% to 27%, and the nomination is open. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
   "E06": {
-   "p": 0.886,
+   "p": 0.885,
    "p_calm": 0.886,
-   "p_recession": 0.886,
+   "p_recession": 0.884,
    "note": "Two candidates dominate the Republican race, and the Democratic field is split five ways. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
   },
   "E07": {
-   "p": 0.629,
-   "p_calm": 0.629,
-   "p_recession": 0.629,
+   "p": 0.627,
+   "p_calm": 0.626,
+   "p_recession": 0.63,
    "note": "The Democratic field is split, and New Hampshire is in dispute with the national party over its date. (As entered in November 2026.)",
    "landed": false,
    "status": "unresolved"
@@ -1203,7 +1203,7 @@
  },
  "copy_differs": [],
  "outlook": {
-  "recession_share": 0.3,
+  "recession_share": 0.333,
   "unemployment": 4.2,
   "jobs_a_month": [
    90,
@@ -1237,13 +1237,13 @@
    2.1
   ],
   "income": [
-   2.0,
-   2.0,
-   2.0,
-   2.0,
-   2.0,
-   2.0,
-   2.0
+   1.4,
+   1.4,
+   1.4,
+   1.4,
+   1.4,
+   1.4,
+   1.4
   ],
   "cpi_quarters": [
    4.0,
@@ -1255,27 +1255,19 @@
    2.3,
    2.3
   ],
-  "population": 0.25,
-  "industrial_production": 1.0,
-  "spending": 2.2,
-  "hourly_pay": 3.8,
-  "factory_jobs": 0.0,
+  "population": 0.24,
+  "industrial_production": 1.4,
+  "spending": 2.5,
+  "hourly_pay": 4.3,
+  "factory_jobs": -0.1,
   "oil": [
    [
     1,
-    84.0
-   ],
-   [
-    8,
-    80.0
-   ],
-   [
-    14,
-    72.0
+    102.1
    ],
    [
     20,
-    70.0
+    102.1
    ]
   ],
   "sentiment": [
@@ -1284,12 +1276,8 @@
     51.5
    ],
    [
-    8,
-    57.0
-   ],
-   [
     20,
-    60.0
+    51.5
    ]
   ]
  },
@@ -1311,12 +1299,12 @@
  },
  "range": {
   "above_half": [
-   0.179,
-   0.278
+   0.145,
+   0.236
   ],
   "mean": [
-   0.387,
-   0.42
+   0.372,
+   0.405
   ],
   "blocks": 15,
   "block_years": 4
@@ -1324,264 +1312,352 @@
  "decisive": [
   {
    "id": "C01",
-   "p": 0.021,
-   "if_yes": 0.778,
-   "if_no": 0.218
+   "p": 0.02,
+   "if_yes": 0.733,
+   "if_no": 0.181
   },
   {
    "id": "C02",
    "p": 0.03,
-   "if_yes": 0.752,
-   "if_no": 0.213
+   "if_yes": 0.702,
+   "if_no": 0.176
   },
   {
    "id": "C06",
-   "p": 0.043,
-   "if_yes": 0.699,
-   "if_no": 0.209
-  },
-  {
-   "id": "A05",
-   "p": 0.395,
-   "if_yes": 0.49,
-   "if_no": 0.06
-  },
-  {
-   "id": "B04",
-   "p": 0.367,
-   "if_yes": 0.484,
-   "if_no": 0.082
-  },
-  {
-   "id": "B01",
-   "p": 0.383,
-   "if_yes": 0.471,
-   "if_no": 0.08
-  },
-  {
-   "id": "B07",
-   "p": 0.536,
-   "if_yes": 0.41,
-   "if_no": 0.021
+   "p": 0.042,
+   "if_yes": 0.644,
+   "if_no": 0.172
   },
   {
    "id": "B03",
-   "p": 0.162,
-   "if_yes": 0.552,
-   "if_no": 0.168
+   "p": 0.179,
+   "if_yes": 0.532,
+   "if_no": 0.118
   },
   {
-   "id": "A07",
-   "p": 0.4,
-   "if_yes": 0.458,
-   "if_no": 0.078
+   "id": "A05",
+   "p": 0.377,
+   "if_yes": 0.442,
+   "if_no": 0.041
   },
   {
-   "id": "B02",
-   "p": 0.56,
-   "if_yes": 0.393,
-   "if_no": 0.023
+   "id": "B04",
+   "p": 0.352,
+   "if_yes": 0.429,
+   "if_no": 0.063
   },
   {
    "id": "B08",
-   "p": 0.39,
-   "if_yes": 0.442,
-   "if_no": 0.094
+   "p": 0.18,
+   "if_yes": 0.488,
+   "if_no": 0.127
+  },
+  {
+   "id": "B01",
+   "p": 0.377,
+   "if_yes": 0.411,
+   "if_no": 0.06
+  },
+  {
+   "id": "B07",
+   "p": 0.513,
+   "if_yes": 0.363,
+   "if_no": 0.012
+  },
+  {
+   "id": "A07",
+   "p": 0.377,
+   "if_yes": 0.396,
+   "if_no": 0.069
   },
   {
    "id": "B15",
-   "p": 0.565,
-   "if_yes": 0.379,
-   "if_no": 0.035
+   "p": 0.539,
+   "if_yes": 0.337,
+   "if_no": 0.022
   },
   {
-   "id": "B13",
-   "p": 0.09,
-   "if_yes": 0.54,
-   "if_no": 0.199
+   "id": "B02",
+   "p": 0.582,
+   "if_yes": 0.323,
+   "if_no": 0.01
+  },
+  {
+   "id": "A06",
+   "p": 0.565,
+   "if_yes": 0.323,
+   "if_no": 0.022
   },
   {
    "id": "A03",
    "p": 0.565,
-   "if_yes": 0.378,
-   "if_no": 0.038
-  },
-  {
-   "id": "A02",
-   "p": 0.656,
-   "if_yes": 0.346,
-   "if_no": 0.008
-  },
-  {
-   "id": "A06",
-   "p": 0.586,
-   "if_yes": 0.368,
-   "if_no": 0.034
-  },
-  {
-   "id": "C03",
-   "p": 0.425,
-   "if_yes": 0.42,
-   "if_no": 0.089
-  },
-  {
-   "id": "B06",
-   "p": 0.4,
-   "if_yes": 0.427,
-   "if_no": 0.098
-  },
-  {
-   "id": "C04",
-   "p": 0.435,
-   "if_yes": 0.409,
-   "if_no": 0.091
-  },
-  {
-   "id": "A09",
-   "p": 0.695,
    "if_yes": 0.322,
-   "if_no": 0.019
-  },
-  {
-   "id": "A08",
-   "p": 0.407,
-   "if_yes": 0.405,
-   "if_no": 0.109
-  },
-  {
-   "id": "C05",
-   "p": 0.426,
-   "if_yes": 0.399,
-   "if_no": 0.104
-  },
-  {
-   "id": "A04",
-   "p": 0.772,
-   "if_yes": 0.295,
-   "if_no": 0.009
-  },
-  {
-   "id": "A01",
-   "p": 0.67,
-   "if_yes": 0.322,
-   "if_no": 0.043
-  },
-  {
-   "id": "A10",
-   "p": 0.763,
-   "if_yes": 0.294,
    "if_no": 0.023
   },
   {
+   "id": "A02",
+   "p": 0.633,
+   "if_yes": 0.301,
+   "if_no": 0.005
+  },
+  {
+   "id": "C03",
+   "p": 0.415,
+   "if_yes": 0.364,
+   "if_no": 0.07
+  },
+  {
+   "id": "B06",
+   "p": 0.36,
+   "if_yes": 0.38,
+   "if_no": 0.087
+  },
+  {
+   "id": "C04",
+   "p": 0.427,
+   "if_yes": 0.356,
+   "if_no": 0.07
+  },
+  {
+   "id": "A10",
+   "p": 0.608,
+   "if_yes": 0.298,
+   "if_no": 0.027
+  },
+  {
+   "id": "A09",
+   "p": 0.668,
+   "if_yes": 0.281,
+   "if_no": 0.014
+  },
+  {
+   "id": "A08",
+   "p": 0.395,
+   "if_yes": 0.353,
+   "if_no": 0.087
+  },
+  {
+   "id": "C05",
+   "p": 0.418,
+   "if_yes": 0.347,
+   "if_no": 0.081
+  },
+  {
+   "id": "A04",
+   "p": 0.787,
+   "if_yes": 0.243,
+   "if_no": 0.004
+  },
+  {
+   "id": "A01",
+   "p": 0.657,
+   "if_yes": 0.273,
+   "if_no": 0.037
+  },
+  {
    "id": "A18",
-   "p": 0.854,
-   "if_yes": 0.269,
+   "p": 0.838,
+   "if_yes": 0.229,
    "if_no": 0.0
   },
   {
    "id": "A14",
-   "p": 0.696,
-   "if_yes": 0.307,
-   "if_no": 0.054
+   "p": 0.677,
+   "if_yes": 0.265,
+   "if_no": 0.039
   },
   {
    "id": "B09",
-   "p": 0.891,
-   "if_yes": 0.257,
-   "if_no": 0.007
+   "p": 0.882,
+   "if_yes": 0.217,
+   "if_no": 0.003
   },
   {
    "id": "B10",
-   "p": 0.954,
-   "if_yes": 0.241,
+   "p": 0.95,
+   "if_yes": 0.202,
    "if_no": 0.0
   },
   {
-   "id": "B12",
-   "p": 0.771,
-   "if_yes": 0.281,
-   "if_no": 0.058
-  },
-  {
-   "id": "B14",
-   "p": 0.181,
-   "if_yes": 0.393,
-   "if_no": 0.194
-  },
-  {
    "id": "A16",
-   "p": 0.627,
-   "if_yes": 0.303,
-   "if_no": 0.107
+   "p": 0.489,
+   "if_yes": 0.295,
+   "if_no": 0.094
+  },
+  {
+   "id": "B12",
+   "p": 0.754,
+   "if_yes": 0.241,
+   "if_no": 0.042
   },
   {
    "id": "A11",
-   "p": 0.847,
-   "if_yes": 0.256,
-   "if_no": 0.083
+   "p": 0.881,
+   "if_yes": 0.215,
+   "if_no": 0.018
   },
   {
-   "id": "A15",
-   "p": 0.636,
-   "if_yes": 0.287,
-   "if_no": 0.129
-  },
-  {
-   "id": "E06",
-   "p": 0.886,
-   "if_yes": 0.247,
-   "if_no": 0.097
-  },
-  {
-   "id": "A17",
-   "p": 0.413,
-   "if_yes": 0.316,
-   "if_no": 0.169
-  },
-  {
-   "id": "B11",
-   "p": 0.724,
-   "if_yes": 0.27,
-   "if_no": 0.125
-  },
-  {
-   "id": "A12",
-   "p": 0.721,
-   "if_yes": 0.264,
-   "if_no": 0.142
-  },
-  {
-   "id": "E05",
-   "p": 0.681,
-   "if_yes": 0.268,
-   "if_no": 0.149
-  },
-  {
-   "id": "E04",
-   "p": 0.749,
-   "if_yes": 0.257,
-   "if_no": 0.149
-  },
-  {
-   "id": "A13",
-   "p": 0.737,
-   "if_yes": 0.256,
+   "id": "B14",
+   "p": 0.179,
+   "if_yes": 0.349,
    "if_no": 0.158
   },
   {
+   "id": "A15",
+   "p": 0.625,
+   "if_yes": 0.248,
+   "if_no": 0.099
+  },
+  {
+   "id": "A17",
+   "p": 0.411,
+   "if_yes": 0.277,
+   "if_no": 0.132
+  },
+  {
+   "id": "E06",
+   "p": 0.885,
+   "if_yes": 0.208,
+   "if_no": 0.07
+  },
+  {
+   "id": "B11",
+   "p": 0.564,
+   "if_yes": 0.244,
+   "if_no": 0.124
+  },
+  {
+   "id": "E05",
+   "p": 0.68,
+   "if_yes": 0.228,
+   "if_no": 0.116
+  },
+  {
+   "id": "A13",
+   "p": 0.615,
+   "if_yes": 0.235,
+   "if_no": 0.124
+  },
+  {
+   "id": "A12",
+   "p": 0.719,
+   "if_yes": 0.223,
+   "if_no": 0.114
+  },
+  {
+   "id": "E04",
+   "p": 0.748,
+   "if_yes": 0.216,
+   "if_no": 0.12
+  },
+  {
    "id": "E07",
-   "p": 0.629,
-   "if_yes": 0.266,
-   "if_no": 0.169
+   "p": 0.627,
+   "if_yes": 0.224,
+   "if_no": 0.139
+  },
+  {
+   "id": "B13",
+   "p": 0.009,
+   "if_yes": 0.273,
+   "if_no": 0.191
   },
   {
    "id": "E03",
-   "p": 0.882,
-   "if_yes": 0.239,
-   "if_no": 0.159
+   "p": 0.881,
+   "if_yes": 0.201,
+   "if_no": 0.123
   }
  ],
- "engine": "2026.11c",
+ "engine": "2026.11d",
+ "outlook_baselines": {
+  "from_the_figures": {
+   "hourly_pay": 4.3,
+   "spending": 2.5,
+   "industrial_production": 1.4,
+   "factory_jobs": -0.1,
+   "income": [
+    1.4,
+    1.4,
+    1.4,
+    1.4,
+    1.4,
+    1.4,
+    1.4
+   ],
+   "population": 0.24,
+   "oil": [
+    [
+     1,
+     102.1
+    ],
+    [
+     20,
+     102.1
+    ]
+   ],
+   "sentiment": [
+    [
+     1,
+     51.5
+    ],
+    [
+     20,
+     51.5
+    ]
+   ]
+  },
+  "as_entered_in_november_2026": {
+   "hourly_pay": 3.8,
+   "spending": 2.2,
+   "industrial_production": 1.0,
+   "factory_jobs": 0.0,
+   "income": [
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0
+   ],
+   "population": 0.25,
+   "oil": [
+    [
+     1,
+     84.0
+    ],
+    [
+     8,
+     80.0
+    ],
+    [
+     14,
+     72.0
+    ],
+    [
+     20,
+     70.0
+    ]
+   ],
+   "sentiment": [
+    [
+     1,
+     51.5
+    ],
+    [
+     8,
+     57.0
+    ],
+    [
+     20,
+     60.0
+    ]
+   ],
+   "recession_share": 0.3
+  },
+  "recession_share_from": "the share of like stretches since 1964 in which a recession began in the months still ahead"
+ },
  "approval_step": {
   "points_a_month": 2.19,
   "measured": {
@@ -1635,33 +1711,33 @@
  "if": [
   {
    "what": "recession in 20% of runs",
-   "mean": 0.422,
-   "above_half": 0.261
+   "mean": 0.413,
+   "above_half": 0.23
   },
   {
    "what": "recession in 40% of runs",
-   "mean": 0.385,
-   "above_half": 0.196
+   "mean": 0.377,
+   "above_half": 0.171
   },
   {
    "what": "a rougher nomination season",
-   "mean": 0.391,
-   "above_half": 0.194
+   "mean": 0.377,
+   "above_half": 0.159
   },
   {
    "what": "a smoother nomination season",
-   "mean": 0.413,
-   "above_half": 0.255
+   "mean": 0.398,
+   "above_half": 0.214
   },
   {
    "what": "approval moving half as much each month",
-   "mean": 0.4,
-   "above_half": 0.217
+   "mean": 0.386,
+   "above_half": 0.179
   },
   {
    "what": "approval moving twice as much each month",
-   "mean": 0.416,
-   "above_half": 0.269
+   "mean": 0.401,
+   "above_half": 0.231
   }
  ]
 }

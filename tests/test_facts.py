@@ -85,7 +85,9 @@ def test_the_third_candidate_key_is_called_from_the_june_polls_and_only_from_the
     pr = case((2028, 6), '2028-07-20', runs='3000', edit=read_as(under[:2], D(2028, 7, 20)))
     assert pr['calls']['E03']['status'] in ('unresolved', 'held') and pr['calls']['E03']['value'] is None and 'three are needed' in pr['calls']['E03']['why'], 'too few pollsters: open, never no'
     pr = case((2028, 6), '2028-08-20', runs='3000', edit=read_as(under[:2], D(2028, 8, 20)))
-    assert pr['observed'] and pr['observed']['final'] and 'E03' in pr['observed']['left_out'] and 0 <= pr['observed']['index'] <= 1, 'after the last day the count stands on the keys that could be scored'
+    o = pr['observed']; assert o['final'] and 'E03' in o['left_open'] and all(k[0] == 'E' for k in o['left_open']) and o['index'] is None, 'after the last day an open key is counted neither way'
+    assert abs((o['highest'] - o['lowest']) - len(o['left_open']) / 7 / 5) < 1e-3, 'each open key is one of the seven in its group, and the group a fifth of the count: no key and no group changes its weight'
+    assert o['call'] == ('in favor' if o['lowest'] > 0.5 else 'against' if o['highest'] <= 0.5 else None)
 
 
 if __name__ == '__main__':

@@ -111,5 +111,31 @@
    "C05 (Approval is higher than in January): 28% to 43%.",
    "C04 (Approval is higher than at the midterms): 34% to 44%."
   ]
+ },
+ {
+  "as_of": "November 25, 2026",
+  "mean": 0.389,
+  "median": 0.397,
+  "p25": 0.296,
+  "p75": 0.479,
+  "above_half": 0.192,
+  "in_favor": 26,
+  "likely": 0.409,
+  "vote": 48.1,
+  "landed": [],
+  "open": 44,
+  "file": "2026-11-25T230315Z.json",
+  "made": "2026-11-25T23:03:15Z",
+  "engine": "2026.11d",
+  "changes": [
+   "The run-ahead method changed (version 2026.11c to 2026.11d); see the change log.",
+   "The outlook was revised: factory jobs, hourly pay, income, industrial production, oil, population, recession share, sentiment, spending.",
+   "A16 (Consumer sentiment is higher than a year ago) now leans no: 49%, from 63%.",
+   "B08 (Real disposable income per person grew faster this term than last): 39% to 18%.",
+   "B11 (Oil is cheaper than when the term began, after inflation): 72% to 56%.",
+   "A10 (Real disposable income per person is higher than a year ago): 76% to 61%.",
+   "A13 (Oil is cheaper than a year ago, after inflation): 74% to 62%.",
+   "B13 (Consumer sentiment is higher than when the term began): 9% to 1%."
+  ]
  }
 ]

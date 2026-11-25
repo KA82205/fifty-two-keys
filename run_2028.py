@@ -50,7 +50,7 @@ START, H = ym(2026, 10), 20                           # the run starts from Octo
 QEND = [2, 5, 8, 11, 14, 17, 20]                      # quarter ends from December 2026 to June 2028
 Q0 = 2026 * 4 + 3                                     # 2026 Q4, the first quarter of the run
 RUNS, SEED = int(os.environ.get('KEYS_RUNS', 200000)), 2028     # KEYS_RUNS: fewer runs, for the tests only
-ENGINE = '2026.11c'                                   # the version of this run-ahead method; a change to the method changes it, new data do not
+ENGINE = '2026.11d'                                   # the version of this run-ahead method; a change to the method changes it, new data do not
 # what the three "approval is rising" keys (C03, C04, C05) did in each election since 1952; years without the president on the ticket count double
 CYCLES = {1952: (1, 0, 1), 1956: (1, 1, 0), 1960: (0, 1, 0), 1964: (1, 1, 0), 1968: (0, 0, 0), 1972: (1, 1, 1), 1976: (0, 0, 0), 1980: (1, 0, 0),
           1984: (1, 1, 1), 1988: (0, 0, 0), 1992: (0, 0, 0), 1996: (1, 1, 1), 2000: (1, 0, 0), 2004: (0, 0, 0), 2008: (0, 0, 0), 2012: (1, 1, 1),
@@ -119,6 +119,23 @@ P = load_monthly()
 QS, LEVEL = load_quarterly()
 avg = lambda xs: sum(xs) / len(xs)
 m3 = lambda s, y, months: avg([P[s][ym(y, m)] for m in months])
+
+
+def baselines():
+    """The parts of the outlook no forecaster's survey gives, taken from the figures themselves and not typed in: each
+    growth rate is the series' own pace over the last two years, oil and consumer sentiment stay where they last stood
+    (for both, "no change" is the plainest forecast there is), and the population grows as it did over the last year.
+    They move by themselves as new figures are published. The share of runs with a recession is set in run()."""
+    last = lambda s: max(P[s]); pace = lambda s, months=24: round(100 * ((P[s][last(s)] / P[s][last(s) - months]) ** (12 / months) - 1), 1)
+    qs = sorted(QS)[-8:]; lv = sorted(LEVEL)
+    out = {'hourly_pay': pace('wage'), 'spending': pace('pce'), 'industrial_production': pace('ip'), 'factory_jobs': pace('man'),
+           'income': [round(avg([QS[q]['rdpi'] for q in qs]), 1)] * 7, 'population': round(100 * (LEVEL[lv[-1]]['pop'] / LEVEL[lv[-5]]['pop'] - 1), 2),
+           'oil': [[1, round(P['oil'][last('oil')], 1)], [20, round(P['oil'][last('oil')], 1)]], 'sentiment': [[1, round(P['ics'][last('ics')], 1)], [20, round(P['ics'][last('ics')], 1)]]}
+    return out
+
+
+ENTERED_OUTLOOK = {k: OUTLOOK[k] for k in ('hourly_pay', 'spending', 'industrial_production', 'factory_jobs', 'income', 'population', 'oil', 'sentiment', 'recession_share')}      # as typed in November 2026, kept for the record
+OUTLOOK.update(baselines())
 BASE = dict(
     jobs_jan21=P['jobs'][ym(2021, 1)], jobs_jan25=P['jobs'][ym(2025, 1)], ip_jan21=P['ip'][ym(2021, 1)], ip_jan25=P['ip'][ym(2025, 1)],
     pce_jan21=P['pce'][ym(2021, 1)], pce_jan25=P['pce'][ym(2025, 1)], man_jan25=P['man'][ym(2025, 1)], wage_jan25=P['wage'][ym(2025, 1)],
@@ -341,11 +358,13 @@ def other_keys(rnd, recession):
 
 
 def run(runs=RUNS, seed=SEED, share=None, gap=0.3):
-    share = OUTLOOK['recession_share'] if share is None else share
     S = stretches(gap); med = middle(S); rnd = random.Random(seed)
     econ = [economy_keys(s, med, rnd) for s in S]
-    rec = [s['recession'] for s in S]; seen = avg(rec)
-    w = [share / seen if r else (1 - share) / (1 - seen) for r in rec]
+    # a recession in the months still ahead, in stretches like this one: the record's own share is used, so it falls by itself
+    # as the months left run out. `share` overrides it only for the what-if lines.
+    rec = [any(t in REC for t in range(s['t0'] + max(MONTH_NOW, 0) + 1, s['t0'] + H + 1)) for s in S]; seen = avg(rec)
+    share = seen if share is None else share
+    w = [1.0] * len(S) if seen in (0, 1) else [share / seen if r else (1 - share) / (1 - seen) for r in rec]
     size = {g: len(ks) for g, ks in GROUPS.items()}
     tally, index, by_group, calm_index = {}, [], {g: [] for g in GROUPS}, []
     yes_rec, n_rec = {}, 0
@@ -370,7 +389,7 @@ def run(runs=RUNS, seed=SEED, share=None, gap=0.3):
     # for each key: the share of runs above one half when it is yes, and when it is no
     split = {a: (yes_above.get(a, 0) / tally[a] if tally[a] else None, (n_above - yes_above.get(a, 0)) / (runs - tally[a]) if runs - tally[a] else None) for a in tally}
     per = [{'t0': s['t0'], 'recession': r, 'above': hits[i] / draws[i] if draws[i] else None, 'mean': sums[i] / draws[i] if draws[i] else None} for i, (s, r) in enumerate(zip(S, rec))]
-    return dict(p={a: tally[a] / runs for a in sorted(tally)}, index=index, by_group=by_group, calm=calm_index, stretches=len(S), with_recession=sum(rec),
+    return dict(share=share, p={a: tally[a] / runs for a in sorted(tally)}, index=index, by_group=by_group, calm=calm_index, stretches=len(S), with_recession=sum(rec),
                 first=S[0]['t0'] // 12, last=S[-1]['t0'] // 12, split=split, per=per, copy=dict({a: econ[0][a] for a in LANDED}, **approval_keys()),
                 p_rec={a: yes_rec.get(a, 0) / n_rec for a in tally} if n_rec else {}, p_calm={a: (tally[a] - yes_rec.get(a, 0)) / (runs - n_rec) for a in tally} if runs > n_rec else {})
 
@@ -387,9 +406,11 @@ def spread(per, share, rnd, reps=4000, years=4):
     for _ in range(reps):
         pick = [x for b in rnd.choices(names, k=len(names)) for x in blocks[b]]
         r, c = [x for x in pick if x['recession']], [x for x in pick if not x['recession']]
-        if not r or not c:
+        if not pick:
             continue
-        sh = rnd.uniform(share - 0.10, share + 0.10)
+        if not r or not c:                               # late in the run no stretch has a recession still ahead: there is nothing to weigh
+            out.append((avg([x['above'] for x in pick]), avg([x['mean'] for x in pick]))); continue
+        sh = min(0.95, max(0.02, rnd.uniform(share - 0.10, share + 0.10)))
         out.append((sh * avg([x['above'] for x in r]) + (1 - sh) * avg([x['above'] for x in c]), sh * avg([x['mean'] for x in r]) + (1 - sh) * avg([x['mean'] for x in c])))
     q = lambda v, p: sorted(v)[min(len(v) - 1, int(p * len(v)))]
     return {'above_half': [round(q([a for a, _ in out], .1), 3), round(q([a for a, _ in out], .9), 3)], 'mean': [round(q([m for _, m in out], .1), 3), round(q([m for _, m in out], .9), 3)],
@@ -579,6 +600,7 @@ def notes():
 def main():
     full = {k[:3]: k for k in ALL}
     Rn = run()
+    OUTLOOK['recession_share'] = round(Rn['share'], 3)          # the record's own share for the months still ahead (run())
     ix = sorted(Rn['index']); n = len(ix)
     q = lambda v, p: v[min(len(v) - 1, int(p * len(v)))]
     above = sum(1 for x in ix if x > 0.5) / n
@@ -625,6 +647,7 @@ def main():
         'decisive': sorted(({'id': a, 'p': round(Rn['p'][a], 3), 'if_yes': round(y, 3), 'if_no': round(n, 3)} for a, (y, n) in Rn['split'].items()
                             if a not in SETTLED and y is not None and n is not None), key=lambda d: d['if_no'] - d['if_yes']),
         'engine': ENGINE,
+        'outlook_baselines': {'from_the_figures': baselines(), 'as_entered_in_november_2026': ENTERED_OUTLOOK, 'recession_share_from': 'the share of like stretches since 1964 in which a recession began in the months still ahead'},
         'approval_step': {'points_a_month': APPROVAL['step'], 'measured': APPROVAL['step_from'], 'from': f"{APPROVAL['approve']}% approve, {APPROVAL['disapprove']}% disapprove"},
         'third_candidates': {'chance_none_reaches_10': round(THIRD_P, 3), 'reading': ((THIRD or {}).get('now') or {}).get('reading'), 'pollsters': ((THIRD or {}).get('now') or {}).get('pollsters', 0), 'odds_entered': POLITICS['no_third_candidate']},
         'approval': {k: APPROVAL[k] for k in ('approve', 'disapprove', 'pollsters', 'polls', 'from', 'to', 'year_ago', 'midterm')},
@@ -638,10 +661,14 @@ def main():
         final = CALL.index({a: c['value'] for a, c in CALLS.items()})
         assert min(ix) == max(ix) and abs(ix[0] - final) < 1e-12, 'with every key called, every run gives the count the rules give'
         out['observed'] = {'index': round(final, 4), 'in_favor': sum(c['value'] for c in CALLS.values()), 'final': all(c['final'] for c in CALLS.values())}
-    elif TODAY > datetime.date.fromisoformat(CALL.CYCLE['last_day']):  # the last day has passed with keys still open: the count stands on the keys that could be scored
-        got = {a: c['value'] for a, c in CALLS.items() if c['value'] is not None}
-        out['observed'] = {'index': round(CALL.index_of(got), 4), 'in_favor': sum(got.values()), 'final': True, 'left_out': sorted(set(CALLS) - set(got)),
-                           'note': 'These keys had no evidence by the last day and are left out; each group is the share of its keys that could be scored.'}
+    elif TODAY > datetime.date.fromisoformat(CALL.CYCLE['last_day']):  # the last day has passed with keys still open
+        # Nothing is re-weighted. Every group keeps all of its keys and its fifth of the count, and the line stays at one half.
+        # The count is given as the lowest and the highest it could be (each open key counted against the party, then for it),
+        # and the keys make a call only if both ends fall on the same side of one half.
+        got = {a: c['value'] for a, c in CALLS.items()}; lo = CALL.index({a: bool(v) for a, v in got.items()}); hi = CALL.index({a: (True if v is None else bool(v)) for a, v in got.items()})
+        out['observed'] = {'index': None, 'lowest': round(lo, 4), 'highest': round(hi, 4), 'call': ('in favor' if lo > 0.5 else 'against' if hi <= 0.5 else None), 'in_favor': sum(bool(v) for v in got.values()),
+                           'final': True, 'left_open': sorted(a for a, v in got.items() if v is None),
+                           'note': 'These keys had no evidence by the last day. They are counted neither way: the count is somewhere between the two figures, and there is a call only if both are on the same side of one half.'}
     assert set(out['keys']) | set(SETTLED) == set(full) and all(out['keys'][a]['note'] for a in out['keys'])
     # how far the answer moves when the main assumptions do
     vary = []

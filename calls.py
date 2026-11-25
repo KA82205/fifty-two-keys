@@ -232,7 +232,7 @@ def write_registry():
          '**settled** when it is called on evidence that will not change; **held** when the evidence should be there and is not, or two sources disagree. A missing figure never counts as no.', '',
          f"The count is closed on **{registry()[0]['count_closes']}**, on the figures published by then. Every June figure is due before that day: jobs, unemployment and pay on the first Friday of July, "
          "prices and production by the middle of the month, second-quarter growth and income in the last week, June spending with it or a day later, the state indexes in the last days of July. "
-         "A figure that comes out late is used as first published, up to August 15, 2028; a key still without evidence then is left out, and its group is the share of the keys that could be scored. "
+         "A figure that comes out late is used as first published, up to August 15, 2028; a key still without evidence then stays open. Nothing is re-weighted: each group keeps all of its keys and its fifth of the count, the line stays at one half, the count is given as the lowest and highest it could be, and the keys make a call only if both fall on the same side of one half. "
          "The conventions may come after the close: the nomination keys rest on pledged delegates at the end of the primaries, not on the convention.", '']
     for g, name in B.GROUP_NAMES.items():
         L += [f'## {g}. {name}', '', '| Key | Asks | Compares | Sign | With | Tie | Reads | First possible call | By hand |', '|---|---|---|---|---|---|---|---|---|']
@@ -406,13 +406,6 @@ def record(calls, today, path=HISTORY):
                 w.writeheader()
             w.writerows(new)
     return new
-
-
-def index_of(values):
-    """The count over the keys that could be scored: each group is the share in favor among its scored keys, and a group
-    with none scored is left out of the average. With all 52 scored this is index()."""
-    shares = [sum(values[i] for i in IDS if i[0] == g and i in values) / n for g in B.GROUPS for n in [sum(1 for i in IDS if i[0] == g and i in values)] if n]
-    return sum(shares) / len(shares)
 
 
 def index(values):
