@@ -69,7 +69,7 @@ def test_the_list_has_every_key_and_matches_the_rules():
     assert named <= read, named - read
     on_disk = json.load(open(os.path.join(HERE, 'data', 'key_registry.json')))['keys']
     assert on_disk == json.loads(json.dumps(rows)), 'data/key_registry.json is out of date: run python calls.py'
-    assert sum(r['automatic'] == 'yes' for r in rows) == 41 and {r['id'] for r in rows if r['automatic'] != 'yes'} == {'D01', 'D02', 'D03', 'D05', 'D06', 'E01', 'E03', 'E04', 'E05', 'E06', 'E07'}
+    assert sum(r['automatic'] == 'yes' for r in rows) == 47 and {r['id'] for r in rows if r['automatic'] != 'yes'} == {'E01', 'E04', 'E05', 'E06', 'E07'}
 
 
 def test_today():

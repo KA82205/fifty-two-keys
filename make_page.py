@@ -350,7 +350,6 @@ def main():
         feed = {'as_of': run['as_of'], 'party_in_office': 'R', 'keys': len(ALL), 'settled': sum(1 for k in keys if k['s'] is not None),
                 'likely': run['likely'], 'mean': run['index']['mean'], 'median': run['index']['median'], 'p25': run['index']['p25'], 'p75': run['index']['p75'],
                 'sd': round(iqr / 1.349, 3), 'above_half': run['index']['above_half'], 'above_half_range': (run.get('range') or {}).get('above_half'),
-                'vote_estimate': {'party_in_office': payload['sure']['run']['vote_likely'], 'line': sure['line'], 'typical_miss': sure['miss']},
                 'record': {'right': call['right'], 'n': call['n']}, 'engine': run.get('engine'), 'page': SITE,
                 'note': 'likely: the count if every open key lands the way it leans. above_half: the share of runs in which the count ends above one half; it is not a chance of winning.',
                 # from here on: the whole run, for anything that wants more than the headline (format 2; nothing above was changed)

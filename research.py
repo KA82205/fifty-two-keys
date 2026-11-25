@@ -260,7 +260,7 @@ ch = [m['june'] - m['then'] for m in moves]; chd = [m['june_dis'] - m['then_dis'
 out['approval'] = {'moves': moves, 'now': [now_a, now_d], 'needed': [round(50 - now_a, 1), round(now_d - 50, 1)],
                    'rose_by_needed': sum(1 for c in ch if c >= 50 - now_a), 'disapproval_fell_by_needed': sum(1 for c in chd if c <= 50 - now_d), 'n': len(moves),
                    'largest_rise': round(max(ch), 1), 'largest_fall_in_disapproval': round(min(chd), 1), 'median_change': round(st.median(ch), 1),
-                   'spread': round(st.pstdev(ch), 1), 'set_by_hand': {'disapproval_below_half': E.POLITICS['surge'], 'approval_at_50': round(E.POLITICS['surge'] * E.POLITICS['net_given_surge'] * E.POLITICS['fifty_given_net'], 4)}}
+                   'spread': round(st.pstdev(ch), 1), 'set_by_hand': {'disapproval_below_half': run['keys']['C06']['p'], 'approval_at_50': run['keys']['C01']['p']}}      # no longer set by hand: the run-ahead's own chances (the name is kept for the page)
 
 json.dump(out, open(os.path.join(HERE, 'research.json'), 'w'), separators=(',', ':'))
 a_ = out['alike']

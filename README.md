@@ -268,8 +268,8 @@ B05 0%, C01 1%, C02 1%, C06 2%, B13 9%, B03 16%, B14 20%, C05 28%, C04 34%, B01 
 | Recession in 40% of runs | 38% | 17% |
 | A rougher nomination season | 38% | 16% |
 | A smoother nomination season | 40% | 22% |
-| No chance that disapproval falls below half | 39% | 19% |
-| An 8% chance that it does | 40% | 22% |
+| Approval moving half as much each month | 40% | 22% |
+| Approval moving twice as much each month | 42% | 27% |
 
 ### What to keep in mind
 
@@ -416,6 +416,25 @@ What the survey does not give stays as entered, with the date it was entered: in
 production, factory jobs, oil, sentiment, the growth of the population and the 30% share of runs with a recession. So do
 the odds for the approval and nomination keys. Between surveys the latest published figures are carried along the shape
 of the outlook in hand.
+
+### What is read and what is still entered
+
+Read by rule, with nothing typed: the economic series (FRED), approval polls (VoteHub), the forecasters' outlook for growth,
+jobs, unemployment and inflation (`outlook.py`), seats in each new Congress (`facts.py`, from the public list of sitting
+members), and polls that name a third candidate (`facts.py`, from PollResults.org). 47 of the 52 keys need nothing done by
+hand; `KEYS.md` lists all 52.
+
+Still entered, once each, in 2028: the nominee's share of pledged delegates when the primaries end (E04) and the New
+Hampshire primary line once both parties have a candidate with a majority of pledged delegates (E05 to E07). No free, open
+list of delegates or of New Hampshire's certified results exists to read. If a party has no such candidate by August 1,
+2028, its keys are left open and the count is closed without them. Also entered, with their dates: the parts of the
+outlook the survey does not give, the 30% share of runs with a recession, and the odds for the nomination keys.
+
+The count is closed on August 1, 2028, on the figures published by then. A figure that comes out late is used as first
+published up to August 15; after that the key is left out and its group is the share of the keys that could be scored.
+
+There is no estimate of the vote for 2028. The keys call a winner; a line from the count to the vote missed by 4.3 points of
+margin on average in 2008 to 2024, always in the Democrats' favor, and The Margin's forecast did better without it.
 
 ### The calls
 

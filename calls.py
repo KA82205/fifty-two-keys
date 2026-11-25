@@ -30,7 +30,8 @@ FULL = dict(zip(IDS, B.ALL))
 # The election this file is set up for. Another election is another table like this one and nothing else.
 CYCLE = {
     'year': 2028, 'party': 'R',
-    'closes': '2028-08-01',        # the count is closed on the figures published by this day (see KEYS.md: proposed, not yet approved)
+    'closes': '2028-08-01',        # the count is closed on the figures published by this day (approved November 25, 2026)
+    'last_day': '2028-08-15',      # a figure that comes out late is used when it first appears, up to this day; after it the key is left out
     'approval_in': '2028-07-08',   # the June polls are taken as complete a week after the month ends
     # the day by which each kind of evidence should exist; after it, a key without evidence is held and the run is flagged
     'expected': {'seats': '2027-02-01', 'approval': '2028-07-15', 'monthly': '2028-07-31', 'quarterly': '2028-07-31', 'state': '2028-07-31',
@@ -73,8 +74,8 @@ SOURCES = {
     'vote': dict(ids=['build.WINNER_PCT'], what="the winner's share of all votes cast for president", by='Federal Election Commission', units='percent', every='four years',
                  out='in the weeks after the states certify', revised='not revised', url='https://www.fec.gov/introduction-campaign-finance/election-results-and-voting-information/', entered=True),
     'fact': dict(ids=['data/outlook.json, settled'], what='a fact of the calendar or the Constitution', by='public record', units='yes or no', every='once', out='known in advance', revised='not revised', entered=True),
-    'third': dict(ids=['data/outlook.json, settled'], what='national polls finished in June that name a third candidate', by='no approved list yet', units='percent', every='once',
-                  out='the first week of July', revised='not revised', entered=True),
+    'third': dict(ids=['api.pollresults.org/v1.0/politics/results/president'], what='national polls finished in June that name a third candidate', by='PollResults.org', units='percent', every='poll',
+                  out='as polls are published; read on every run', revised='a poll can be corrected by its pollster', url='https://pollresults.org/', licence='PollResults.org, CC BY 4.0'),
     'delegates': dict(ids=['data/outlook.json, settled'], what="the nominee's share of his party's convention delegates", by='the party', units='share of delegates', every='once',
                       out='when the primaries end in June, or at the convention', revised='not revised', entered=True),
     'nh': dict(ids=['data/nh_primaries.csv'], what='the vote in each party\'s New Hampshire primary', by='New Hampshire Secretary of State', units='percent of the vote', every='four years',
@@ -142,19 +143,19 @@ RULES = {
 }
 WAITS = {'A': 'monthly', 'B': 'monthly', 'C': 'approval', 'D': 'seats'}       # which `expected` day applies; quarterly and state keys are told apart below
 MANUAL = {
-    'D': ('One line in data/congress_seats.csv when a new Congress meets, every two years. The 2026 result is entered.',
-          'Could be read from the public list of sitting members (github.com/unitedstates/congress-legislators). Not needed again before 2031.'),
+    'D': ('Nothing: the seats are counted from the public list of sitting members when a new Congress meets (facts.py).', 'None needed.'),
     'D04': ('One figure in build.py every four years, from the certified result. The 2024 figure is entered.', 'None needed before 2029.'),
     'E01': ('Entered once: the president cannot run again.', 'None needed.'),
     'E02': ('None: read from the table of past elections.', 'None needed.'),
-    'E03': ('Entered by hand in data/outlook.json after the June 2028 polls. No list of polls naming a third candidate has been approved as the source, and the rule does not say how to average them.',
-            'Read the national polls that name a third candidate from the poll list The Margin already uses, average by pollster as approval is averaged, and call the key on that. Needs your approval of the list and the average.'),
-    'E04': ('Entered by hand in data/outlook.json. Delegate counts are published by the parties and by news organisations, not as an open feed, and the rule does not say which count is the evidence.',
-            'Decide the evidence: the pledged count when the primaries end in June (known before the count is closed), or the convention roll call (which may come after it). Then one entry, with its source.'),
-    'E05': ('One line in data/nh_primaries.csv once both nominees are known. New Hampshire publishes its results as documents, not as a feed, and "the nominee" is not official until the convention.',
-            'Decide who counts as the nominee before the conventions (for example, a majority of pledged delegates). Then the line can be entered the day that happens, with the Secretary of State as its source.'),
+    'E04': ('One entry in data/outlook.json when the primaries end, in June 2028: the share of pledged delegates won by the candidate with a majority of them, with its source. '
+            'The evidence is the pledged count at the end of the primaries, not the convention roll call, which can come after the count is closed. Delegate counts are published by the parties and by news organisations as pages, not as an open list.',
+            'None found: no free, open and stable list of pledged delegates exists to read. If nobody holds a majority of pledged delegates by August 1, 2028, the key is left open and the count is closed without it.'),
+    'E05': ('One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). '
+            'The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.',
+            'None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them.'),
 }
 MANUAL['E06'] = MANUAL['E07'] = MANUAL['E05']
+MANUAL['E03'] = ('Nothing: scored from the June polls that name a third candidate (facts.py).', 'None needed.')
 
 
 def registry():
@@ -206,6 +207,15 @@ def registry():
                 if_missing=f"The key stays open and keeps its chance. After {day(datetime.date.fromisoformat(CYCLE['expected'].get(i, CYCLE['expected']['seats'])))} it is held and the run is flagged every day."
                            if i not in ('D04', 'E01', 'E02') else 'Does not arise: the fact is known.',
                 fallback='none', automatic='yes' if i in ('D04', 'E02') else 'no: one entry', by_hand=done, remedy=remedy)
+            if g == 'D' and i != 'D04':
+                row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets',
+                           checked='every day in January and February of an odd year, until the new Congress is on the list', fallback='a line entered by hand in data/congress_seats.csv, with its source')
+            if i == 'E03':
+                row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='https://api.pollresults.org/v1.0/politics/results/president (facts.py)', window_closes='June 30, 2028',
+                           earliest_call='July 8, 2028: polls finished in June and published by July 7',
+                           stays_open='Fewer than three pollsters named a third candidate in June. A poll that names none is not counted as zero.',
+                           checked='on every run', checks='only named candidates of neither party; each pollster once; undecided voters left as the poll left them',
+                           fallback='none: without three pollsters the key stays open, and the count is closed without it')
         rows.append(row)
     assert len(rows) == 52 and [r['id'] for r in rows] == IDS
     return rows
@@ -220,7 +230,10 @@ def write_registry():
          'Written by `calls.py` from the rules in `build.py`. The same list, with every field, is in `data/key_registry.json`.', '',
          'A key is **unresolved** until the figures or the event its rule needs exist; **provisional** once every figure is published and the rule has been applied, while the figures can still be revised; '
          '**settled** when it is called on evidence that will not change; **held** when the evidence should be there and is not, or two sources disagree. A missing figure never counts as no.', '',
-         f"The count is closed on **{registry()[0]['count_closes']}**, on the figures published by then. That day is a proposal: the model says only that June figures are used and that a forecast made at the end of July can use them.", '']
+         f"The count is closed on **{registry()[0]['count_closes']}**, on the figures published by then. Every June figure is due before that day: jobs, unemployment and pay on the first Friday of July, "
+         "prices and production by the middle of the month, second-quarter growth and income in the last week, June spending with it or a day later, the state indexes in the last days of July. "
+         "A figure that comes out late is used as first published, up to August 15, 2028; a key still without evidence then is left out, and its group is the share of the keys that could be scored. "
+         "The conventions may come after the close: the nomination keys rest on pledged delegates at the end of the primaries, not on the convention.", '']
     for g, name in B.GROUP_NAMES.items():
         L += [f'## {g}. {name}', '', '| Key | Asks | Compares | Sign | With | Tie | Reads | First possible call | By hand |', '|---|---|---|---|---|---|---|---|---|']
         for r in rows:
@@ -278,7 +291,7 @@ def read_history(path=HISTORY):
     return list(csv.DictReader(open(path))) if os.path.exists(path) else []
 
 
-def evaluate(today, P, QS, LEVEL, approval, states, entered, landed, history=(), held_series=(), root=HERE):
+def evaluate(today, P, QS, LEVEL, approval, states, entered, landed, history=(), held_series=(), root=HERE, third=None):
     """Every key's state on `today`. `landed`: the economy keys whose series all run through June without a gap (run_2028).
     `states`: what run_2028.state_figures() gives. Returns {id: {status, value, final, basis, evidence, why, next}}."""
     from make_page import detail
@@ -336,7 +349,17 @@ def evaluate(today, P, QS, LEVEL, approval, states, entered, landed, history=(),
                 c.update(status='settled', value=bool(e['value']), final=True, basis='entered', evidence=e.get('why', ''))
             else:
                 c.update(why='The nominees are not known, so the New Hampshire result cannot be read for them yet.', next='when both nominees are known, by June 2028', status='held' if today > exp[i] else 'unresolved')
-        else:                                              # E01, E03, E04: entered, with what the entry rests on
+        elif i == 'E03' and e is None:                     # scored by rule on the June polls that name a third candidate (facts.py)
+            june = (third or {}).get('june') or {}
+            if june.get('reading') is not None and today >= datetime.date(y, 7, 8):
+                top = max(june['polls'], key=lambda q: q['best_share'])
+                c.update(status='provisional', value=bool(june['reading'] < 10), basis='rule',
+                         evidence=f"{june['pollsters']} pollsters named a third candidate in polls finished in June {y}; the best-placed averaged {june['reading']}% (highest in one poll: {top['best']}, {top['best_share']}%).")
+            else:
+                few = today >= datetime.date(y, 7, 8)
+                c.update(why=(f"Only {june.get('pollsters', 0)} pollsters named a third candidate in June {y}; three are needed for a reading." if few else f'The June {y} polls do not exist yet.'),
+                         next=f'July 8, {y}', status='held' if today > exp.get(i, closes) else 'unresolved')
+        else:                                              # E01, E04, and E03 when entered: entered, with what the entry rests on
             if e is not None:
                 c.update(status='settled', value=bool(e['value']), final=True, basis='entered', evidence=e.get('why', ''))
             else:
@@ -383,6 +406,13 @@ def record(calls, today, path=HISTORY):
                 w.writeheader()
             w.writerows(new)
     return new
+
+
+def index_of(values):
+    """The count over the keys that could be scored: each group is the share in favor among its scored keys, and a group
+    with none scored is left out of the average. With all 52 scored this is index()."""
+    shares = [sum(values[i] for i in IDS if i[0] == g and i in values) / n for g in B.GROUPS for n in [sum(1 for i in IDS if i[0] == g and i in values)] if n]
+    return sum(shares) / len(shares)
 
 
 def index(values):

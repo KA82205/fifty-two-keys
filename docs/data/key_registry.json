@@ -1936,7 +1936,7 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets",
    "window_closes": "November 3, 2026 (the midterm)",
    "earliest_call": "when the result cannot change any more: here, when one party has won or lost enough seats",
    "count_closes": "August 1, 2028",
@@ -1944,13 +1944,13 @@
    "called_yes": "The party's House seats after the 2026 midterm > its seats after the 2022 midterm.",
    "called_no": "The same statement is false.",
    "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
+   "checked": "every day in January and February of an odd year, until the new Congress is on the list",
    "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
    "if_missing": "The key stays open and keeps its chance. After February 1, 2027 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/congress_seats.csv when a new Congress meets, every two years. The 2026 result is entered.",
-   "remedy": "Could be read from the public list of sitting members (github.com/unitedstates/congress-legislators). Not needed again before 2031."
+   "fallback": "a line entered by hand in data/congress_seats.csv, with its source",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "D02",
@@ -1981,7 +1981,7 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets",
    "window_closes": "November 3, 2026 (the midterm)",
    "earliest_call": "when the result cannot change any more: here, when one party has won or lost enough seats",
    "count_closes": "August 1, 2028",
@@ -1989,13 +1989,13 @@
    "called_yes": "The party's House seats in 2027 > the other party's.",
    "called_no": "The same statement is false.",
    "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
+   "checked": "every day in January and February of an odd year, until the new Congress is on the list",
    "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
    "if_missing": "The key stays open and keeps its chance. After February 1, 2027 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/congress_seats.csv when a new Congress meets, every two years. The 2026 result is entered.",
-   "remedy": "Could be read from the public list of sitting members (github.com/unitedstates/congress-legislators). Not needed again before 2031."
+   "fallback": "a line entered by hand in data/congress_seats.csv, with its source",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "D03",
@@ -2026,7 +2026,7 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets",
    "window_closes": "November 3, 2026 (the midterm)",
    "earliest_call": "when the result cannot change any more: here, when one party has won or lost enough seats",
    "count_closes": "August 1, 2028",
@@ -2034,13 +2034,13 @@
    "called_yes": "The party's Senate seats in 2027 > the other party's (a tied Senate counts as held: the vice president breaks the tie).",
    "called_no": "The same statement is false.",
    "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
+   "checked": "every day in January and February of an odd year, until the new Congress is on the list",
    "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
    "if_missing": "The key stays open and keeps its chance. After February 1, 2027 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/congress_seats.csv when a new Congress meets, every two years. The 2026 result is entered.",
-   "remedy": "Could be read from the public list of sitting members (github.com/unitedstates/congress-legislators). Not needed again before 2031."
+   "fallback": "a line entered by hand in data/congress_seats.csv, with its source",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "D04",
@@ -2116,7 +2116,7 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets",
    "window_closes": "November 3, 2026 (the midterm)",
    "earliest_call": "when the result cannot change any more: here, when one party has won or lost enough seats",
    "count_closes": "August 1, 2028",
@@ -2124,13 +2124,13 @@
    "called_yes": "The party's House seats after the 2026 midterm >= its seats when the term began.",
    "called_no": "The same statement is false.",
    "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
+   "checked": "every day in January and February of an odd year, until the new Congress is on the list",
    "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
    "if_missing": "The key stays open and keeps its chance. After February 1, 2027 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/congress_seats.csv when a new Congress meets, every two years. The 2026 result is entered.",
-   "remedy": "Could be read from the public list of sitting members (github.com/unitedstates/congress-legislators). Not needed again before 2031."
+   "fallback": "a line entered by hand in data/congress_seats.csv, with its source",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "D06",
@@ -2161,7 +2161,7 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets",
    "window_closes": "November 3, 2026 (the midterm)",
    "earliest_call": "when the result cannot change any more: here, when one party has won or lost enough seats",
    "count_closes": "August 1, 2028",
@@ -2169,13 +2169,13 @@
    "called_yes": "The party's Senate seats after the 2026 midterm >= its seats when the term began.",
    "called_no": "The same statement is false.",
    "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
+   "checked": "every day in January and February of an odd year, until the new Congress is on the list",
    "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
    "if_missing": "The key stays open and keeps its chance. After February 1, 2027 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/congress_seats.csv when a new Congress meets, every two years. The 2026 result is entered.",
-   "remedy": "Could be read from the public list of sitting members (github.com/unitedstates/congress-legislators). Not needed again before 2031."
+   "fallback": "a line entered by hand in data/congress_seats.csv, with its source",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "E01",
@@ -2285,32 +2285,32 @@
     {
      "name": "third",
      "series": [
-      "data/outlook.json, settled"
+      "api.pollresults.org/v1.0/politics/results/president"
      ],
      "what": "national polls finished in June that name a third candidate",
-     "published_by": "no approved list yet",
+     "published_by": "PollResults.org",
      "units": "percent",
-     "link": "",
-     "comes_out": "the first week of July",
-     "revised": "not revised",
-     "licence": "public record"
+     "link": "https://pollresults.org/",
+     "comes_out": "as polls are published; read on every run",
+     "revised": "a poll can be corrected by its pollster",
+     "licence": "PollResults.org, CC BY 4.0"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "https://api.pollresults.org/v1.0/politics/results/president (facts.py)",
    "window_closes": "June 30, 2028",
-   "earliest_call": "when the fact is on the public record",
+   "earliest_call": "July 8, 2028: polls finished in June and published by July 7",
    "count_closes": "August 1, 2028",
    "revisions": "An election result, a primary result and a fact do not change. A mistake in what was entered is corrected in the open: the first entry stays in the record.",
    "called_yes": "The best-placed third candidate in the June 2028 polls < 10%.",
    "called_no": "The same statement is false.",
-   "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
-   "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
+   "stays_open": "Fewer than three pollsters named a third candidate in June. A poll that names none is not counted as zero.",
+   "checked": "on every run",
+   "checks": "only named candidates of neither party; each pollster once; undecided voters left as the poll left them",
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "Entered by hand in data/outlook.json after the June 2028 polls. No list of polls naming a third candidate has been approved as the source, and the rule does not say how to average them.",
-   "remedy": "Read the national polls that name a third candidate from the poll list The Margin already uses, average by pollster as approval is averaged, and call the key on that. Needs your approval of the list and the average."
+   "fallback": "none: without three pollsters the key stays open, and the count is closed without it",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "E04",
@@ -2354,8 +2354,8 @@
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
    "fallback": "none",
    "automatic": "no: one entry",
-   "by_hand": "Entered by hand in data/outlook.json. Delegate counts are published by the parties and by news organisations, not as an open feed, and the rule does not say which count is the evidence.",
-   "remedy": "Decide the evidence: the pledged count when the primaries end in June (known before the count is closed), or the convention roll call (which may come after it). Then one entry, with its source."
+   "by_hand": "One entry in data/outlook.json when the primaries end, in June 2028: the share of pledged delegates won by the candidate with a majority of them, with its source. The evidence is the pledged count at the end of the primaries, not the convention roll call, which can come after the count is closed. Delegate counts are published by the parties and by news organisations as pages, not as an open list.",
+   "remedy": "None found: no free, open and stable list of pledged delegates exists to read. If nobody holds a majority of pledged delegates by August 1, 2028, the key is left open and the count is closed without it."
   },
   {
    "id": "E05",
@@ -2399,8 +2399,8 @@
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
    "fallback": "none",
    "automatic": "no: one entry",
-   "by_hand": "One line in data/nh_primaries.csv once both nominees are known. New Hampshire publishes its results as documents, not as a feed, and \"the nominee\" is not official until the convention.",
-   "remedy": "Decide who counts as the nominee before the conventions (for example, a majority of pledged delegates). Then the line can be entered the day that happens, with the Secretary of State as its source."
+   "by_hand": "One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.",
+   "remedy": "None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them."
   },
   {
    "id": "E06",
@@ -2444,8 +2444,8 @@
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
    "fallback": "none",
    "automatic": "no: one entry",
-   "by_hand": "One line in data/nh_primaries.csv once both nominees are known. New Hampshire publishes its results as documents, not as a feed, and \"the nominee\" is not official until the convention.",
-   "remedy": "Decide who counts as the nominee before the conventions (for example, a majority of pledged delegates). Then the line can be entered the day that happens, with the Secretary of State as its source."
+   "by_hand": "One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.",
+   "remedy": "None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them."
   },
   {
    "id": "E07",
@@ -2489,8 +2489,8 @@
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
    "fallback": "none",
    "automatic": "no: one entry",
-   "by_hand": "One line in data/nh_primaries.csv once both nominees are known. New Hampshire publishes its results as documents, not as a feed, and \"the nominee\" is not official until the convention.",
-   "remedy": "Decide who counts as the nominee before the conventions (for example, a majority of pledged delegates). Then the line can be entered the day that happens, with the Secretary of State as its source."
+   "by_hand": "One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.",
+   "remedy": "None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them."
   }
  ]
 }

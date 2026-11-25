@@ -22,9 +22,14 @@ How the economy keys are run (33 keys)
   past stretches, and never below 3.4%. Payroll jobs follow the outlook and unemployment, because past job booms came
   with a fast-growing workforce. The two state keys use a stand-in for the state indexes fitted on 1980 to 2024.
 
-How the other keys are run (11 keys): by the odds in data/outlook.json, set from polls and from how these keys went
-in the 19 elections since 1952. They are judgment, and the README lists what each rests on. The six approval keys
-land on their own once the June 2028 polls are in; the nomination keys are entered by hand as they are settled.
+How the other keys are run (11 keys)
+  The six approval keys: from today's reading, approval takes a step to each date the keys compare, sized by how far it
+  has moved between the midterm and June of the election year in the terms since 1950 (or by its month-to-month moves in
+  this term, if those are larger). No trend is assumed. In half of the runs with a recession every step goes down. A
+  reading that has been taken is used as it is, and the keys land once the June 2028 polls are in.
+  The third-candidate key: the odds entered in data/outlook.json, moved halfway toward what the polls say once three
+  pollsters have named a third candidate in the last 90 days; scored by rule on the June 2028 polls (facts.py).
+  The four nomination keys: the odds entered in data/outlook.json, with the date they were entered, until each is settled.
 """
 import csv, datetime, json, math, os, random, statistics as st, sys
 
@@ -45,7 +50,7 @@ START, H = ym(2026, 10), 20                           # the run starts from Octo
 QEND = [2, 5, 8, 11, 14, 17, 20]                      # quarter ends from December 2026 to June 2028
 Q0 = 2026 * 4 + 3                                     # 2026 Q4, the first quarter of the run
 RUNS, SEED = int(os.environ.get('KEYS_RUNS', 200000)), 2028     # KEYS_RUNS: fewer runs, for the tests only
-ENGINE = '2026.11b'                                   # the version of this run-ahead method; a change to the method changes it, new data do not
+ENGINE = '2026.11c'                                   # the version of this run-ahead method; a change to the method changes it, new data do not
 # what the three "approval is rising" keys (C03, C04, C05) did in each election since 1952; years without the president on the ticket count double
 CYCLES = {1952: (1, 0, 1), 1956: (1, 1, 0), 1960: (0, 1, 0), 1964: (1, 1, 0), 1968: (0, 0, 0), 1972: (1, 1, 1), 1976: (0, 0, 0), 1980: (1, 0, 0),
           1984: (1, 1, 1), 1988: (0, 0, 0), 1992: (0, 0, 0), 1996: (1, 1, 1), 2000: (1, 0, 0), 2004: (0, 0, 0), 2008: (0, 0, 0), 2012: (1, 1, 1),
@@ -296,13 +301,33 @@ def economy_keys(s, med, rnd):
     return k
 
 
+def third_chance():
+    """The chance that no third candidate reaches 10% in the June 2028 polls. With no reading it is the odds entered
+    (data/outlook.json). With one (three or more pollsters naming a third candidate in the last 90 days, facts.py) it is
+    halfway between those odds and what the reading says, which is held loosely: the further June is, the more such
+    support has room to fade or to grow."""
+    now = (THIRD or {}).get('now') or {}
+    if now.get('reading') is None:
+        return POLITICS['no_third_candidate']
+    months = max(0.0, (datetime.date(CALL.CYCLE['year'], 6, 15) - TODAY).days / 30.44); sd = 3 + 0.25 * months
+    says = 0.5 * (1 + math.erf((10 - now['reading']) / sd / math.sqrt(2)))
+    return 0.5 * POLITICS['no_third_candidate'] + 0.5 * says
+
+
 def other_keys(rnd, recession):
-    pool = [c for y, c in CYCLES.items() for _ in range(2 if y in OPEN_SEAT else 1)]
-    c3, c4, c5 = (0, 0, 0) if recession and rnd.random() < POLITICS['slump_in_recession'] else rnd.choice(pool)
-    surge = (not recession) and rnd.random() < POLITICS['surge']
-    net = surge and rnd.random() < POLITICS['net_given_surge']; fifty = net and rnd.random() < POLITICS['fifty_given_net']
-    if surge:
-        c3 = c4 = c5 = 1
+    # approval: from today's reading it takes a step to each date the keys compare, of the size it has moved month to month
+    # in this term, with no trend assumed either way. A reading that has been taken is used as it is. In half of the runs
+    # with a recession every step goes down. Disapproval moves by as much the other way.
+    a0, d0, step = APPROVAL['approve'], APPROVAL['disapprove'], APPROVAL['step']; y = CALL.CYCLE['year']
+    down = recession and rnd.random() < POLITICS['slump_in_recession']
+    cur, at, seen = a0, TODAY, {}
+    for name, when in (('june27', datetime.date(y - 1, 6, 15)), ('jan28', datetime.date(y, 1, 15)), ('june28', datetime.date(y, 6, 15))):
+        if APPROVAL.get(name) and name != 'june28':
+            seen[name] = APPROVAL[name]['approve']; continue
+        months = max(0.0, (when - max(at, TODAY)).days / 30.44); z = rnd.gauss(0, 1)
+        if name == 'june28': months = max(months, 0.5)          # until the June polls are in, today's reading is not June's: half a month's step stays open
+        cur += step * math.sqrt(months) * (-abs(z) if down else z); at = max(when, TODAY); seen[name] = cur
+    j = seen['june28']; dis = d0 - (j - a0); mid = (APPROVAL.get('midterm') or {}).get('approve', a0)
     won = rnd.random() < POLITICS['nominee_wins_nh']
     cut = lambda mu, sd, lo, hi: min(hi, max(lo, rnd.gauss(mu, sd)))
     rep = cut(47, 8, 30, 70) if won else cut(33, 8, 10, 45)                           # the Republican nominee's share of the New Hampshire vote
@@ -310,8 +335,8 @@ def other_keys(rnd, recession):
         dwon = rnd.random() < POLITICS['dem_nominee_wins_nh']; dem = cut(33, 6, 24, 55) if dwon else cut(22, 10, 3, 34)
     else:
         dwon = rnd.random() < POLITICS['dem_write_in_win']; dem = cut(45, 8, 30, 65) if dwon else cut(5, 3, 0, 15)
-    return {'C01': fifty, 'C02': net, 'C03': bool(c3), 'C04': bool(c4), 'C05': bool(c5), 'C06': surge,
-            'E03': rnd.random() < POLITICS['no_third_candidate'],
+    return {'C01': j >= 50, 'C02': j > dis, 'C03': j > seen['june27'], 'C04': j > mid, 'C05': j > seen['jan28'], 'C06': dis < 50,
+            'E03': rnd.random() < THIRD_P,
             'E04': rnd.random() < (POLITICS['two_thirds_if_won'] if won else POLITICS['two_thirds_if_lost']), 'E05': won, 'E06': rep > dem, 'E07': not dwon}
 
 
@@ -398,10 +423,25 @@ def approval():
                jan28=month(2028, 1) or month(2027, 12), june28=month(2028, 6) or month(2028, 5))
     # the June 2028 polls are in a week after the month ends, if every reading the keys compare exists
     out['in'] = TODAY >= datetime.date.fromisoformat(CALL.CYCLE['approval_in']) and all(out[k] for k in ('june28', 'june27', 'jan28', 'midterm'))
+    # how far approval has moved from one month to the next in this term: the size of step the run-ahead lets it take
+    months = [r['approve'] for r in (month(y, m) for y in range(2025, TODAY.year + 1) for m in range(1, 13) if datetime.date(y, m, 1) <= TODAY.replace(day=1)) if r]
+    steps = [b - a for a, b in zip(months, months[1:])]
+    term = round(st.pstdev(steps), 2) if len(steps) >= 6 else None
+    # and how far it moved between the midterm and June of the election year in the nineteen terms since 1950 (research.json):
+    # that spread, spread evenly over the months between, is the larger of the two and the one used
+    try:
+        past = json.load(open(os.path.join(HERE, 'research.json')))['approval']['moves']
+        record = round(math.sqrt(sum((m['june'] - m['then']) ** 2 for m in past) / len(past)) / math.sqrt(19.5), 2)
+    except (FileNotFoundError, KeyError, ZeroDivisionError):
+        record = None
+    out['step'] = max([x for x in (term, record) if x] or [1.5])
+    out['step_from'] = {'this_term': term, 'months': len(steps), 'past_terms': record}
     return out
 
 
 APPROVAL = approval()
+THIRD = json.load(open(os.path.join(D, 'third_candidates.json'))) if os.path.exists(os.path.join(D, 'third_candidates.json')) else None      # facts.py
+THIRD_P = third_chance()
 
 
 def approval_keys():
@@ -438,7 +478,7 @@ STATES = state_figures()
 
 # Every key's state today, by the model's own rules on the figures published so far (calls.py). A key that is provisional or
 # settled is the same in every run. A key that is held keeps its last entry if it has one; otherwise it stays open.
-CALLS = CALL.evaluate(TODAY, P, QS, LEVEL, APPROVAL, STATES, ENTERED, LANDED, CALL.read_history(os.path.join(D, 'key_calls.csv')), set(os.environ.get('KEYS_HELD', '').split()))
+CALLS = CALL.evaluate(TODAY, P, QS, LEVEL, APPROVAL, STATES, ENTERED, LANDED, CALL.read_history(os.path.join(D, 'key_calls.csv')), set(os.environ.get('KEYS_HELD', '').split()), third=THIRD)
 FIXED = {k: bool(c['value']) for k, c in CALLS.items() if c['status'] in ('provisional', 'settled')}
 FIXED.update({k: c['last'] for k, c in CALLS.items() if 'last' in c and k[0] in 'DE'})
 FIXED.update({k: bool(v['value']) for k, v in ENTERED.items() if k not in FIXED})
@@ -511,9 +551,9 @@ def notes():
         'B15': f"So far this term, growth is above its 2024 pace in states holding {STATES['faster_ev']:.0f} electoral votes.",
         'C01': f"{a['approve']:.0f}% approve now, in polls of all adults from the past month ({a['pollsters']} pollsters).",
         'C02': f"{a['approve']:.0f}% approve and {a['disapprove']:.0f}% disapprove now.",
-        'C03': f"{a['approve']:.0f}% approve now" + (f" against {a['year_ago']['approve']:.0f}% a year ago" if a['year_ago'] else '') + ". Approval rose in the last year for 3 of the 7 presidents who were not running again.",
-        'C04': f"Approval averaged {a['midterm']['approve']:.0f}% in the polls around the midterms. It was higher by June in 8 of 19 cycles.",
-        'C05': "It rose from January to June of the election year in 6 of 19 cycles.",
+        'C03': f"{a['approve']:.0f}% approve now" + (f" against {a['year_ago']['approve']:.0f}% a year ago" if a['year_ago'] else '') + (f". The key compares June 2028 with June 2027 ({a['june27']['approve']:.0f}%)." if a.get('june27') else ". Neither June reading the key compares exists yet, so it is close to a coin toss."),
+        'C04': f"Approval averaged {a['midterm']['approve']:.0f}% in the polls around the midterms and is {a['approve']:.0f}% now. It has moved about {a['step']} points a month in this term.",
+        'C05': (f"{a['jan28']['approve']:.0f}% approved in January 2028; {a['approve']:.0f}% do now." if a.get('jan28') else "Neither reading the key compares exists yet, so it is close to a coin toss."),
         'C06': f"{a['disapprove']:.0f}% disapprove now.",
         'E03': "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections.",
         'E04': f"Rubio ({POLLS['rubio']:.0f}%) and Vance ({POLLS['vance']:.0f}%) are level in national polls, which points to a real contest.",
@@ -585,6 +625,8 @@ def main():
         'decisive': sorted(({'id': a, 'p': round(Rn['p'][a], 3), 'if_yes': round(y, 3), 'if_no': round(n, 3)} for a, (y, n) in Rn['split'].items()
                             if a not in SETTLED and y is not None and n is not None), key=lambda d: d['if_no'] - d['if_yes']),
         'engine': ENGINE,
+        'approval_step': {'points_a_month': APPROVAL['step'], 'measured': APPROVAL['step_from'], 'from': f"{APPROVAL['approve']}% approve, {APPROVAL['disapprove']}% disapprove"},
+        'third_candidates': {'chance_none_reaches_10': round(THIRD_P, 3), 'reading': ((THIRD or {}).get('now') or {}).get('reading'), 'pollsters': ((THIRD or {}).get('now') or {}).get('pollsters', 0), 'odds_entered': POLITICS['no_third_candidate']},
         'approval': {k: APPROVAL[k] for k in ('approve', 'disapprove', 'pollsters', 'polls', 'from', 'to', 'year_ago', 'midterm')},
         'states': {k: STATES[k] for k in ('through', 'growing', 'growing_ev', 'faster_ev')},
         'data_through': {'monthly': f"{datetime.date((START + K['u']) // 12, (START + K['u']) % 12 + 1, 1):%B %Y}", 'quarterly': f"{QKEY(KQ)[0]} Q{QKEY(KQ)[1]}",
@@ -596,6 +638,10 @@ def main():
         final = CALL.index({a: c['value'] for a, c in CALLS.items()})
         assert min(ix) == max(ix) and abs(ix[0] - final) < 1e-12, 'with every key called, every run gives the count the rules give'
         out['observed'] = {'index': round(final, 4), 'in_favor': sum(c['value'] for c in CALLS.values()), 'final': all(c['final'] for c in CALLS.values())}
+    elif TODAY > datetime.date.fromisoformat(CALL.CYCLE['last_day']):  # the last day has passed with keys still open: the count stands on the keys that could be scored
+        got = {a: c['value'] for a, c in CALLS.items() if c['value'] is not None}
+        out['observed'] = {'index': round(CALL.index_of(got), 4), 'in_favor': sum(got.values()), 'final': True, 'left_out': sorted(set(CALLS) - set(got)),
+                           'note': 'These keys had no evidence by the last day and are left out; each group is the share of its keys that could be scored.'}
     assert set(out['keys']) | set(SETTLED) == set(full) and all(out['keys'][a]['note'] for a in out['keys'])
     # how far the answer moves when the main assumptions do
     vary = []
@@ -606,9 +652,9 @@ def main():
     keep = dict(POLITICS)
     POLITICS.update(nominee_wins_nh=0.55, two_thirds_if_won=0.7, two_thirds_if_lost=0.4, no_third_candidate=0.8, dem_nominee_wins_nh=0.5); also('a rougher nomination season')
     POLITICS.update(keep); POLITICS.update(nominee_wins_nh=0.8, two_thirds_if_won=0.9, two_thirds_if_lost=0.7, no_third_candidate=0.93, dem_nominee_wins_nh=0.35); also('a smoother nomination season')
-    POLITICS.update(keep); POLITICS.update(surge=0.0); also('no chance that disapproval falls below half')
-    POLITICS.update(keep); POLITICS.update(surge=0.08); also('an 8% chance that it does')
     POLITICS.update(keep)
+    step = APPROVAL['step']                                # approval moving half as much, or twice as much, from month to month as it has in this term
+    APPROVAL['step'] = step / 2; also('approval moving half as much each month'); APPROVAL['step'] = step * 2; also('approval moving twice as much each month'); APPROVAL['step'] = step
     out['if'] = vary
     json.dump(out, open(os.path.join(HERE, 'projection_2028.json'), 'w'), indent=1)
     for row in CALL.record(CALLS, TODAY, os.path.join(D, 'key_calls.csv')):

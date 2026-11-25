@@ -743,8 +743,8 @@ footer a{color:var(--board-ink)}
     <div class="sc" id="sc"></div>
     <p class="body-p" id="sure-ec"></p>
     <p class="body-p" style="margin-top:10px" id="sure-pv"></p>
-    <h4 class="sub-h">The vote the count implies, election by election</h4>
-    <p class="note" style="max-width:74ch">Each election's share is estimated from a line fitted to the other 18, so no election helps to estimate itself. Shares are of the two-party vote, for the party in office. The miss is the actual share less the implied one.</p>
+    <h4 class="sub-h">Why the count is not a forecast of the vote</h4>
+    <p class="note" style="max-width:74ch">The keys call a winner. They were not built to say by how much, and they do it poorly. Below, each past election's share is estimated from a line fitted to the other 18, so no election helps to estimate itself, and set against what the party in office took. In the five elections from 2008 to 2024 a line fitted only on earlier elections missed the margin by 4.3 points on average, each time in the Democrats' favor, and a forecast that used it did worse than the same forecast without it (The Margin's test, linked at the foot of the page). So there is no vote estimate for 2028 here: the count says who is favored, and nothing more exact. Shares are of the two-party vote, for the party in office.</p>
     <div class="scroll"><table class="cmp votes-t" id="votes"></table></div>
     <p class="note" style="margin-top:12px;max-width:74ch">The ranges in the ranking above are every ten points, round numbers that were not tuned. They describe the record and change nothing in the model: the call is still made at one half.</p>
   </div>
@@ -862,7 +862,7 @@ footer a{color:var(--board-ink)}
   <div class="foot-mark"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>{{TITLE}}</span></div>
   <p><b>Inspired by Allan Lichtman's 13 Keys to the White House.</b> This is an independent, personal project. It is not affiliated with or endorsed by him.</p>
   <p>Data: Federal Reserve Bank of St. Louis (FRED and the FRED-MD monthly database) for the economy; Federal Reserve Bank of Philadelphia state coincident indexes, weighted as in Enns, Colner, Kumar and Lagodny, &ldquo;Understanding Biden&rsquo;s Exit and the 2024 Election&rdquo; (PS: Political Science &amp; Politics, 2024); Roper Center and Gallup polls for approval; Wikipedia for seat counts, primary results, election results and Lichtman's ratings of his keys.</p>
-  <p><b>Two sister sites.</b> <a href="https://ka82205.github.io/the-margin/">The Margin</a> is a forecast of the 2028 election with chances for every state; it reads this site&rsquo;s count as one of its starting points and turns it into a share of the vote. <a href="https://ka82205.github.io/tipping-point/">Tipping Point</a> runs two published academic models of the same election. Neither one feeds back into the count here: the keys are scored on their own rules.</p>
+  <p><b>Two sister sites.</b> <a href="https://ka82205.github.io/the-margin/">The Margin</a> is a forecast of the 2028 election with chances for every state; it shows this site&rsquo;s count beside its own forecast, and has tested whether the count improves that forecast (<a href="https://github.com/KA82205/the-margin/blob/main/STATUS.md">it does not</a>). <a href="https://ka82205.github.io/tipping-point/">Tipping Point</a> runs two published academic models of the same election. Neither one feeds back into the count here: the keys are scored on their own rules.</p>
 </footer>
 </div>
 
@@ -1012,7 +1012,7 @@ const DATA = /*DATA*/null;
       const pc = x => Math.round(100 * x) + '%', sh = SURE.run.shares;
       $('run-sure').innerHTML = '<b>How sure is that?</b> ' + (l => l.slice(0, -1).join(', ') + ' and ' + l[l.length - 1])(SURE.bands.map((b, i) => [b, sh[i]]).filter(p => p[1] >= 0.005).map((p, i) => pc(p[1]) + (i ? ' in ' : ' of runs end in the ') + p[0].label + (i ? '' : ' range'))) +
         '. ' +
-        'The average count corresponds to about ' + SURE.run.vote.toFixed(0) + '% of the two-party vote, give or take ' + SURE.miss.toFixed(1) + ' points before the uncertainty in the keys themselves. These rest on ' + R.n + ' elections, so read them as rough.';
+        'The share of runs above one half is how often the keys would call the party in office the winner on today\'s outlook. It is not a measured chance of winning the election. These rest on ' + R.n + ' elections, so read them as rough.';
     }
   })();
   // ---- the hero: the fifty-two keys as a ring, and where 2028 sits on the record
@@ -1203,7 +1203,7 @@ const DATA = /*DATA*/null;
       const k = seen === null ? null : K[seen];
       out.innerHTML = '<p class="lab-call">' + esc(cap(band[2])) + '</p><p class="lab-num"><b>' + (100 * idx).toFixed(1) + '%</b> of the keys, group by group. ' + tot + ' of ' + K.length + (tot === 1 ? ' is' : ' are') + ' yes.</p>' +
         '<p>The keys would say the Republicans <b>' + (win ? 'win' : 'lose') + '</b>. Parties in office in this range have ' + was + ' since ' + E[0].y + '.</p>' +
-        '<div class="gbars">' + bars + '</div><p class="lab-vote">The count lines up with about <b>' + vote.toFixed(1) + '%</b> of the two-party vote for the Republicans, give or take ' + LB.miss.toFixed(1) + ' points.</p>' +
+        '<div class="gbars">' + bars + '</div>' +
         '<p class="lab-key">' + (k ? '<b>' + k.id + '</b> ' + esc(k.t) + '? ' + (k.s !== null ? 'Settled: ' + (k.s ? 'yes' : 'no') + '. ' + esc(k.why) : 'Run ahead: ' + esc(k.est) + '.') : 'Choose a key to read it. Click, tap or press Enter to turn it.') + '</p>';
     }
     function setPre(id) { const f = PRE.find(p => p[0] === id)[2]; K.forEach((k, j) => { sel[j] = k.s !== null && !unlocked ? k.s : (k.s !== null ? (id === 'yes' ? 1 : id === 'no' ? 0 : k.s) : (f(k) ? 1 : 0)); }); cur = id; draw(); }
@@ -1221,10 +1221,10 @@ const DATA = /*DATA*/null;
   (function () {
     const Hs = (DATA.history || []).slice().reverse(); if (!Hs.length) return;
     const day = h => new Date(h.made).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/New_York'});
-    $('hist').innerHTML = '<thead><tr><th scope="col">Run</th><th scope="col" class="v">As each key leans</th><th scope="col" class="v">Average of runs</th><th scope="col" class="v">Runs above one half</th><th scope="col" class="v">Implied vote</th><th scope="col">What changed</th></tr></thead><tbody>' +
+    $('hist').innerHTML = '<thead><tr><th scope="col">Run</th><th scope="col" class="v">As each key leans</th><th scope="col" class="v">Average of runs</th><th scope="col" class="v">Runs above one half</th><th scope="col">What changed</th></tr></thead><tbody>' +
       Hs.map(h => '<tr><td><a href="archive/' + esc(h.file) + '">' + day(h) + '</a></td><td class="v">' + h.in_favor + ' of ' + K.length + '<small>' + (100 * h.likely).toFixed(1) + '%</small></td><td class="v">' + (100 * h.mean).toFixed(1) + '%</td><td class="v">' +
-        pct(h.above_half) + '</td><td class="v">' + h.vote.toFixed(1) + '%</td><td class="why">' + (h.changes || []).map(c => '<span>' + esc(c) + '</span>').join('') + '</td></tr>').join('') + '</tbody>';
-    $('hist-note').innerHTML = 'Each date opens the archived run: every key\'s chance, the figures it used and the assumptions behind it. "Implied vote" is the Republicans\' share of the two-party vote that the count lines up with. The list is also a file: <a href="archive/index.json">archive/index.json</a>.';
+        pct(h.above_half) + '</td><td class="why">' + (h.changes || []).map(c => '<span>' + esc(c) + '</span>').join('') + '</td></tr>').join('') + '</tbody>';
+    $('hist-note').innerHTML = 'Each date opens the archived run: every key\'s chance, the figures it used and the assumptions behind it. The list is also a file: <a href="archive/index.json">archive/index.json</a>.';
   })();
 
   // ================================================================ how much weight the record can bear
@@ -1281,7 +1281,6 @@ const DATA = /*DATA*/null;
   if (SUREV) {
     const by = {}; E.forEach(e => { by[e.y] = e; });
     $('votes').innerHTML = '<thead><tr><th scope="col">Election</th><th scope="col">Party in office</th><th scope="col" class="v">Keys in favor</th><th scope="col" class="v">Implied share</th><th scope="col" class="v">Actual share</th><th scope="col" class="v">Miss</th></tr></thead><tbody>' +
-      (RUN ? '<tr class="next"><td>2028</td><td>Republicans</td><td class="v">' + (100 * RUN.likely).toFixed(1) + '%<small>as each key leans</small></td><td class="v">' + DATA.sure.run.vote_likely.toFixed(1) + '%<small>' + DATA.sure.run.vote_low.toFixed(0) + '% to ' + DATA.sure.run.vote_high.toFixed(0) + '% in half of runs</small></td><td class="v"></td><td class="v"></td></tr>' : '') +
       SUREV.slice().reverse().map(v => { const e = by[v.year]; return '<tr><td>' + v.year + '</td><td>' + party(e.p) + ' <small class="in">' + esc(e.c) + '</small></td><td class="v">' + (100 * e.i).toFixed(1) + '%</td><td class="v">' + v.est.toFixed(1) + '%</td><td class="v">' + v.actual.toFixed(1) + '%</td><td class="v' + (Math.abs(v.miss) > 5 ? ' big' : '') + '">' + (v.miss > 0 ? '+' : v.miss < 0 ? '−' : '') + Math.abs(v.miss).toFixed(1) + '</td></tr>'; }).join('') + '</tbody>';
   }
 })();

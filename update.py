@@ -32,6 +32,7 @@ from zoneinfo import ZoneInfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import outlook as OUT                                  # noqa: E402
+import facts as FACTS                                  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 D = os.path.join(HERE, 'data')
@@ -87,6 +88,7 @@ class Held(Exception):
 
 
 DOWN = {}                                              # hosts that did not answer in this run: they are not asked again
+THIRD, SEATS = FACTS.refresh_third, FACTS.refresh_seats   # the tests put files in their place
 SURVEY = OUT.fetch                                     # how the Survey of Professional Forecasters is read (the tests put a file in its place)
 
 
@@ -296,7 +298,7 @@ def sha(path):
     return hashlib.sha256(open(path, 'rb').read()).hexdigest()[:16]
 
 
-INPUTS = ['data/latest_monthly.csv', 'data/quarterly.csv', 'data/latest.json', 'data/approval_polls.json', 'data/state_index_this_term.csv', 'data/outlook.json', 'locked_keys.csv',
+INPUTS = ['data/latest_monthly.csv', 'data/quarterly.csv', 'data/latest.json', 'data/approval_polls.json', 'data/state_index_this_term.csv', 'data/outlook.json', 'data/third_candidates.json', 'locked_keys.csv',
           'run_2028.py', 'build.py', 'calls.py', 'data/congress_seats.csv', 'data/nh_primaries.csv']
 
 
@@ -424,7 +426,8 @@ def fingerprint(day, held):
     fp = {'day': str(day), 'held back': h(sorted(held))}
     for p in INPUTS:
         full = os.path.join(HERE, p)
-        if p.endswith(('latest.json', 'approval_polls.json')):
+        if not os.path.exists(full): fp[p] = ''; continue
+        if p.endswith(('latest.json', 'approval_polls.json', 'third_candidates.json')):
             x = json.load(open(full)); x.pop('as_of', None); x.pop('fetched', None); fp[p] = h(x)
         else:
             fp[p] = sha(full)
@@ -461,7 +464,7 @@ def feed():
     """The part of docs/keys.json that other sites read."""
     try:
         k = json.load(open(os.path.join(HERE, 'docs', 'keys.json')))
-        return [k.get('likely'), k.get('mean'), k.get('sd'), k.get('settled'), (k.get('vote_estimate') or {}).get('party_in_office'), k.get('calls'), k.get('index_dist')]
+        return [k.get('likely'), k.get('mean'), k.get('sd'), k.get('settled'), k.get('calls'), k.get('index_dist')]
     except Exception:                                                       # noqa: BLE001
         return None
 
@@ -491,11 +494,17 @@ def main(argv):
             print('The outlook: ' + words, flush=True); report['outlook'] = {'state': state, 'said': words}
             if state == 'new': report['new'].append({'series': "the forecasters' outlook", 'through': json.load(open(os.path.join(D, 'outlook.json')))['outlook_survey']})
             if state != 'new' and state != 'same': print('::warning::' + words)
+            state, words = SEATS(today); print('Seats in Congress: ' + words, flush=True)            # counted once, in the January a new Congress meets
+            if state == 'new': report['new'].append({'series': 'seats in the new Congress'})
+            if state == 'unreachable': print('::warning::' + words)
             if not report['failed']: read_on['economy'] = str(today)
         else:
             print(f"The economic series are not read at this hour ({now:%A %H:%M} Eastern); they were last read {log.get('economy_read', 'at the last full run')}.", flush=True)
         n = len(report['failed'])
         refresh_polls(os.path.join(D, 'approval_polls.json'), today, trust, report); say('approval polls')
+        state, words = THIRD(today); print('Third candidates: ' + words, flush=True)      # polls that name a third candidate (key E03): on every run
+        if state == 'new': report['new'].append({'series': 'polls naming a third candidate'})
+        if state == 'unreachable': print('::warning::' + words)
         if len(report['failed']) == n: read_on['polls'] = str(today)
         latest['as_of'] = str(today)
         json.dump(latest, open(latest_path, 'w'), indent=1)

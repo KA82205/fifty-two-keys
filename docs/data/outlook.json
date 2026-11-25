@@ -95,9 +95,6 @@
  "outlook_note": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Growth, jobs, unemployment and inflation are read from each new survey as it comes out; the rest is entered by hand.",
  "odds_entered": "November 2026",
  "politics": {
-  "surge": 0.03,
-  "net_given_surge": 0.6,
-  "fifty_given_net": 0.7,
   "slump_in_recession": 0.5,
   "no_third_candidate": 0.88,
   "nominee_wins_nh": 0.68,

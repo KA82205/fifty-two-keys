@@ -1,0 +1,26 @@
+{
+ "source": "PollResults.org, presidential polls (CC BY 4.0)",
+ "rule": "facts.py",
+ "enough_pollsters": 3,
+ "now": {
+  "from": "2026-08-28",
+  "to": "2026-11-25",
+  "published_by": null,
+  "pollsters": 1,
+  "polls": [
+   {
+    "id": "bc8eaeaf-041b-480d-8fbc-2f2ef4f8b3de",
+    "pollster": "YouGov",
+    "end": "2026-10-14",
+    "questions": 8,
+    "share": 6.38,
+    "best": "Aaron Rodgers",
+    "best_share": 7.0,
+    "url": "https://d3nkl3psvxxpe9.cloudfront.net/documents/The_Bulwark_x_Pablo_Torre_Finds_Out_poll_results.pdf"
+   }
+  ],
+  "reading": null
+ },
+ "june": null,
+ "fetched": "2026-11-25"
+}

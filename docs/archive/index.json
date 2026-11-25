@@ -89,5 +89,27 @@
   "made": "2026-11-25T19:00:54Z",
   "engine": "2026.11b",
   "changes": []
+ },
+ {
+  "as_of": "November 25, 2026",
+  "mean": 0.404,
+  "median": 0.416,
+  "p25": 0.316,
+  "p75": 0.494,
+  "above_half": 0.23,
+  "in_favor": 27,
+  "likely": 0.42,
+  "vote": 48.3,
+  "landed": [],
+  "open": 44,
+  "file": "2026-11-25T224430Z.json",
+  "made": "2026-11-25T22:44:30Z",
+  "engine": "2026.11c",
+  "changes": [
+   "The run-ahead method changed (version 2026.11b to 2026.11c); see the change log.",
+   "The odds for the nomination and approval keys were revised.",
+   "C05 (Approval is higher than in January): 28% to 43%.",
+   "C04 (Approval is higher than at the midterms): 34% to 44%."
+  ]
  }
 ]

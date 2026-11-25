@@ -142,7 +142,7 @@ def test_a_hole_in_the_figures_keeps_the_key_open():
 def test_no_june_polls_no_approval_keys():
     pr = case((2028, 6), '2028-08-05', no_polls_in=((2028, 5), (2028, 6)))        # June polls, or May's if there are none, are what the keys read
     assert not landed(pr) & APPROVAL and landed(pr) == ECONOMY | STATE_KEYS
-    assert 0 < pr['keys']['C03']['p'] < 1
+    assert all(pr['calls'][k]['status'] in ('unresolved', 'held') and pr['calls'][k]['value'] is None for k in APPROVAL)      # open, whatever today's polls suggest: a chance is not a call
 
 
 if __name__ == '__main__':

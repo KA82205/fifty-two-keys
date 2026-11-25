@@ -49,6 +49,7 @@ jobs:
           python tests/test_engine.py
           python tests/test_calls.py
           python tests/test_outlook.py
+          python tests/test_facts.py
 
       - name: Read the sources, check them, and rerun 2028 if anything is new
         id: update
