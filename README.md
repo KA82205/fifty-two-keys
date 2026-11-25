@@ -363,7 +363,8 @@ not on the page. The three changes that were taken out for overfitting are liste
    entered in `data/outlook.json` when they are settled. A key with a missing figure stays open. It is never scored as
    no.
 4. **Archive.** Each run that differs from the last is written to `archive/` under its own time stamp, with the
-   figures' fingerprints, the assumptions, the checks, the versions, and a list of what changed and why. Archive files
+   national figures it used, fingerprints of the longer files, the assumptions, the checks, the versions, and a list of
+   what changed and why. Archive files
    are opened for writing once and never again. `archive/index.json` is the list; the page shows it as "Forecast
    history".
 5. **Build.** `make_page.py` rebuilds the page, the downloads in `docs/data/`, and `docs/keys.json`, a small feed of

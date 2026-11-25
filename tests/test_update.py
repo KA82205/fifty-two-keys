@@ -73,6 +73,8 @@ def test_the_archive_is_written_once():
         update.ARCHIVE = tempfile.mkdtemp()
         first = update.archive(pr, {'held': []}, t)
         assert first == '2030-01-07T120000Z.json'
+        kept = json.load(open(os.path.join(update.ARCHIVE, first)))
+        assert kept['figures']['monthly'][0][0] == 'observation_date' and kept['assumptions']['settled'] and kept['model']['engine'] and kept['inputs']['locked_keys.csv']
         assert update.archive(pr, {'held': []}, t + datetime.timedelta(days=7)) is None, 'nothing changed, so nothing is archived'
         before = open(os.path.join(update.ARCHIVE, first)).read()
         later = copy.deepcopy(pr); k = sorted(later['keys'])[0]

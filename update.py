@@ -327,8 +327,13 @@ def archive(pr, report, made, commit=''):
     text = {k: v[0] for k, v in TEXT.items()}
     why = changes(json.load(open(os.path.join(ARCHIVE, index[-1]['file'])))['projection'], pr, text) if index else ['The first archived run.']
     name = made.strftime('%Y-%m-%dT%H%M%SZ') + '.json'
+    # the figures themselves, as used: the two tables of national series and the prices. (The 50 state indexes and the list of
+    # polls are too long to repeat here; their fingerprints are in `inputs` and the files are in the commit that follows this run.)
+    figures = {'monthly': list(csv.reader(open(os.path.join(D, 'latest_monthly.csv')))), 'quarterly': list(csv.reader(open(os.path.join(D, 'quarterly.csv'))))[-12:],
+               'quarterly_columns': next(csv.reader(open(os.path.join(D, 'quarterly.csv')))), 'prices': json.load(open(os.path.join(D, 'latest.json'))),
+               'approval': pr.get('approval'), 'states': pr.get('states')}
     entry = {'made': made.strftime('%Y-%m-%dT%H:%M:%SZ'), 'model': {'keys': inputs['locked_keys.csv'], 'engine': pr.get('engine')}, 'commit': commit, 'inputs': inputs,
-             'assumptions': json.load(open(os.path.join(D, 'outlook.json'))), 'checks': report, 'changes': why, 'projection': pr}
+             'figures': figures, 'assumptions': json.load(open(os.path.join(D, 'outlook.json'))), 'checks': report, 'changes': why, 'projection': pr}
     with open(os.path.join(ARCHIVE, name), 'x') as f:                        # 'x': an archive file is written once and never again
         json.dump(entry, f, indent=1)
     index.append(dict(summary(pr), file=name, made=entry['made'], engine=pr.get('engine'), changes=why))
