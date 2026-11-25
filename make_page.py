@@ -331,8 +331,11 @@ def main():
                 'note': 'likely: the count if every open key lands the way it leans. above_half: the share of runs in which the count ends above one half; it is not a chance of winning.'}
         json.dump(feed, open(os.path.join(docs, 'keys.json'), 'w'), indent=1)
     audit = os.path.join(HERE, 'research', 'audit.md')
-    if os.path.exists(audit):
+    try:
         import markdown
+    except ImportError:                                  # without the package the audit page already in docs/ is left as it is
+        markdown = None
+    if os.path.exists(audit) and markdown:
         body = markdown.markdown(open(audit).read(), extensions=['tables', 'fenced_code'])
         page = open(os.path.join(HERE, 'research', 'page.html')).read().replace('{{BODY}}', body).replace('{{TITLE}}', title).replace('{{FONT_DISPLAY}}', b64('besley-latin-wght-normal.woff2')).replace('{{FONT_TEXT}}', b64('libre-franklin-latin-wght-normal.woff2'))
         open(os.path.join(docs, 'audit.html'), 'w').write(page)

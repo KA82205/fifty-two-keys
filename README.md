@@ -369,6 +369,11 @@ not on the page. The three changes that were taken out for overfitting are liste
 5. **Build.** `make_page.py` rebuilds the page, the downloads in `docs/data/`, and `docs/keys.json`, a small feed of
    the headline figures.
 
+**FRED needs a key on GitHub.** FRED's download links do not answer requests from GitHub's servers, so the workflow
+reads FRED through its API, which needs a free key. Add it once as a repository secret named `FRED_API_KEY`
+(Settings, Secrets and variables, Actions). Without it the weekly run still refreshes the approval polls, reruns,
+archives and rebuilds, keeps the last good economic figures, and ends as failed to say so.
+
 The outlook (the Survey of Professional Forecasters) and the odds for the approval and nomination keys are still typed
 in by hand, in `data/outlook.json`. Between entries the latest figures are carried along the shape of the last outlook.
 
@@ -400,6 +405,7 @@ shown as such.
 python states.py       # optional: prints the state measure and writes state_economy.csv
 python build.py        # scores the keys: keys_table.csv, keys_raw_values.csv
 python test.py         # the record and the checks: results.json (needs numpy)
+
 python run_2028.py     # the run ahead for 2028, projection_2028.json (about fifteen seconds)
 python research.py     # the audit's numbers: research.json
 python update.py       # the weekly update: fetch, check, run, archive, build (--offline to skip the fetch)

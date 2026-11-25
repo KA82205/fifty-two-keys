@@ -735,7 +735,7 @@ footer a{color:var(--board-ink)}
     <p class="body-p" id="sure-ec"></p>
     <p class="body-p" style="margin-top:10px" id="sure-pv"></p>
     <h4 class="sub-h">The vote the count implies, election by election</h4>
-    <p class="note" style="max-width:74ch">Each election's share is estimated from a line fitted to the other 18, so no election helps to estimate itself. Shares are of the two-party vote, for the party in office.</p>
+    <p class="note" style="max-width:74ch">Each election's share is estimated from a line fitted to the other 18, so no election helps to estimate itself. Shares are of the two-party vote, for the party in office. The miss is the actual share less the implied one.</p>
     <div class="scroll"><table class="cmp votes-t" id="votes"></table></div>
     <p class="note" style="margin-top:12px;max-width:74ch">The ranges in the ranking above are every ten points, round numbers that were not tuned. They describe the record and change nothing in the model: the call is still made at one half.</p>
   </div>
@@ -1054,7 +1054,8 @@ const DATA = {"groups":[{"id":"A","name":"Economy now","n":18,"desc":"Is the eco
     const said = e.i > 0.5, pct = (e.i * 100).toFixed(1);
     $('p-title').textContent = e.y + ': ' + e.c + ' (' + e.p + ') against ' + e.o;
     $('p-text').innerHTML = 'The keys were <b>' + pct + '%</b> in the ' + party(e.p) + "' favor, so they said the party would <b>" + (said ? 'win' : 'lose') + '</b> the election. It ' + (e.w ? 'won' : 'lost') + '. ' +
-      (said === e.w ? 'The keys called it.' : '<b>The keys missed.</b>') + (e.sp ? ' The party won the most votes nationwide and lost the Electoral College.' : '');
+      (said === e.w ? 'The keys called it.' : '<b>The keys missed.</b>') + (e.sp ? ' The party won the most votes nationwide and lost the Electoral College.' : '') +
+      (SUREV ? (v => v ? ' The count lined up with ' + v.est.toFixed(1) + '% of the two-party vote; the party took ' + v.actual.toFixed(1) + '%.' : '')(SUREV.find(v => v.year === e.y)) : '');
     let i = 0, bars = '';
     G.forEach(x => {
       let t = 0, n = 0;
@@ -1170,7 +1171,7 @@ const DATA = {"groups":[{"id":"A","name":"Economy now","n":18,"desc":"Is the eco
       out.innerHTML = '<p class="lab-call">' + esc(cap(band[2])) + '</p><p class="lab-num"><b>' + (100 * idx).toFixed(1) + '%</b> of the keys, group by group. ' + tot + ' of ' + K.length + (tot === 1 ? ' is' : ' are') + ' yes.</p>' +
         '<p>The keys would say the Republicans <b>' + (win ? 'win' : 'lose') + '</b>. Parties in office in this range have ' + was + ' since ' + E[0].y + '.</p>' +
         '<div class="gbars">' + bars + '</div><p class="lab-vote">The count lines up with about <b>' + vote.toFixed(1) + '%</b> of the two-party vote for the Republicans, give or take ' + LB.miss.toFixed(1) + ' points.</p>' +
-        '<p class="lab-key">' + (k ? '<b>' + k.id + '</b> ' + esc(k.t) + '? ' + (k.s !== null ? 'Settled: ' + (k.s ? 'yes' : 'no') + '. ' + esc(k.why) : 'Run ahead: ' + esc(k.est) + '.') : 'Point at a key to read it. Click or press Enter to turn it.') + '</p>';
+        '<p class="lab-key">' + (k ? '<b>' + k.id + '</b> ' + esc(k.t) + '? ' + (k.s !== null ? 'Settled: ' + (k.s ? 'yes' : 'no') + '. ' + esc(k.why) : 'Run ahead: ' + esc(k.est) + '.') : 'Choose a key to read it. Click, tap or press Enter to turn it.') + '</p>';
     }
     function setPre(id) { const f = PRE.find(p => p[0] === id)[2]; K.forEach((k, j) => { sel[j] = k.s !== null && !unlocked ? k.s : (k.s !== null ? (id === 'yes' ? 1 : id === 'no' ? 0 : k.s) : (f(k) ? 1 : 0)); }); cur = id; draw(); }
     pre.addEventListener('click', ev => { const b = ev.target.closest('button'); if (b) setPre(b.dataset.p); });
