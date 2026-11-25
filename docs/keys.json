@@ -7,15 +7,15 @@
   "in_favor": 27,
   "index": 0.42
  },
- "mean": 0.395,
+ "mean": 0.394,
  "median": 0.405,
- "p25": 0.306,
+ "p25": 0.305,
  "p75": 0.483,
- "sd": 0.131,
- "above_half": 0.197,
+ "sd": 0.132,
+ "above_half": 0.195,
  "above_half_range": [
-  0.151,
-  0.241
+  0.149,
+  0.239
  ],
  "vote_estimate": {
   "party_in_office": 48.3,

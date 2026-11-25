@@ -1,31 +1,31 @@
 {
  "read": [
+  "UNRATE",
+  "PAYEMS",
+  "MANEMP",
+  "CPIAUCSL",
+  "INDPRO",
+  "DPCERA3M086SBEA",
+  "CES0600000008",
+  "HOUST",
+  "UMCSENT",
+  "MCOILWTICO",
+  "SP500",
+  "ICSA",
+  "SP500",
+  "DCOILWTICO",
+  "state indexes",
   "approval polls"
  ],
  "new": [],
- "held": [],
- "failed": [
-  "UNRATE: could not be read (TimeoutError: The read operation timed out)",
-  "PAYEMS: could not be read (TimeoutError: The read operation timed out)",
-  "MANEMP: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "CPIAUCSL: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "INDPRO: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "DPCERA3M086SBEA: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "CES0600000008: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "HOUST: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "UMCSENT: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "MCOILWTICO: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "SP500: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "ICSA: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "A191RL1Q225SBEA: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "A067RL1Q156SBEA: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "B230RC0Q173SBEA: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "A939RX0Q048SBEA: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "A229RX0Q048SBEA: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "SP500: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "DCOILWTICO: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)",
-  "state indexes: 50 of 50 states not updated; the first: ALPHCI: could not be read (ConnectionError: fred.stlouisfed.org did not answer earlier in this run)"
+ "held": [
+  "A191RL1Q225SBEA: -28 in 2020-04 to 34.9 in 2020-07 is a larger change than this series makes",
+  "A067RL1Q156SBEA: -7.9 in 2020-10 to 59 in 2021-01 is a larger change than this series makes",
+  "B230RC0Q173SBEA: 325557 for 2016-10 is outside 330000 to 370000",
+  "A939RX0Q048SBEA: 59296 for 2016-10 is outside 60000 to 90000",
+  "A229RX0Q048SBEA: 43845 for 2016-10 is outside 45000 to 70000"
  ],
+ "failed": [],
  "trusted": [],
- "made": "2026-11-25T12:24:24Z"
+ "made": "2026-11-25T12:36:16Z"
 }
