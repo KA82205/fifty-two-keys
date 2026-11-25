@@ -462,7 +462,7 @@ footer a{color:var(--board-ink)}
 .links a{border-radius:3px}
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:8px;top:8px;z-index:20;background:var(--ink);color:var(--paper);padding:8px 12px;border-radius:3px}
-.scroll{overflow-x:auto}
+.scroll{overflow-x:auto}.scroll:focus-visible,.gridwrap:focus-visible,.calls:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .sub-h{font:700 1.05rem/1.3 var(--display);margin:34px 0 6px}
 .cmp tr.us td{font-weight:600}
 .cmp .yrs{color:var(--muted);font-size:.92rem}
@@ -583,7 +583,7 @@ footer a{color:var(--board-ink)}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#1f3d31"/><path d="M32.00 8.80L32.00 4.40M34.80 8.97L35.33 4.60M37.55 9.47L38.61 5.20M40.23 10.31L41.79 6.19M42.78 11.46L44.83 7.56M45.18 12.91L47.68 9.29M47.38 14.63L50.30 11.34M49.37 16.62L52.66 13.70M51.09 18.82L54.71 16.32M52.54 21.22L56.44 19.17M53.69 23.77L57.81 22.21M54.53 26.45L58.80 25.39M55.03 29.20L59.40 28.67M55.20 32.00L59.60 32.00M55.03 34.80L59.40 35.33M54.53 37.55L58.80 38.61M53.69 40.23L57.81 41.79M52.54 42.78L56.44 44.83M51.09 45.18L54.71 47.68M49.37 47.38L52.66 50.30M47.38 49.37L50.30 52.66M45.18 51.09L47.68 54.71M42.78 52.54L44.83 56.44M40.23 53.69L41.79 57.81M37.55 54.53L38.61 58.80M34.80 55.03L35.33 59.40M32.00 55.20L32.00 59.60M29.20 55.03L28.67 59.40M26.45 54.53L25.39 58.80M23.77 53.69L22.21 57.81M21.22 52.54L19.17 56.44M18.82 51.09L16.32 54.71M16.62 49.37L13.70 52.66M14.63 47.38L11.34 50.30M12.91 45.18L9.29 47.68M11.46 42.78L7.56 44.83M10.31 40.23L6.19 41.79M9.47 37.55L5.20 38.61M8.97 34.80L4.60 35.33M8.80 32.00L4.40 32.00M8.97 29.20L4.60 28.67M9.47 26.45L5.20 25.39M10.31 23.77L6.19 22.21M11.46 21.22L7.56 19.17M12.91 18.82L9.29 16.32M14.63 16.62L11.34 13.70M16.62 14.63L13.70 11.34M18.82 12.91L16.32 9.29M21.22 11.46L19.17 7.56M23.77 10.31L22.21 6.19M26.45 9.47L25.39 5.20M29.20 8.97L28.67 4.60" stroke="#d2aa45" stroke-width="1.5" stroke-linecap="round" fill="none"/><path transform="translate(24 14) scale(.8)" fill="#d2aa45" fill-rule="evenodd" d="M8 19.26A8.5 8.5 0 1 1 12 19.26V30H16.5V33.5H12V36H15V39H12V41A2 2 0 0 1 8 41ZM10 5.2A2.8 2.8 0 1 0 10 10.8A2.8 2.8 0 1 0 10 5.2Z"/></symbol><symbol id="key" viewBox="0 0 20 44"><path fill-rule="evenodd" d="M8 19.26A8.5 8.5 0 1 1 12 19.26V30H16.5V33.5H12V36H15V39H12V41A2 2 0 0 1 8 41ZM10 5.2A2.8 2.8 0 1 0 10 10.8A2.8 2.8 0 1 0 10 5.2Z"/></symbol></svg>
 
 <nav class="top" aria-label="Sections"><div class="wrap top-in">
-  <a class="skip" href="#now">Skip to the 2028 count</a><a class="mark" href="#top"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>Fifty-Two Keys</span></a>
+  <a class="skip" href="#now">Skip to the 2028 count</a><a class="mark" href="#top" aria-label="Fifty-Two Keys, top of the page"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>Fifty-Two Keys</span></a>
   <div class="links"><a href="#now">2028</a><a href="#lab">Scenario lab</a><a href="#archive">Forecast history</a><a href="#record">Track record</a><a href="#history">Every election</a><a href="#keys">The keys</a><a href="#research">Research</a><a href="#notes">Fine print</a></div>
 </div></nav>
 
@@ -622,7 +622,7 @@ footer a{color:var(--board-ink)}
   <ul class="settled" id="settled"></ul>
   <h3 class="settled-h" id="calls-h">The record of calls</h3>
   <p class="note" id="calls-note">Every call and every correction, newest first. A line is added when a key is called, when the figures behind a call are revised, and when the call becomes final; none is ever removed. The record was started on November 25, 2026, after the first eight keys were settled. The <a href="data/key_calls.csv">whole record</a> and the <a href="data/key_registry.json">list of what each key reads and when it can be called</a> are files.</p>
-  <ol class="calls" id="calls"></ol>
+  <ol class="calls" id="calls" tabindex="0" aria-label="The record of calls"></ol>
   <div class="pair">
     <p><b>What it would take.</b> Party strength is already 0 of 6, and each group counts the same. To get above half overall, the other four groups would need to average more than 62.5% of their keys in the Republicans' favor.</p>
     <p><b>The states so far.</b> Weighted the same way over the term to date, state economies were growing through September 2026 in 49 of the 50 states and Washington, D.C., which together hold 525 of the 538 electoral votes. The exceptions are Alabama and Hawaii. The two state keys are scored on the figures to June 2028.</p>
@@ -689,7 +689,7 @@ footer a{color:var(--board-ink)}
     <h2>Forecast history</h2>
     <p>Every run is kept as it was published, with the figures, assumptions and versions behind it. Nothing in the archive is rewritten. The newest run is first.</p>
   </div>
-  <div class="scroll"><table class="cmp hist-t" id="hist"></table></div>
+  <div class="scroll" tabindex="0" role="region" aria-label="Table"><table class="cmp hist-t" id="hist"></table></div>
   <p class="note" style="margin-top:12px;max-width:74ch" id="hist-note"></p>
 </section>
 
@@ -713,7 +713,7 @@ footer a{color:var(--board-ink)}
   <div class="sub" id="bear">
     <h3>How much weight the record can bear</h3>
     <p>Fifteen of 19 is the record of the model as built. These checks say how far to trust it.</p>
-    <div class="scroll"><table class="cmp" id="base"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table"><table class="cmp" id="base"></table></div>
     <p class="body-p" id="bear-1"></p>
     <p class="body-p" style="margin-top:10px" id="bear-2"></p>
     <p class="body-p" style="margin-top:10px" id="bear-3"></p>
@@ -745,7 +745,7 @@ footer a{color:var(--board-ink)}
     <p class="body-p" style="margin-top:10px" id="sure-pv"></p>
     <h4 class="sub-h">Why the count is not a forecast of the vote</h4>
     <p class="note" style="max-width:74ch">The keys call a winner. They were not built to say by how much, and they do it poorly. Below, each past election's share is estimated from a line fitted to the other 18, so no election helps to estimate itself, and set against what the party in office took. In the five elections from 2008 to 2024 a line fitted only on earlier elections missed the margin by 4.3 points on average, each time in the Democrats' favor, and a forecast that used it did worse than the same forecast without it (The Margin's test, linked at the foot of the page). So there is no vote estimate for 2028 here: the count says who is favored, and nothing more exact. Shares are of the two-party vote, for the party in office.</p>
-    <div class="scroll"><table class="cmp votes-t" id="votes"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table"><table class="cmp votes-t" id="votes"></table></div>
     <p class="note" style="margin-top:12px;max-width:74ch">The ranges in the ranking above are every ten points, round numbers that were not tuned. They describe the record and change nothing in the model: the call is still made at one half.</p>
   </div>
 
@@ -777,7 +777,7 @@ footer a{color:var(--board-ink)}
     <span>A gap means the data do not reach back that far</span>
     <span class="swipe">Swipe sideways to see every key</span>
   </div>
-  <div class="gridwrap"><div class="grid" id="g"></div></div>
+  <div class="gridwrap" tabindex="0" role="region" aria-label="The grid of keys by election"><div class="grid" id="g"></div></div>
 </section>
 
 <section id="keys">
@@ -810,7 +810,7 @@ footer a{color:var(--board-ink)}
   <div class="sub">
     <h3>The run ahead, tried on the past</h3>
     <p id="eng-lede"></p>
-    <div class="scroll"><table class="cmp cal-t" id="cal"></table></div>
+    <div class="scroll" tabindex="0" role="region" aria-label="Table"><table class="cmp cal-t" id="cal"></table></div>
     <p class="body-p" id="eng-1"></p>
   </div>
   <div class="sub">
@@ -1141,7 +1141,7 @@ const DATA = {"groups":[{"id":"A","name":"Economy now","n":18,"desc":"Is the eco
       (no ? '; when it was no the party lost ' + noLost + ' of ' + no : '') + '. Its answer matched the result in ' + (yesWon + noLost) + ' of ' + had.length + ' elections.' +
       (E.length > had.length ? ' No figures for ' + list(E.filter(e => e.k[c] === '?').map(e => String(e.y))) + ', so the key is left out of those counts.' : '') +
       (DATA.research ? ' Weight in the count: ' + (100 * DATA.research.weight[k.id]).toFixed(1) + '%.' : '') + '</p>';
-    h += '<div class="scroll"><table class="cmp kd-t"><thead><tr><th scope="col">Election</th><th scope="col">Answer</th><th scope="col">The figure</th><th scope="col">Party in office</th></tr></thead><tbody>' +
+    h += '<div class="scroll" tabindex="0" role="region" aria-label="Table"><table class="cmp kd-t"><thead><tr><th scope="col">Election</th><th scope="col">Answer</th><th scope="col">The figure</th><th scope="col">Party in office</th></tr></thead><tbody>' +
       E.map(e => '<tr><td>' + e.y + '</td><td>' + (e.k[c] === 'T' ? 'Yes' : e.k[c] === '.' ? 'No' : 'No figures') + '</td><td>' + esc(e.d[c] || '') + '</td><td>' + (e.w ? 'won' : 'lost') + '</td></tr>').join('') +
       '<tr class="next"><td>2028</td><td>' + (k.s === null ? (k.st === 'held' ? 'Held' : 'Open') : (k.s ? 'Yes' : 'No') + (k.st === 'provisional' ? ', not final' : '')) + '</td><td>' + esc(k.s === null ? (k.est ? cap(k.est) + '. ' + k.note : k.when) : k.why) + '</td><td></td></tr></tbody></table></div>';
     d.lastElementChild.innerHTML = h;
