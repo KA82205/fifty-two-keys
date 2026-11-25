@@ -12,20 +12,19 @@
   "MCOILWTICO",
   "SP500",
   "ICSA",
+  "A191RL1Q225SBEA",
+  "A067RL1Q156SBEA",
+  "B230RC0Q173SBEA",
+  "A939RX0Q048SBEA",
+  "A229RX0Q048SBEA",
   "SP500",
   "DCOILWTICO",
   "state indexes",
   "approval polls"
  ],
  "new": [],
- "held": [
-  "A191RL1Q225SBEA: -28 in 2020-04 to 34.9 in 2020-07 is a larger change than this series makes",
-  "A067RL1Q156SBEA: -7.9 in 2020-10 to 59 in 2021-01 is a larger change than this series makes",
-  "B230RC0Q173SBEA: 325557 for 2016-10 is outside 330000 to 370000",
-  "A939RX0Q048SBEA: 59296 for 2016-10 is outside 60000 to 90000",
-  "A229RX0Q048SBEA: 43845 for 2016-10 is outside 45000 to 70000"
- ],
+ "held": [],
  "failed": [],
  "trusted": [],
- "made": "2026-11-25T12:36:16Z"
+ "made": "2026-11-25T12:39:24Z"
 }
