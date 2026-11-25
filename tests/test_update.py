@@ -150,6 +150,71 @@ def test_changes_are_explained():
     assert any(line.startswith('B04') and 'landed: no' in line for line in got) and any(line.startswith('A05') and 'now leans yes: 56%, from 40%' in line for line in got)
 
 
+def test_the_economy_is_read_when_a_release_could_be_out():
+    import datetime
+    at = lambda d, h: datetime.datetime(2026, 12, d, h, 7, tzinfo=update.ET)           # December 7, 2026 is a Monday
+    assert all(update.economy_due(at(7, h), False) for h in (8, 9, 10, 11, 14, 20))    # the morning releases and the two fallbacks
+    assert not any(update.economy_due(at(7, h), False) for h in (0, 3, 7, 12, 13, 15, 19, 23))
+    assert [h for h in range(24) if update.economy_due(at(12, h), False)] == [14, 20]    # a Saturday: the fallbacks only
+    assert update.economy_due(at(12, 3), True) and update.economy_due(at(12, 3), False, force=True)       # the first run of a day, and a run asked for
+
+
+def test_reading_the_same_figures_again_changes_nothing():
+    """The fingerprint moves with a figure and not with the date a file was fetched."""
+    real = (update.HERE, update.INPUTS)
+    try:
+        root = tempfile.mkdtemp(); os.makedirs(os.path.join(root, 'data'))
+        write = lambda name, text: open(os.path.join(root, 'data', name), 'w').write(text)
+        update.HERE = root; update.INPUTS = ['data/latest.json', 'data/approval_polls.json', 'data/quarterly.csv']
+        polls = [{'id': 1, 'approve': 40, 'disapprove': 55}]
+        write('latest.json', json.dumps({'as_of': '2026-12-07', 'sp500': {'date': '2026-12-04', 'value': 7000.0}}))
+        write('approval_polls.json', json.dumps({'source': 'x', 'fetched': '2026-12-07', 'polls': polls})); write('quarterly.csv', 'observation_date,A\n2026-07-01,2.1\n')
+        base = update.fingerprint('2026-12-07', [])
+        write('latest.json', json.dumps({'as_of': '2026-12-08', 'sp500': {'date': '2026-12-04', 'value': 7000.0}}))
+        write('approval_polls.json', json.dumps({'source': 'x', 'fetched': '2026-12-08', 'polls': polls}))
+        assert update.fingerprint('2026-12-07', []) == base                                        # fetched again, nothing in it new
+        moved = lambda: [k for k, v in update.fingerprint('2026-12-07', []).items() if v != base[k]]
+        write('approval_polls.json', json.dumps({'source': 'x', 'fetched': '2026-12-08', 'polls': polls + [{'id': 2, 'approve': 41, 'disapprove': 54}]}))
+        assert moved() == ['data/approval_polls.json']                                             # a new poll
+        write('latest.json', json.dumps({'as_of': '2026-12-08', 'sp500': {'date': '2026-12-07', 'value': 7010.0}}))
+        assert moved() == ['data/latest.json', 'data/approval_polls.json']                         # a new closing price
+        write('quarterly.csv', 'observation_date,A\n2026-07-01,2.3\n')
+        assert 'data/quarterly.csv' in moved()                                                     # a revised figure
+        assert [k for k, v in update.fingerprint('2026-12-08', []).items() if v != update.fingerprint('2026-12-07', [])[k]] == ['day']
+        assert [k for k, v in update.fingerprint('2026-12-07', ['UNRATE']).items() if v != update.fingerprint('2026-12-07', [])[k]] == ['held back']
+    finally:
+        update.HERE, update.INPUTS = real
+
+
+def test_a_projection_is_archived_only_when_it_says_something_new():
+    pr = json.load(open(os.path.join(HERE, 'projection_2028.json')))
+    same = copy.deepcopy(pr); same['as_of'] = 'another day'; same['data_through']['prices'] = '2031-01-01'
+    k = sorted(same['keys'])[0]; same['keys'][k]['p'] = round(pr['keys'][k]['p'] + (0.004 if pr['keys'][k]['p'] < 0.49 or pr['keys'][k]['p'] >= 0.5 else -0.004), 3)
+    assert not update.differs(pr, same)                                                            # another day, a price tick, odds that moved by less than a point
+    for change in (lambda p: p['keys'][k].update(p=round(pr['keys'][k]['p'] + (0.02 if pr['keys'][k]['p'] < 0.9 else -0.02), 3)), lambda p: p['keys'][k].update(landed=True),
+                   lambda p: p['index'].update(mean=pr['index']['mean'] + 0.001), lambda p: p['likely'].update(in_favor=pr['likely']['in_favor'] + 1),
+                   lambda p: p['data_through'].update(monthly='another month'), lambda p: p.update(engine='another'), lambda p: p['keys'].pop(k)):
+        other = copy.deepcopy(pr); change(other)
+        assert update.differs(pr, other)
+    lean = copy.deepcopy(pr); lean['keys'][k]['p'] = 0.497; flip = copy.deepcopy(lean); flip['keys'][k]['p'] = 0.502
+    assert update.differs(lean, flip)                                                              # a key that changes its lean, however small the move
+
+
+def test_when_a_run_ends_as_failed():
+    import datetime
+    today = datetime.date(2026, 12, 8); ok = {'economy': '2026-12-08', 'polls': '2026-12-08'}
+    assert update.alarm([], [], ok, today, True) is None and update.alarm([], ['UNRATE'], ok, today, False) is None
+    assert 'failed a check' in update.alarm(['UNRATE'], [], ok, today, False)                      # first held back: at once
+    assert update.alarm(['UNRATE'], ['UNRATE'], ok, today, False) is None                          # still held an hour later: not again
+    assert 'failed a check' in update.alarm(['UNRATE'], ['UNRATE'], ok, today, True)               # still held the next morning: once a day
+    assert 'failed a check' in update.alarm(['UNRATE', 'HOUST'], ['UNRATE'], ok, today, False)     # a second figure held back: at once
+    assert 'failed a check' in update.alarm(['UNRATE'], ['UNRATE'], ok, today, False, force=True)  # a run asked for by hand
+    late = {'economy': '2026-12-06', 'polls': '2026-12-08'}
+    assert update.alarm([], [], late, today, False) is None and 'economy' in update.alarm([], [], late, today, True)      # out of reach two days: the day's first run says so
+    assert update.alarm([], [], {'economy': '2026-12-07', 'polls': '2026-12-07'}, today, True) is None and update.alarm([], [], {}, today, True) is None
+
+
 if __name__ == '__main__':
     test_checks(); test_history_is_let_be_and_new_figures_are_not(); test_a_missing_value_is_not_a_zero(); test_a_failed_series_keeps_its_figures(); test_the_archive_is_written_once(); test_changes_are_explained()
-    print('ok (checks, held figures, the archive)')
+    test_the_economy_is_read_when_a_release_could_be_out(); test_reading_the_same_figures_again_changes_nothing(); test_a_projection_is_archived_only_when_it_says_something_new(); test_when_a_run_ends_as_failed()
+    print('ok (checks, held figures, the archive, when a run is made and when it ends as failed)')

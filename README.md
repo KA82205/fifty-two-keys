@@ -5,7 +5,7 @@ from public data. When more than half go its way, the keys say it wins the elect
 Lichtman's 13 Keys to the White House. A separate project from Tipping Point: nothing here is used by the
 Nowcast, and nothing here reads from it.
 
-The 2028 page is rebuilt every week from the latest figures. The key list is not frozen yet. The name follows the count.
+The figures behind the 2028 page are checked every hour, and the page is rebuilt whenever one of them has changed. The key list is not frozen yet. The name follows the count.
 
 **Read the audit first.** `research/audit.md` ([on the site](https://ka82205.github.io/fifty-two-keys/audit.html)) sets out what the record does and does not show, where hindsight
 enters, and what should change before 2028. The short version: 15 of 19 is the record as built; a one-fact rule
@@ -201,7 +201,7 @@ average of polls of all adults for 2028.
 ## 2028, run ahead
 
 `run_2028.py` estimates how the 44 open keys are likely to land and writes `projection_2028.json`. It is an
-estimate, rerun every week (see "Weekly update, archive and tests"). It is not part of the model, it changes no key, and it was not checked against
+estimate, rerun whenever a figure it reads changes (see "Updates, archive and tests"). It is not part of the model, it changes no key, and it was not checked against
 any election result. The page shows it under "The run ahead".
 
 | | |
@@ -347,39 +347,61 @@ not on the page. The three changes that were taken out for overfitting are liste
   vice president for those years.
 - The model makes one call, who wins the election. Earlier versions scored the national vote.
 
-## Weekly update, archive and tests
+## Updates, archive and tests
 
-`update.py` runs every Monday (`.github/workflows/update.yml`) and can be started by hand.
+`update.py` runs every hour (`.github/workflows/update.yml`) and can be started by hand. Most runs end after the first
+two steps, because nothing has changed.
+
+**What is read, and when.** Approval polls are read on every run. The economic series are read when a release could be
+out: on working days at 8, 9, 10 and 11 in the morning, Eastern time (the statistical agencies publish at 8:30 and
+10:00, and FRED carries a new figure within the hour), at 2 and 8 in the afternoon and evening of every day in case a
+release is late or a morning run did not start, and on the first run of each day.
+
+**When the model is run again.** After reading, every file the run ahead reads is fingerprinted and compared with the
+fingerprints of the last run (`data/fingerprint.json`). The date a file was fetched is not part of the fingerprint. If
+nothing differs and the day is the same, the run ends: nothing is recalculated and nothing is saved. The first run of
+each day always goes through, because the page's date and the 30-day approval window move with the day.
 
 1. **Fetch.** Twelve monthly and five quarterly series, the latest S&P 500 and oil prices and the 50 state indexes from
    FRED; approval polls from VoteHub.
-2. **Check.** Each series must be a table of that series, in order, inside wide limits, with no jump or revision larger
-   than the series makes (`MONTHLY`, `QUARTERLY`, `DAILY`, `STATE_RULE` in `update.py`). A series that fails is **held
-   back**: the figures already in the repository stay, the run goes on with them, and it ends as failed so that
-   somebody looks. `--trust SERIES` accepts a held series after it has been looked at.
+2. **Check.** Each series must be a table of that series, in order, with every figure inside the range the series can
+   take. A figure for a date not held before must sit within a tight limit of the figure before it; a figure already
+   held must not have been revised by more than the series is revised (`MONTHLY`, `QUARTERLY`, `DAILY`, `STATE_RULE`
+   in `update.py`). The two limits are separate on purpose: the swings of 2020 and 2021 are in the tables already and
+   are checked only for revision, so they do not loosen the limit on a new figure. A wrong unit, a slipped decimal
+   point, a flipped sign, a zero or a re-based history is held back, and so is a real move as large as spring 2020
+   until somebody has looked at it. A series that fails is **held back**: the figures already in the repository stay,
+   the run goes on with them, and it ends as failed so that somebody looks, at once when a figure is first held and
+   then once a day until it is settled. `--trust SERIES` accepts a held series after it has been looked at. A source
+   that cannot be reached is tried again on the next run and reported once it has been out of reach for two days.
 3. **Run.** `run_2028.py` reads the published months and runs only the months still ahead. A key **lands** when the
    figures it is scored on are published through June 2028: the economy keys from FRED, the six approval keys from the
    June 2028 polls, the two state keys from the state indexes by the rule in `states.py`. The nomination keys are
    entered in `data/outlook.json` when they are settled. A key with a missing figure stays open. It is never scored as
    no.
-4. **Archive.** Each run that differs from the last is written to `archive/` under its own time stamp, with the
-   national figures it used, fingerprints of the longer files, the assumptions, the checks, the versions, and a list of
-   what changed and why. Archive files
+4. **Archive.** Each run whose projection says something the last one kept did not is written to `archive/` under its
+   own time stamp, with the national figures it used, fingerprints of the longer files, the assumptions, the checks,
+   the versions, and a list of what changed and why. "Something new" is a headline figure, a key that landed or changed
+   its lean, a key whose odds moved by a point or more, a new month or quarter of figures, or a change to the method or
+   the assumptions; a price that ticked without moving any of these is not. Archive files
    are opened for writing once and never again. `archive/index.json` is the list; the page shows it as "Forecast
    history".
 5. **Build.** `make_page.py` rebuilds the page, the downloads in `docs/data/`, and `docs/keys.json`, a small feed of
-   the headline figures.
+   the headline figures. The Margin reads that feed. If the repository has a secret named `DISPATCH_TOKEN` (a token
+   allowed to start workflows in the `the-margin` repository), The Margin is told the moment the feed changes; without
+   it The Margin finds the change at its own next hourly check.
 
 **FRED needs a key on GitHub.** FRED's download links do not answer requests from GitHub's servers, so the workflow
 reads FRED through its API, which needs a free key. Add it once as a repository secret named `FRED_API_KEY`
-(Settings, Secrets and variables, Actions). Without it the weekly run still refreshes the approval polls, reruns,
+(Settings, Secrets and variables, Actions). Without it a run still refreshes the approval polls, reruns,
 archives and rebuilds, keeps the last good economic figures, and ends as failed to say so.
 
 The outlook (the Survey of Professional Forecasters) and the odds for the approval and nomination keys are still typed
 in by hand, in `data/outlook.json`. Between entries the latest figures are carried along the shape of the last outlook.
 
 Tests (`tests/`, run before every update): the key table against the locked copy; that a missing figure stays
-missing; the checks; the archive; and the run ahead on made-up future figures, where keys must land when June 2028 is
+missing; the checks, on new figures and on history separately; when the economy is read, when the model is run again
+and when a run ends as failed; the archive; and the run ahead on made-up future figures, where keys must land when June 2028 is
 published and not before, and a hole in the figures must leave a key open.
 
 On November 25, 2026 the run ahead was changed to work this way (version `2026.11b`). On the same figures it gave the
@@ -409,7 +431,7 @@ python test.py         # the record and the checks: results.json (needs numpy)
 
 python run_2028.py     # the run ahead for 2028, projection_2028.json (about fifteen seconds)
 python research.py     # the audit's numbers: research.json
-python update.py       # the weekly update: fetch, check, run, archive, build (--offline to skip the fetch)
+python update.py       # the update: read, check, and if anything is new run, archive, build (--offline to skip the reading)
 python make_page.py    # docs/index.html, from template.html (checks what the page says against results.json)
 ```
 
@@ -448,7 +470,7 @@ requests and can be put on any static host as it is.
   (series ALPHCI to WYPHCI) in November 2026: the quarter-end values for the six quarters before each
   election from 1980 to 2024, plus June 2025 and June 2026. 
 - `data/state_index_this_term.csv`: the same indexes month by month from December 2024 to September 2026,
-  read from FRED by `update.py` every week. Used for the reading of the current term and, once it runs through June 2028,
+  read from FRED by `update.py`. Used for the reading of the current term and, once it runs through June 2028,
   to score the two state keys.
 - `data/fred_md_2026-09.csv`: the FRED-MD monthly database, September 2026 vintage, as shared at
   https://github.com/ThevinSilva/Fred-MD. Used only by the run ahead.
@@ -456,7 +478,7 @@ requests and can be put on any static host as it is.
   Only polls of all adults count toward the reading; campaign and party internals are left out.
 - `data/outlook.json`: the forecasters' outlook, the odds for the approval and nomination keys, and the keys already
   settled with the reason for each. Entered by hand.
-- `archive/`: every published run. See "Weekly update, archive and tests".
+- `archive/`: every published run. See "Updates, archive and tests".
 - `data/latest_monthly.csv`, `data/quarterly.csv`, `data/latest.json`: the latest monthly and quarterly figures and daily
   prices, read from FRED by `update.py` (UNRATE, PAYEMS, MANEMP, CPIAUCSL, INDPRO, DPCERA3M086SBEA,
   CES0600000008, HOUST, UMCSENT, MCOILWTICO, SP500, ICSA; A191RL1Q225SBEA, A067RL1Q156SBEA, B230RC0Q173SBEA,

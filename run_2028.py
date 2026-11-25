@@ -3,7 +3,7 @@
 THIS IS NOT THE MODEL. The model scores each key by its rule once the June 2028 figures exist. This file estimates,
 from the figures published so far, how likely each open key is to go the party's way, and from that where the count
 may end up. Nothing here changes a key, a group or a rule, and nothing here was checked against an election result.
-update.py reruns it every week with fresh figures.
+update.py reruns it whenever a figure it reads has changed.
 
 How the economy keys are run (33 keys)
   1 Start from the figures published so far (FRED) and the outlook forecasters hold (data/outlook.json).

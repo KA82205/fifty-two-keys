@@ -1,9 +1,11 @@
-name: Weekly update
+name: Update
 
 on:
   schedule:
-    # Mondays. GitHub starts scheduled runs late, sometimes by hours, so the time is only a rough one.
-    - cron: "23 11 * * 1"
+    # Every hour. Polls are read on every run; the economic series when a release could be out (update.py, economy_due).
+    # If nothing the model reads has changed, the run ends there and nothing is saved.
+    # GitHub starts scheduled runs late, sometimes by a good while, so the minute is only a rough one.
+    - cron: "7 * * * *"
   workflow_dispatch:
     inputs:
       trust:
@@ -15,12 +17,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: weekly-update
+  group: update
   cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,7 +37,7 @@ jobs:
           python tests/test_update.py
           python tests/test_engine.py
 
-      - name: Fetch the latest figures, check them, rerun 2028, archive, rebuild the page
+      - name: Read the sources, check them, and rerun 2028 if anything is new
         id: update
         continue-on-error: true
         timeout-minutes: 25
@@ -42,9 +45,18 @@ jobs:
           TRUST: ${{ inputs.trust }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}      # optional: without it FRED is read through its download links
           PYTHONUNBUFFERED: "1"
-        run: python update.py --trust "$TRUST"
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python update.py --force --trust "$TRUST"
+          else
+            python update.py
+          fi
 
       - name: Save to the repository
+        id: save
+        if: steps.update.outputs.changed == 'true'
+        env:
+          WHAT: ${{ steps.update.outputs.what }}
         run: |
           git config user.name "forecast-bot"
           git config user.email "forecast-bot@users.noreply.github.com"
@@ -52,12 +64,40 @@ jobs:
           if git diff --cached --quiet; then
             echo "Nothing changed."
           else
-            git commit -m "Weekly update $(TZ=America/New_York date +%Y-%m-%d)"
-            git push
+            git commit -m "Update $(TZ=America/New_York date '+%Y-%m-%d %H:%M'): $WHAT"
+            git push || { git pull --rebase && git push; }
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Flag figures that were held back
-        if: steps.update.outcome == 'failure'
+      # The Margin reads this site's count. With a DISPATCH_TOKEN secret it is told at once; without one it finds the
+      # change at its own next hourly check.
+      - name: Tell The Margin
+        if: steps.save.outputs.pushed == 'true' && steps.update.outputs.feed == 'true'
+        env:
+          DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
         run: |
-          echo "::error::Some figures were not updated, or the run failed. The page shows the last good figures. Open the update step above."
-          exit 1
+          if [ -z "$DISPATCH_TOKEN" ]; then
+            echo "No DISPATCH_TOKEN secret: The Margin will see the new count at its next hourly check."
+            exit 0
+          fi
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $DISPATCH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/KA82205/the-margin/dispatches \
+            -d '{"event_type":"upstream-updated","client_payload":{"from":"fifty-two-keys"}}' \
+            || echo "::warning::The Margin could not be told; its hourly check will pick the change up."
+
+      # A figure held back, or a source out of reach for days, is always flagged (update.py reports each at once and
+      # then once a day). A run that fails for another reason is tried again every hour and marked as failed at 7 a.m.,
+      # 1 p.m. and 7 p.m. Eastern only, so a fault that lasts is reported three times a day and a passing one not at all.
+      # A run started by hand is always marked.
+      - name: Flag figures that were held back, or a failed run
+        if: steps.update.outcome == 'failure'
+        env:
+          ALERT: ${{ steps.update.outputs.alert }}
+        run: |
+          hour=$(TZ=America/New_York date +%H)
+          if [ "$ALERT" = "true" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$hour" = "07" ] || [ "$hour" = "13" ] || [ "$hour" = "19" ]; then
+            echo "::error::Some figures were not updated, a source has been out of reach for days, or the run failed. The page shows the last good figures. Open the update step above."
+            exit 1
+          fi
+          echo "::warning::The run failed this hour; the page shows the last good figures. The next hourly run tries again."

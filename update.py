@@ -1,19 +1,29 @@
-"""The weekly update: fetch the latest figures, check them, rerun the 2028 run-ahead, archive it, rebuild the page.
+"""The update. It is run every hour: it reads what could have changed, checks it, and reruns the 2028 run-ahead only if a
+figure the run-ahead reads is new.
 
-    python update.py                 fetch, check, run, archive, build
-    python update.py --offline       no fetching: run, archive and build from the figures already here
+    python update.py                 read, check, and if anything is new: run, archive, build
+    python update.py --force         read every source and run, whether or not anything is new
+    python update.py --offline       no reading: run, archive and build from the figures already here
     python update.py --trust UNRATE  accept a series even though it failed a check (after looking at it)
 
-What it reads
-    FRED (fred.stlouisfed.org)   twelve monthly series, five quarterly series, the latest S&P 500 and oil price,
-                                 and the Philadelphia Fed's coincident index for each of the 50 states
-    VoteHub (api.votehub.com)    polls of presidential approval
+What it reads, and when
+    VoteHub (api.votehub.com)    polls of presidential approval: on every run
+    FRED (fred.stlouisfed.org)   twelve monthly series, five quarterly series, the latest S&P 500 and oil price, and the
+                                 Philadelphia Fed's coincident index for each of the 50 states: when a release could have
+                                 come out (economy_due below), and on the first run of every day
+
+When it runs the model again
+    After reading, every file the run-ahead reads is fingerprinted and compared with the fingerprints of the last run
+    (data/fingerprint.json). If none differs and the day is the same, the run stops there: nothing is recalculated and
+    nothing is saved. The first run of each day always goes through, so the page's date and its 30-day windows keep up.
 
 The rules it keeps
     A figure that fails a check is not used. The last good figure stays, the run says so, and the run ends as failed
-    so that somebody looks. Nothing is ever filled in, and a key with missing figures stays open: it never becomes "no".
-    Every run that changes anything is written to archive/ under its own time stamp, with the figures, assumptions and
-    versions behind it. Archive files are never rewritten.
+    so that somebody looks: at once when a figure is first held back, and then once a day until it is settled. A source
+    that cannot be reached is tried again on the next run and reported once a day if it stays out of reach.
+    Nothing is ever filled in, and a key with missing figures stays open: it never becomes "no".
+    Every run whose projection differs from the last one kept is written to archive/ under its own time stamp, with the
+    figures, assumptions and versions behind it. Archive files are never rewritten.
 """
 import csv, datetime, hashlib, io, json, os, subprocess, sys, time, urllib.error, urllib.parse, urllib.request
 from zoneinfo import ZoneInfo
@@ -24,8 +34,15 @@ ARCHIVE = os.path.join(HERE, 'archive')
 FRED = 'https://fred.stlouisfed.org/graph/fredgraph.csv'
 FRED_API = 'https://api.stlouisfed.org/fred/series/observations'
 VOTEHUB = 'https://api.votehub.com/polls?poll_type=approval&subject=donald-trump'
-AGENT = {'User-Agent': 'fifty-two-keys/1.0 (weekly update)'}
+AGENT = {'User-Agent': 'fifty-two-keys/1.0 (update)'}
 FIRST = '2025-12-01'                                   # the first month kept in data/latest_monthly.csv
+ET = ZoneInfo('America/New_York')
+# When the economic series are read. The statistical agencies publish at 8:30 and 10:00 in the morning, Eastern time, on
+# working days, and FRED carries a new figure within the hour. The other hours are there in case a release is late, falls
+# on another day, or a morning run did not start.
+RELEASE_HOURS = (8, 9, 10, 11)                         # Monday to Friday
+FALLBACK_HOURS = (14, 20)                              # every day
+OUT_OF_REACH_DAYS = 2                                  # a source not read for this many days is reported on the day's first run
 
 # series: (lowest and highest believable value, the largest believable change in a NEW figure from the one before it, the
 # largest believable REVISION to a figure already held). Changes are fractions unless marked 'points'.
@@ -324,16 +341,29 @@ def changes(old, new, text):
     return out
 
 
+def differs(old, new):
+    """Does projection `new` say something `old` did not? The headline figures, any key that landed or changed its lean, any
+    key whose odds moved by a point or more, the months the figures run through, the method and the assumptions. A price
+    that ticked without moving any of these is not a different projection."""
+    head = lambda pr: {k: v for k, v in summary(pr).items() if k != 'as_of'}
+    if head(old) != head(new): return True
+    if any(old.get(k) != new.get(k) for k in ('engine', 'outlook', 'politics', 'recession_share')): return True
+    through = lambda pr: {k: v for k, v in (pr.get('data_through') or {}).items() if k != 'prices'}
+    if through(old) != through(new): return True
+    a, b = old['keys'], new['keys']
+    if set(a) != set(b): return True
+    return any(bool(a[k].get('landed')) != bool(b[k].get('landed')) or (a[k]['p'] >= 0.5) != (b[k]['p'] >= 0.5) or abs(a[k]['p'] - b[k]['p']) >= 0.01 for k in b)
+
+
 def archive(pr, report, made, commit=''):
-    """Write this run to the archive under its own time stamp, unless nothing in it differs from the last one kept."""
+    """Write this run to the archive under its own time stamp, unless it says nothing the last one kept did not."""
     os.makedirs(ARCHIVE, exist_ok=True)
     index_path = os.path.join(ARCHIVE, 'index.json')
     index = json.load(open(index_path)) if os.path.exists(index_path) else []
     inputs = {p: sha(os.path.join(HERE, p)) for p in INPUTS}
-    body = {k: v for k, v in pr.items() if k != 'as_of'}
     if index:
         last = json.load(open(os.path.join(ARCHIVE, index[-1]['file'])))
-        if {k: v for k, v in last['projection'].items() if k != 'as_of'} == body and last['inputs'] == inputs:
+        if not differs(last['projection'], pr):
             return None
     sys.path.insert(0, HERE)
     from make_page import TEXT
@@ -354,38 +384,119 @@ def archive(pr, report, made, commit=''):
     return name
 
 
+def economy_due(now, new_day, force=False):
+    """Are the economic series read on this run? `now` is the time in the East. Polls are read on every run."""
+    return bool(force or new_day or (now.weekday() < 5 and now.hour in RELEASE_HOURS) or now.hour in FALLBACK_HOURS)
+
+
+POLLS = 'approval polls'
+of_polls = lambda line: line.startswith(POLLS)
+
+
+def fingerprint(day, held):
+    """A short hash of every file the run-ahead reads, the day, and the series being held back. The date a file was fetched
+    is left out of it, so reading the same figures again changes nothing."""
+    h = lambda x: hashlib.sha256(json.dumps(x, sort_keys=True, separators=(',', ':')).encode()).hexdigest()[:16]
+    fp = {'day': str(day), 'held back': h(sorted(held))}
+    for p in INPUTS:
+        full = os.path.join(HERE, p)
+        if p.endswith(('latest.json', 'approval_polls.json')):
+            x = json.load(open(full)); x.pop('as_of', None); x.pop('fetched', None); fp[p] = h(x)
+        else:
+            fp[p] = sha(full)
+    return fp
+
+
+def alarm(held, held_before, read_on, today, new_day, force=False):
+    """Should this run end as failed, so that somebody looks? Returns the reason, or None.
+    A figure held back: on the run that first holds it, then on the first run of each day until it is settled.
+    A source out of reach: on the first run of the day, once it has not been read for OUT_OF_REACH_DAYS days.
+    A run asked for by hand reports either."""
+    if held and (set(held) - set(held_before) or new_day or force):
+        return 'Some figures failed a check and were not used; the page was rebuilt with the last good ones. See the warnings above.'
+    day = datetime.date.fromisoformat
+    lost = [k for k in ('economy', 'polls') if read_on.get(k) and (today - day(read_on[k])).days >= OUT_OF_REACH_DAYS]
+    if lost and (new_day or force):
+        return f"Not read for {OUT_OF_REACH_DAYS} days or more: {', '.join(lost)}. The page shows the last figures read."
+    return None
+
+
+def out(key, value):
+    """A result for the workflow that started the run."""
+    if os.environ.get('GITHUB_OUTPUT'):
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f: f.write(f'{key}={value}\n')
+
+
+def feed():
+    """The part of docs/keys.json that other sites read."""
+    try:
+        k = json.load(open(os.path.join(HERE, 'docs', 'keys.json')))
+        return [k.get('likely'), k.get('mean'), k.get('sd'), k.get('settled'), (k.get('vote_estimate') or {}).get('party_in_office')]
+    except Exception:                                                       # noqa: BLE001
+        return None
+
+
 def main(argv):
     offline = '--offline' in argv
     trust = set(argv[argv.index('--trust') + 1].replace(',', ' ').split()) if '--trust' in argv and len(argv) > argv.index('--trust') + 1 else set()
+    force = '--force' in argv or bool(trust)
     made = datetime.datetime.now(datetime.timezone.utc)
-    today = made.astimezone(ZoneInfo('America/New_York')).date()
-    report = {'read': [], 'new': [], 'held': [], 'failed': [], 'trusted': sorted(trust)}
-    latest_path = os.path.join(D, 'latest.json')
+    now = made.astimezone(ET); today = now.date()
+    latest_path, log_path, fp_path = os.path.join(D, 'latest.json'), os.path.join(D, 'update_log.json'), os.path.join(D, 'fingerprint.json')
     latest = json.load(open(latest_path))
+    log = json.load(open(log_path)) if os.path.exists(log_path) else {}
+    new_day = latest.get('as_of', '') < str(today)
+    report = {'read': [], 'new': [], 'held': [], 'failed': [], 'trusted': sorted(trust)}
+    economy = not offline and economy_due(now, new_day, force)
+    read_on = dict(log.get('read_on') or {})
     if not offline:
         say = lambda what: print(f"{what}: {len(report['read'])} read, {len(report['held'])} held back, {len(report['failed'])} not reached", flush=True)
-        print('FRED is read ' + ('through its API, with a key' if os.environ.get('FRED_API_KEY', '').strip() else 'through its download links, without a key'), flush=True)
-        refresh_table(os.path.join(D, 'latest_monthly.csv'), MONTHLY, today, trust, report, monthly=True); say('monthly series')
-        refresh_table(os.path.join(D, 'quarterly.csv'), QUARTERLY, today, trust, report, monthly=False); say('quarterly series')
-        refresh_prices(latest, today, trust, report); say('prices')
-        refresh_states(os.path.join(D, 'state_index_this_term.csv'), trust, report); say('state indexes')
+        if economy:
+            print('FRED is read ' + ('through its API, with a key' if os.environ.get('FRED_API_KEY', '').strip() else 'through its download links, without a key'), flush=True)
+            refresh_table(os.path.join(D, 'latest_monthly.csv'), MONTHLY, today, trust, report, monthly=True); say('monthly series')
+            refresh_table(os.path.join(D, 'quarterly.csv'), QUARTERLY, today, trust, report, monthly=False); say('quarterly series')
+            refresh_prices(latest, today, trust, report); say('prices')
+            refresh_states(os.path.join(D, 'state_index_this_term.csv'), trust, report); say('state indexes')
+            if not report['failed']: read_on['economy'] = str(today)
+        else:
+            print(f"The economic series are not read at this hour ({now:%A %H:%M} Eastern); they were last read {log.get('economy_read', 'at the last full run')}.", flush=True)
+        n = len(report['failed'])
         refresh_polls(os.path.join(D, 'approval_polls.json'), today, trust, report); say('approval polls')
+        if len(report['failed']) == n: read_on['polls'] = str(today)
         latest['as_of'] = str(today)
         json.dump(latest, open(latest_path, 'w'), indent=1)
+    if not economy:                                    # what was held back or out of reach on the last reading of the economy still is
+        for kind in ('held', 'failed'):
+            report[kind] = [m for m in log.get(kind, []) if not of_polls(m)] + report[kind]
     for line in report['held'] + report['failed']:
         print('::warning::' + line)
     print(f"read {len(report['read'])} sources; new figures: {json.dumps(report['new'])}")
+    held = sorted({m.split(':')[0] for m in report['held']})
+    fp = fingerprint(today, held); old = json.load(open(fp_path)) if os.path.exists(fp_path) else {}
+    what = [k for k in fp if fp[k] != old.get(k)]
+    if not what and not force and not offline:
+        print(f"Nothing new since the run of {log.get('made', 'before')}: nothing is recalculated."); out('changed', 'false')
+        return 0
+    print('New: ' + (', '.join(what) if what else 'nothing (the run was asked for)'))
+    before = feed()
     run = lambda script: subprocess.run([sys.executable, os.path.join(HERE, script)], cwd=HERE, check=True, stdout=subprocess.DEVNULL)
     run('run_2028.py')
     pr = json.load(open(os.path.join(HERE, 'projection_2028.json')))
     name = archive(pr, report, made, os.environ.get('GITHUB_SHA', ''))
-    print('archived as ' + name if name else 'nothing changed since the last archived run')
+    print('archived as ' + name if name else 'the projection says nothing new: not added to the archive')
     run('make_page.py')
-    json.dump(dict(report, made=made.strftime('%Y-%m-%dT%H:%M:%SZ')), open(os.path.join(D, 'update_log.json'), 'w'), indent=1)
-    if report['held'] or report['failed']:
-        print('::error::Some figures were not updated; the page was rebuilt with the last good ones. See the warnings above.')
-        return 1
-    return 0
+    first_held = sorted(set(held) - set(log.get('held_names') or []))
+    if not offline:                                    # a run without reading says nothing about the sources
+        json.dump(dict(report, made=made.strftime('%Y-%m-%dT%H:%M:%SZ'), economy_read=made.strftime('%Y-%m-%dT%H:%M:%SZ') if economy else log.get('economy_read'),
+                       read_on=read_on, held_names=held), open(log_path, 'w'), indent=1)
+    json.dump(fp, open(fp_path, 'w'), indent=1)
+    news = [n_['series'] for n_ in report['new']]
+    out('changed', 'true'); out('feed', 'true' if feed() != before else 'false')
+    out('what', ', '.join(news) if news else ('a figure held back' if first_held else 'the day' if what == ['day'] else 'revised figures'))
+    why = alarm(held, log.get('held_names') or [], read_on, today, new_day, force)
+    if why:
+        print('::error::' + why); out('alert', 'true')
+    return 1 if why else 0
 
 
 if __name__ == '__main__':
