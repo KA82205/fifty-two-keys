@@ -6,6 +6,9 @@ on:
     # If nothing the model reads has changed, the run ends there and nothing is saved.
     # GitHub starts scheduled runs late, sometimes by a good while, so the minute is only a rough one.
     - cron: "7 * * * *"
+  repository_dispatch:
+    # "check now", from an outside scheduler (see The Margin's RUNBOOK.md). Treated exactly as a scheduled run.
+    types: [heartbeat]
   workflow_dispatch:
     inputs:
       trust:
@@ -101,6 +104,25 @@ jobs:
             https://api.github.com/repos/KA82205/the-margin/dispatches \
             -d '{"event_type":"upstream-updated","client_payload":{"from":"fifty-two-keys"}}' \
             || echo "::warning::The Margin could not be told; its hourly check will pick the change up."
+
+      # The Margin also runs on its own schedule, but GitHub starts scheduled runs when it pleases. Every run here that finds
+      # The Margin has not checked for most of an hour wakes it. The Margin never wakes this site back, so there is no loop.
+      - name: Wake The Margin if it has not checked lately
+        if: always()
+        env:
+          DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$DISPATCH_TOKEN" ]; then exit 0; fi
+          mins=$(curl -fsS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/KA82205/the-margin/actions/workflows/update.yml/runs?per_page=1" \
+            | python3 -c "import sys,json,datetime as d; r=json.load(sys.stdin)['workflow_runs']; print(int((d.datetime.now(d.timezone.utc)-d.datetime.fromisoformat(r[0]['created_at'].replace('Z','+00:00'))).total_seconds()//60) if r else 9999)" || echo 0)
+          echo "The Margin last started a run $mins minutes ago."
+          if [ "$mins" -ge 50 ]; then
+            curl -fsS -X POST -H "Authorization: Bearer $DISPATCH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/KA82205/the-margin/dispatches -d '{"event_type":"heartbeat","client_payload":{"from":"fifty-two-keys"}}' \
+              && echo "Woke The Margin." || echo "::warning::The Margin could not be woken."
+          fi
 
       # A figure held back, or a source out of reach for days, is always flagged (update.py reports each at once and
       # then once a day). A run that fails for another reason is tried again every hour and marked as failed at 7 a.m.,
