@@ -1,0 +1,2206 @@
+{
+ "made": "2026-11-25T19:00:54Z",
+ "model": {
+  "keys": "0c7c9208e8fdcd94",
+  "engine": "2026.11b"
+ },
+ "commit": "0ff1655be8d89e0e1f11cf85ebca3b5e876e1ceb",
+ "inputs": {
+  "data/latest_monthly.csv": "2bbb626b65d8fcc4",
+  "data/quarterly.csv": "548802a15fa0bde8",
+  "data/latest.json": "37e42bd04267bd7f",
+  "data/approval_polls.json": "1c3b4c8409768d39",
+  "data/state_index_this_term.csv": "bab5bb3f725151d2",
+  "data/outlook.json": "b90a1f229d35cb49",
+  "locked_keys.csv": "0c7c9208e8fdcd94",
+  "run_2028.py": "82e789d72f14c074",
+  "build.py": "39239e82b11dddfc",
+  "calls.py": "1f98a252908bdce5",
+  "data/congress_seats.csv": "1adbaa892c7657a9",
+  "data/nh_primaries.csv": "5c125165db053c70"
+ },
+ "figures": {
+  "monthly": [
+   [
+    "observation_date",
+    "UNRATE",
+    "PAYEMS",
+    "MANEMP",
+    "CPIAUCSL",
+    "INDPRO",
+    "DPCERA3M086SBEA",
+    "CES0600000008",
+    "HOUST",
+    "UMCSENT",
+    "MCOILWTICO",
+    "SP500",
+    "ICSA"
+   ],
+   [
+    "2025-12-01",
+    "4.4",
+    "158432",
+    "12580",
+    "326.031",
+    "100.7055",
+    "124.98",
+    "33.1",
+    "1378",
+    "52.9",
+    "57.97",
+    "6853.03",
+    "219250"
+   ],
+   [
+    "2026-01-01",
+    "4.3",
+    "158592",
+    "12582",
+    "326.588",
+    "100.3329",
+    "124.876",
+    "33.25",
+    "1385",
+    "56.4",
+    "60.04",
+    "6929.12",
+    "211800"
+   ],
+   [
+    "2026-02-01",
+    "4.4",
+    "158436",
+    "12583",
+    "327.46",
+    "101.0208",
+    "125.136",
+    "33.44",
+    "1346",
+    "56.6",
+    "64.51",
+    "6893.81",
+    "215750"
+   ],
+   [
+    "2026-03-01",
+    "4.3",
+    "158650",
+    "12598",
+    "330.293",
+    "101.1593",
+    "125.459",
+    "33.59",
+    "1522",
+    "53.3",
+    "91.38",
+    "6654.42",
+    "208000"
+   ],
+   [
+    "2026-04-01",
+    "4.3",
+    "158798",
+    "12597",
+    "332.407",
+    "101.6393",
+    "125.859",
+    "33.72",
+    "1414",
+    "49.8",
+    "100.32",
+    "6957.01",
+    "207750"
+   ],
+   [
+    "2026-05-01",
+    "4.3",
+    "158861",
+    "12595",
+    "333.979",
+    "101.7781",
+    "126.289",
+    "33.86",
+    "1182",
+    "44.8",
+    "102.13",
+    "7412.55",
+    "211600"
+   ],
+   [
+    "2026-06-01",
+    "4.2",
+    "158892",
+    "12608",
+    "332.568",
+    "101.9827",
+    "126.811",
+    "33.97",
+    "1439",
+    "49.5",
+    "84.81",
+    "7450.03",
+    "222500"
+   ],
+   [
+    "2026-07-01",
+    "4.1",
+    "158882",
+    "12628",
+    "332.813",
+    "102.2082",
+    "127.034",
+    "34",
+    "1369",
+    "55.2",
+    "80.46",
+    "7481.34",
+    "203250"
+   ],
+   [
+    "2026-08-01",
+    "4.1",
+    "159068",
+    "12649",
+    "334.131",
+    "102.0644",
+    "127.831",
+    "34.1",
+    "1280",
+    "51.7",
+    "83.9",
+    "7711.32",
+    "206000"
+   ],
+   [
+    "2026-09-01",
+    "4.2",
+    "159128",
+    "12662",
+    "336.298",
+    "102.6785",
+    "127.976",
+    "34.08",
+    "1191",
+    "48.1",
+    "97.31",
+    "7669.41",
+    "200500"
+   ],
+   [
+    "2026-10-01",
+    "4.1",
+    "159293",
+    "12681",
+    "337.476",
+    "102.2421",
+    "127.932",
+    "34.29",
+    "1309",
+    "48",
+    "102.07",
+    "7726.69",
+    "195800"
+   ],
+   [
+    "2026-11-01",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "51.5",
+    "",
+    "",
+    ""
+   ]
+  ],
+  "quarterly": [
+   [
+    "2023-10-01",
+    "3.6",
+    "4.1",
+    "338289",
+    "68088",
+    "51780"
+   ],
+   [
+    "2024-01-01",
+    "1.4",
+    "3.9",
+    "339035",
+    "68182",
+    "52167"
+   ],
+   [
+    "2024-04-01",
+    "3.6",
+    "2.9",
+    "339830",
+    "68623",
+    "52416"
+   ],
+   [
+    "2024-07-01",
+    "3.2",
+    "1.2",
+    "340512",
+    "69019",
+    "52473"
+   ],
+   [
+    "2024-10-01",
+    "2.4",
+    "1.7",
+    "341005",
+    "69330",
+    "52622"
+   ],
+   [
+    "2025-01-01",
+    "0.1",
+    "1.1",
+    "341381",
+    "69278",
+    "52713"
+   ],
+   [
+    "2025-04-01",
+    "4",
+    "2.7",
+    "341787",
+    "69881",
+    "53006"
+   ],
+   [
+    "2025-07-01",
+    "3.9",
+    "1.2",
+    "342177",
+    "70469",
+    "53102"
+   ],
+   [
+    "2025-10-01",
+    "0.2",
+    "0.5",
+    "342433",
+    "70453",
+    "53128"
+   ],
+   [
+    "2026-01-01",
+    "2.5",
+    "2.4",
+    "342583",
+    "70857",
+    "53426"
+   ],
+   [
+    "2026-04-01",
+    "2.2",
+    "-0.6",
+    "342749",
+    "71212",
+    "53325"
+   ],
+   [
+    "2026-07-01",
+    "4.3",
+    "2.4",
+    "343007",
+    "71909",
+    "53607"
+   ]
+  ],
+  "quarterly_columns": [
+   "observation_date",
+   "A191RL1Q225SBEA",
+   "A067RL1Q156SBEA",
+   "B230RC0Q173SBEA",
+   "A939RX0Q048SBEA",
+   "A229RX0Q048SBEA"
+  ],
+  "prices": {
+   "as_of": "2026-11-25",
+   "sp500": {
+    "date": "2026-11-24",
+    "value": 7201.09
+   },
+   "oil": {
+    "date": "2026-11-24",
+    "value": 82.24
+   }
+  },
+  "approval": {
+   "approve": 31.4,
+   "disapprove": 65.5,
+   "pollsters": 4,
+   "polls": 8,
+   "from": "2026-10-27",
+   "to": "2026-11-25",
+   "year_ago": {
+    "approve": 39.3,
+    "disapprove": 56.4,
+    "pollsters": 14,
+    "polls": 20,
+    "from": "2025-11-01",
+    "to": "2025-11-30"
+   },
+   "midterm": {
+    "approve": 31.1,
+    "disapprove": 66.0,
+    "pollsters": 5,
+    "polls": 9,
+    "from": "2026-10-01",
+    "to": "2026-11-30"
+   }
+  },
+  "states": {
+   "through": "2026-09",
+   "growing": 49,
+   "growing_ev": 525.0,
+   "faster_ev": 414.0
+  }
+ },
+ "assumptions": {
+  "outlook": {
+   "recession_share": 0.3,
+   "unemployment": 4.2,
+   "jobs_a_month": [
+    90,
+    90,
+    65,
+    65,
+    65,
+    49,
+    49,
+    49,
+    51,
+    51,
+    51,
+    51,
+    51,
+    51,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50
+   ],
+   "gdp": [
+    2.3,
+    2.1,
+    2.2,
+    2.2,
+    2.1,
+    2.1,
+    2.1
+   ],
+   "income": [
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0
+   ],
+   "cpi_quarters": [
+    4.0,
+    2.6,
+    2.4,
+    2.4,
+    2.4,
+    2.3,
+    2.3,
+    2.3
+   ],
+   "population": 0.25,
+   "industrial_production": 1.0,
+   "spending": 2.2,
+   "hourly_pay": 3.8,
+   "factory_jobs": 0.0,
+   "oil": [
+    [
+     1,
+     84.0
+    ],
+    [
+     8,
+     80.0
+    ],
+    [
+     14,
+     72.0
+    ],
+    [
+     20,
+     70.0
+    ]
+   ],
+   "sentiment": [
+    [
+     1,
+     51.5
+    ],
+    [
+     8,
+     57.0
+    ],
+    [
+     20,
+     60.0
+    ]
+   ]
+  },
+  "outlook_date": "2026-11-16",
+  "outlook_note": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Entered by hand when a new survey is out.",
+  "odds_entered": "November 2026",
+  "politics": {
+   "surge": 0.03,
+   "net_given_surge": 0.6,
+   "fifty_given_net": 0.7,
+   "slump_in_recession": 0.5,
+   "no_third_candidate": 0.88,
+   "nominee_wins_nh": 0.68,
+   "two_thirds_if_won": 0.82,
+   "two_thirds_if_lost": 0.6,
+   "dem_on_ballot": 0.85,
+   "dem_nominee_wins_nh": 0.42,
+   "dem_write_in_win": 0.1
+  },
+  "polls": {
+   "rubio": 35.4,
+   "vance": 34.0,
+   "nh_vance": 39.0,
+   "nh_rubio": 27.3
+  },
+  "settled": {
+   "D01": {
+    "value": 0,
+    "why": "Republicans will hold at most 178 House seats, against 222 after the 2022 midterm."
+   },
+   "D02": {
+    "value": 0,
+    "why": "Democrats won the House on November 3, 2026."
+   },
+   "D03": {
+    "value": 0,
+    "why": "Democrats won the Senate, 56 seats to 44."
+   },
+   "D04": {
+    "value": 0,
+    "why": "Trump won 49.8% of all votes in 2024."
+   },
+   "D05": {
+    "value": 0,
+    "why": "Republicans went from 220 House seats to at most 178."
+   },
+   "D06": {
+    "value": 0,
+    "why": "Republicans went from 53 Senate seats to 44."
+   },
+   "E01": {
+    "value": 0,
+    "why": "Trump cannot run for a third term."
+   },
+   "E02": {
+    "value": 1,
+    "why": "Republicans are in their first term back in the White House."
+   }
+  }
+ },
+ "checks": {
+  "read": [
+   "UNRATE",
+   "PAYEMS",
+   "MANEMP",
+   "CPIAUCSL",
+   "INDPRO",
+   "DPCERA3M086SBEA",
+   "CES0600000008",
+   "HOUST",
+   "UMCSENT",
+   "MCOILWTICO",
+   "SP500",
+   "ICSA",
+   "A191RL1Q225SBEA",
+   "A067RL1Q156SBEA",
+   "B230RC0Q173SBEA",
+   "A939RX0Q048SBEA",
+   "A229RX0Q048SBEA",
+   "SP500",
+   "DCOILWTICO",
+   "state indexes",
+   "approval polls"
+  ],
+  "new": [],
+  "held": [],
+  "failed": [],
+  "trusted": []
+ },
+ "changes": [],
+ "projection": {
+  "as_of": "November 25, 2026",
+  "date": "2026-11-25",
+  "runs": 200000,
+  "stretches": {
+   "n": 117,
+   "with_recession": 39,
+   "first": 1964,
+   "last": 2025
+  },
+  "recession_share": 0.3,
+  "index": {
+   "mean": 0.394,
+   "median": 0.405,
+   "p5": 0.197,
+   "p25": 0.305,
+   "p75": 0.483,
+   "p95": 0.567,
+   "above_half": 0.195,
+   "p10": 0.234,
+   "p90": 0.537,
+   "sd": 0.116,
+   "expected_in_favor": 24.33
+  },
+  "index_dist": [
+   [
+    0.03,
+    2e-05
+   ],
+   [
+    0.04,
+    3e-05
+   ],
+   [
+    0.05,
+    1e-05
+   ],
+   [
+    0.06,
+    0.00017
+   ],
+   [
+    0.07,
+    0.00021
+   ],
+   [
+    0.08,
+    0.00021
+   ],
+   [
+    0.09,
+    0.00078
+   ],
+   [
+    0.1,
+    0.00068
+   ],
+   [
+    0.11,
+    0.00178
+   ],
+   [
+    0.12,
+    0.00123
+   ],
+   [
+    0.13,
+    0.00188
+   ],
+   [
+    0.14,
+    0.005
+   ],
+   [
+    0.15,
+    0.00558
+   ],
+   [
+    0.16,
+    0.00214
+   ],
+   [
+    0.17,
+    0.00949
+   ],
+   [
+    0.18,
+    0.00966
+   ],
+   [
+    0.19,
+    0.00741
+   ],
+   [
+    0.2,
+    0.01177
+   ],
+   [
+    0.21,
+    0.01324
+   ],
+   [
+    0.22,
+    0.0098
+   ],
+   [
+    0.23,
+    0.0237
+   ],
+   [
+    0.24,
+    0.01773
+   ],
+   [
+    0.25,
+    0.01169
+   ],
+   [
+    0.26,
+    0.03046
+   ],
+   [
+    0.27,
+    0.02238
+   ],
+   [
+    0.28,
+    0.01012
+   ],
+   [
+    0.29,
+    0.03395
+   ],
+   [
+    0.3,
+    0.01704
+   ],
+   [
+    0.31,
+    0.02025
+   ],
+   [
+    0.32,
+    0.02187
+   ],
+   [
+    0.33,
+    0.02838
+   ],
+   [
+    0.34,
+    0.01672
+   ],
+   [
+    0.35,
+    0.02212
+   ],
+   [
+    0.36,
+    0.03193
+   ],
+   [
+    0.37,
+    0.0272
+   ],
+   [
+    0.38,
+    0.02263
+   ],
+   [
+    0.39,
+    0.0342
+   ],
+   [
+    0.4,
+    0.02578
+   ],
+   [
+    0.41,
+    0.0246
+   ],
+   [
+    0.42,
+    0.03592
+   ],
+   [
+    0.43,
+    0.03695
+   ],
+   [
+    0.44,
+    0.03306
+   ],
+   [
+    0.45,
+    0.03252
+   ],
+   [
+    0.46,
+    0.03025
+   ],
+   [
+    0.47,
+    0.03299
+   ],
+   [
+    0.48,
+    0.02894
+   ],
+   [
+    0.49,
+    0.03752
+   ],
+   [
+    0.5,
+    0.02663
+   ],
+   [
+    0.51,
+    0.02077
+   ],
+   [
+    0.52,
+    0.02669
+   ],
+   [
+    0.53,
+    0.02958
+   ],
+   [
+    0.54,
+    0.01895
+   ],
+   [
+    0.55,
+    0.01371
+   ],
+   [
+    0.56,
+    0.01465
+   ],
+   [
+    0.57,
+    0.01234
+   ],
+   [
+    0.58,
+    0.00798
+   ],
+   [
+    0.59,
+    0.01189
+   ],
+   [
+    0.6,
+    0.00635
+   ],
+   [
+    0.61,
+    0.00408
+   ],
+   [
+    0.62,
+    0.00477
+   ],
+   [
+    0.63,
+    0.00434
+   ],
+   [
+    0.64,
+    0.00153
+   ],
+   [
+    0.65,
+    0.00073
+   ],
+   [
+    0.66,
+    0.00074
+   ],
+   [
+    0.67,
+    0.0006
+   ],
+   [
+    0.68,
+    0.00035
+   ],
+   [
+    0.69,
+    0.00049
+   ],
+   [
+    0.7,
+    0.00025
+   ],
+   [
+    0.71,
+    0.00014
+   ],
+   [
+    0.72,
+    0.00022
+   ],
+   [
+    0.73,
+    0.00019
+   ],
+   [
+    0.74,
+    3e-05
+   ]
+  ],
+  "calm": {
+   "mean": 0.448,
+   "above_half": 0.278
+  },
+  "hist": [
+   {
+    "lo": 0,
+    "share": 0.0
+   },
+   {
+    "lo": 5,
+    "share": 0.0018
+   },
+   {
+    "lo": 10,
+    "share": 0.0115
+   },
+   {
+    "lo": 15,
+    "share": 0.0422
+   },
+   {
+    "lo": 20,
+    "share": 0.0707
+   },
+   {
+    "lo": 25,
+    "share": 0.115
+   },
+   {
+    "lo": 30,
+    "share": 0.1035
+   },
+   {
+    "lo": 35,
+    "share": 0.1403
+   },
+   {
+    "lo": 40,
+    "share": 0.1604
+   },
+   {
+    "lo": 45,
+    "share": 0.1595
+   },
+   {
+    "lo": 50,
+    "share": 0.1159
+   },
+   {
+    "lo": 55,
+    "share": 0.0573
+   },
+   {
+    "lo": 60,
+    "share": 0.0185
+   },
+   {
+    "lo": 65,
+    "share": 0.0027
+   },
+   {
+    "lo": 70,
+    "share": 0.0007
+   },
+   {
+    "lo": 75,
+    "share": 0.0
+   },
+   {
+    "lo": 80,
+    "share": 0.0
+   },
+   {
+    "lo": 85,
+    "share": 0.0
+   },
+   {
+    "lo": 90,
+    "share": 0.0
+   },
+   {
+    "lo": 95,
+    "share": 0.0
+   }
+  ],
+  "groups": {
+   "A": {
+    "mean": 0.636,
+    "p10": 0.222,
+    "p90": 0.944,
+    "likely": 14,
+    "n": 18
+   },
+   "B": {
+    "mean": 0.465,
+    "p10": 0.2,
+    "p90": 0.8,
+    "likely": 7,
+    "n": 15
+   },
+   "C": {
+    "mean": 0.182,
+    "p10": 0.0,
+    "p90": 0.5,
+    "likely": 0,
+    "n": 6
+   },
+   "D": {
+    "mean": 0.0,
+    "p10": 0.0,
+    "p90": 0.0,
+    "likely": 0,
+    "n": 6
+   },
+   "E": {
+    "mean": 0.689,
+    "p10": 0.429,
+    "p90": 0.857,
+    "likely": 6,
+    "n": 7
+   }
+  },
+  "likely": {
+   "in_favor": 27,
+   "index": 0.42
+  },
+  "keys": {
+   "A01": {
+    "p": 0.67,
+    "p_calm": 0.781,
+    "p_recession": 0.408,
+    "note": "Forecasters expect growth of about 2.1% a year in spring 2028. It was 4.3% in the latest quarter.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A02": {
+    "p": 0.656,
+    "p_calm": 0.859,
+    "p_recession": 0.18,
+    "note": "Forecast growth is about 2% a year, and the population is growing about 0.25%.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A03": {
+    "p": 0.565,
+    "p_calm": 0.719,
+    "p_recession": 0.203,
+    "note": "Up 1.0% in the past year.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A04": {
+    "p": 0.772,
+    "p_calm": 0.948,
+    "p_recession": 0.36,
+    "note": "Real spending is up 2.5% in the past year, ahead of the population.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A05": {
+    "p": 0.395,
+    "p_calm": 0.552,
+    "p_recession": 0.025,
+    "note": "It is 4.1% now. Forecasters expect about 4.2% through 2028, and a tie counts as no.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A06": {
+    "p": 0.586,
+    "p_calm": 0.783,
+    "p_recession": 0.126,
+    "note": "Forecasters expect about 50,000 new jobs a month, a slow pace that a weak year could turn negative.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A07": {
+    "p": 0.4,
+    "p_calm": 0.528,
+    "p_recession": 0.1,
+    "note": "Factory jobs have risen 84,000 in the past six months.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A08": {
+    "p": 0.407,
+    "p_calm": 0.526,
+    "p_recession": 0.129,
+    "note": "Claims are about 201,000 a week, below the 230,000 of a year earlier.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A09": {
+    "p": 0.695,
+    "p_calm": 0.948,
+    "p_recession": 0.101,
+    "note": "The signal is at 0.00 now. It takes 0.50, a rise of about half a point in unemployment.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A10": {
+    "p": 0.763,
+    "p_calm": 0.87,
+    "p_recession": 0.512,
+    "note": "Up 1.0% in the past year.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A11": {
+    "p": 0.847,
+    "p_calm": 0.922,
+    "p_recession": 0.671,
+    "note": "Pay is rising 4.4% a year, and forecasters expect inflation of about 2.4%.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A12": {
+    "p": 0.721,
+    "p_calm": 0.744,
+    "p_recession": 0.668,
+    "note": "Inflation is 3.7% now. This year's oil shock lifts the mid-2027 figure that mid-2028 is compared with.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A13": {
+    "p": 0.737,
+    "p_calm": 0.745,
+    "p_recession": 0.719,
+    "note": "About $82 a barrel now. Futures and forecasts point to about $78 in mid-2027 and $69 in mid-2028.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A14": {
+    "p": 0.696,
+    "p_calm": 0.86,
+    "p_recession": 0.31,
+    "note": "The S&P 500 was higher than a year before in about seven years of ten, and lower in recessions.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A15": {
+    "p": 0.636,
+    "p_calm": 0.731,
+    "p_recession": 0.412,
+    "note": "Higher than six months before in about two years of three.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A16": {
+    "p": 0.627,
+    "p_calm": 0.73,
+    "p_recession": 0.386,
+    "note": "The index is 51.5, near its record low, which leaves room to recover.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A17": {
+    "p": 0.413,
+    "p_calm": 0.436,
+    "p_recession": 0.359,
+    "note": "Starts are running near 1.29 million a year, against 1.33 million a year earlier.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "A18": {
+    "p": 0.854,
+    "p_calm": 1.0,
+    "p_recession": 0.51,
+    "note": "State economies are growing in 49 of 51 now. This key has failed only in sharp downturns (1980, 2020).",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B01": {
+    "p": 0.383,
+    "p_calm": 0.515,
+    "p_recession": 0.074,
+    "note": "So far this term: 2.11% a year. The bar, the average of the last two terms, is 1.98%.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B02": {
+    "p": 0.56,
+    "p_calm": 0.756,
+    "p_recession": 0.1,
+    "note": "Up 2.2% since January 2025, against 0.3% a year last term.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B03": {
+    "p": 0.162,
+    "p_calm": 0.23,
+    "p_recession": 0.0,
+    "note": "It would take real spending growth of 3.4% a year from here.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B04": {
+    "p": 0.367,
+    "p_calm": 0.503,
+    "p_recession": 0.049,
+    "note": "It was 4.0% in January 2025 and is 4.1% now.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B05": {
+    "p": 0.0,
+    "p_calm": 0.0,
+    "p_recession": 0.0,
+    "note": "Out of reach: jobs grew 2.6% a year last term and 0.4% a year so far in this one.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B06": {
+    "p": 0.4,
+    "p_calm": 0.528,
+    "p_recession": 0.1,
+    "note": "12.68 million now against 12.67 million in January 2025.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B07": {
+    "p": 0.536,
+    "p_calm": 0.744,
+    "p_recession": 0.051,
+    "note": "About 201,000 a week now against 221,000 at the start of the term.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B08": {
+    "p": 0.39,
+    "p_calm": 0.502,
+    "p_recession": 0.128,
+    "note": "So far this term: 1.1% a year. Last term: 1.5%.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B09": {
+    "p": 0.891,
+    "p_calm": 0.974,
+    "p_recession": 0.696,
+    "note": "Pay after inflation is 1.7% above its January 2025 level.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B10": {
+    "p": 0.954,
+    "p_calm": 1.0,
+    "p_recession": 0.847,
+    "note": "Inflation has averaged 3.3% a year this term against 5.0% last term.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B11": {
+    "p": 0.724,
+    "p_calm": 0.77,
+    "p_recession": 0.617,
+    "note": "Oil is about $82 now. January 2025's price is $80 in today's dollars, and forecasts have oil below that by 2028.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B12": {
+    "p": 0.771,
+    "p_calm": 0.924,
+    "p_recession": 0.413,
+    "note": "The S&P 500 is 14% above its start-of-term level, after inflation.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B13": {
+    "p": 0.09,
+    "p_calm": 0.128,
+    "p_recession": 0.0,
+    "note": "The index is 51.5. It was 71.7 in January 2025.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B14": {
+    "p": 0.181,
+    "p_calm": 0.203,
+    "p_recession": 0.128,
+    "note": "Starts average 1.29 million against 1.40 million at the start of the term.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "B15": {
+    "p": 0.565,
+    "p_calm": 0.796,
+    "p_recession": 0.025,
+    "note": "So far this term, growth is above its 2024 pace in states holding 414 electoral votes.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "C01": {
+    "p": 0.009,
+    "p_calm": 0.013,
+    "p_recession": 0.0,
+    "note": "31% approve now, in polls of all adults from the past month (4 pollsters).",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "C02": {
+    "p": 0.013,
+    "p_calm": 0.018,
+    "p_recession": 0.0,
+    "note": "31% approve and 66% disapprove now.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "C03": {
+    "p": 0.436,
+    "p_calm": 0.516,
+    "p_recession": 0.25,
+    "note": "31% approve now against 39% a year ago. Approval rose in the last year for 3 of the 7 presidents who were not running again.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "C04": {
+    "p": 0.339,
+    "p_calm": 0.403,
+    "p_recession": 0.191,
+    "note": "Approval averaged 31% in the polls around the midterms. It was higher by June in 8 of 19 cycles.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "C05": {
+    "p": 0.276,
+    "p_calm": 0.328,
+    "p_recession": 0.154,
+    "note": "It rose from January to June of the election year in 6 of 19 cycles.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "C06": {
+    "p": 0.021,
+    "p_calm": 0.03,
+    "p_recession": 0.0,
+    "note": "66% disapprove now.",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "E03": {
+    "p": 0.881,
+    "p_calm": 0.881,
+    "p_recession": 0.881,
+    "note": "No third candidate is polling near 10%. One reached it by June in 4 of the 19 elections. (As entered in November 2026.)",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "E04": {
+    "p": 0.75,
+    "p_calm": 0.751,
+    "p_recession": 0.75,
+    "note": "Rubio (35%) and Vance (34%) are level in national polls, which points to a real contest. (As entered in November 2026.)",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "E05": {
+    "p": 0.681,
+    "p_calm": 0.68,
+    "p_recession": 0.683,
+    "note": "Vance leads Rubio in New Hampshire polls, 39% to 27%, and the nomination is open. (As entered in November 2026.)",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "E06": {
+    "p": 0.884,
+    "p_calm": 0.883,
+    "p_recession": 0.886,
+    "note": "Two candidates dominate the Republican race, and the Democratic field is split five ways. (As entered in November 2026.)",
+    "landed": false,
+    "status": "unresolved"
+   },
+   "E07": {
+    "p": 0.627,
+    "p_calm": 0.626,
+    "p_recession": 0.63,
+    "note": "The Democratic field is split, and New Hampshire is in dispute with the national party over its date. (As entered in November 2026.)",
+    "landed": false,
+    "status": "unresolved"
+   }
+  },
+  "calls": {
+   "A01": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its second-quarter 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A02": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its second-quarter 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A03": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A04": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A05": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A06": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A07": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A08": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A09": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A10": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its second-quarter 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A11": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A12": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A13": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A14": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A15": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A16": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A17": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "A18": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The state indexes do not run through June 2028 yet.",
+    "next": "late July 2028"
+   },
+   "B01": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B02": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B03": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B04": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B05": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B06": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B07": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B08": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B09": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B10": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B11": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B12": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B13": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B14": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "Its June 2028 figures are not published yet.",
+    "next": "July 2028"
+   },
+   "B15": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The state indexes do not run through June 2028 yet.",
+    "next": "late July 2028"
+   },
+   "C01": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The June 2028 polls are not in yet.",
+    "next": "July 8, 2028"
+   },
+   "C02": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The June 2028 polls are not in yet.",
+    "next": "July 8, 2028"
+   },
+   "C03": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The June 2028 polls are not in yet.",
+    "next": "July 8, 2028"
+   },
+   "C04": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The June 2028 polls are not in yet.",
+    "next": "July 8, 2028"
+   },
+   "C05": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The June 2028 polls are not in yet.",
+    "next": "July 8, 2028"
+   },
+   "C06": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The June 2028 polls are not in yet.",
+    "next": "July 8, 2028"
+   },
+   "D01": {
+    "status": "settled",
+    "value": false,
+    "final": false,
+    "basis": "entered",
+    "evidence": "Republicans will hold at most 178 House seats, against 222 after the 2022 midterm.",
+    "next": "January 2027, when the new Congress meets and its seats are counted"
+   },
+   "D02": {
+    "status": "settled",
+    "value": false,
+    "final": false,
+    "basis": "entered",
+    "evidence": "Democrats won the House on November 3, 2026.",
+    "next": "January 2027, when the new Congress meets and its seats are counted"
+   },
+   "D03": {
+    "status": "settled",
+    "value": false,
+    "final": false,
+    "basis": "entered",
+    "evidence": "Democrats won the Senate, 56 seats to 44.",
+    "next": "January 2027, when the new Congress meets and its seats are counted"
+   },
+   "D04": {
+    "status": "settled",
+    "value": false,
+    "final": true,
+    "basis": "rule",
+    "evidence": "Trump won 49.8% of all votes in 2024."
+   },
+   "D05": {
+    "status": "settled",
+    "value": false,
+    "final": false,
+    "basis": "entered",
+    "evidence": "Republicans went from 220 House seats to at most 178.",
+    "next": "January 2027, when the new Congress meets and its seats are counted"
+   },
+   "D06": {
+    "status": "settled",
+    "value": false,
+    "final": false,
+    "basis": "entered",
+    "evidence": "Republicans went from 53 Senate seats to 44.",
+    "next": "January 2027, when the new Congress meets and its seats are counted"
+   },
+   "E01": {
+    "status": "settled",
+    "value": false,
+    "final": true,
+    "basis": "entered",
+    "evidence": "Trump cannot run for a third term."
+   },
+   "E02": {
+    "status": "settled",
+    "value": true,
+    "final": true,
+    "basis": "rule",
+    "evidence": "Republicans are in their first term back in the White House."
+   },
+   "E03": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The June 2028 polls do not exist yet.",
+    "next": "July 2028"
+   },
+   "E04": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The delegates are not chosen yet.",
+    "next": "June 2028, when the primaries end"
+   },
+   "E05": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The nominees are not known, so the New Hampshire result cannot be read for them yet.",
+    "next": "when both nominees are known, by June 2028"
+   },
+   "E06": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The nominees are not known, so the New Hampshire result cannot be read for them yet.",
+    "next": "when both nominees are known, by June 2028"
+   },
+   "E07": {
+    "status": "unresolved",
+    "value": null,
+    "final": false,
+    "why": "The nominees are not known, so the New Hampshire result cannot be read for them yet.",
+    "next": "when both nominees are known, by June 2028"
+   }
+  },
+  "count": {
+   "settled": 8,
+   "provisional": 0,
+   "unresolved": 44,
+   "held": 0,
+   "final": 3,
+   "closes": "2028-08-01",
+   "closed": false,
+   "called": 8,
+   "in_favor": 1
+  },
+  "horizon": {
+   "target": "June 2028",
+   "months_left": 20,
+   "quarters_left": 7,
+   "days_to_close": 615
+  },
+  "through": {
+   "UNRATE": "October 2026",
+   "PAYEMS": "October 2026",
+   "MANEMP": "October 2026",
+   "CPIAUCSL": "October 2026",
+   "INDPRO": "October 2026",
+   "DPCERA3M086SBEA": "October 2026",
+   "CES0600000008": "October 2026",
+   "MCOILWTICO": "October 2026",
+   "SP500": "October 2026",
+   "UMCSENT": "November 2026",
+   "HOUST": "October 2026",
+   "ICSA": "October 2026",
+   "quarterly": "2026 Q3",
+   "states": "2026-09",
+   "approval_polls": "2026-11-25"
+  },
+  "odds_entered": "November 2026",
+  "outlook_from": {
+   "date": "2026-11-16",
+   "source": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Entered by hand when a new survey is out.",
+   "next_survey_by": "2027-02-25",
+   "stale": false
+  },
+  "copy_differs": [],
+  "outlook": {
+   "recession_share": 0.3,
+   "unemployment": 4.2,
+   "jobs_a_month": [
+    90,
+    90,
+    65,
+    65,
+    65,
+    49,
+    49,
+    49,
+    51,
+    51,
+    51,
+    51,
+    51,
+    51,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50
+   ],
+   "gdp": [
+    2.3,
+    2.1,
+    2.2,
+    2.2,
+    2.1,
+    2.1,
+    2.1
+   ],
+   "income": [
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0,
+    2.0
+   ],
+   "cpi_quarters": [
+    4.0,
+    2.6,
+    2.4,
+    2.4,
+    2.4,
+    2.3,
+    2.3,
+    2.3
+   ],
+   "population": 0.25,
+   "industrial_production": 1.0,
+   "spending": 2.2,
+   "hourly_pay": 3.8,
+   "factory_jobs": 0.0,
+   "oil": [
+    [
+     1,
+     84.0
+    ],
+    [
+     8,
+     80.0
+    ],
+    [
+     14,
+     72.0
+    ],
+    [
+     20,
+     70.0
+    ]
+   ],
+   "sentiment": [
+    [
+     1,
+     51.5
+    ],
+    [
+     8,
+     57.0
+    ],
+    [
+     20,
+     60.0
+    ]
+   ]
+  },
+  "politics": {
+   "surge": 0.03,
+   "net_given_surge": 0.6,
+   "fifty_given_net": 0.7,
+   "slump_in_recession": 0.5,
+   "no_third_candidate": 0.88,
+   "nominee_wins_nh": 0.68,
+   "two_thirds_if_won": 0.82,
+   "two_thirds_if_lost": 0.6,
+   "dem_on_ballot": 0.85,
+   "dem_nominee_wins_nh": 0.42,
+   "dem_write_in_win": 0.1
+  },
+  "polls": {
+   "rubio": 35.4,
+   "vance": 34.0,
+   "nh_vance": 39.0,
+   "nh_rubio": 27.3
+  },
+  "range": {
+   "above_half": [
+    0.149,
+    0.24
+   ],
+   "mean": [
+    0.378,
+    0.411
+   ],
+   "blocks": 15,
+   "block_years": 4
+  },
+  "decisive": [
+   {
+    "id": "C01",
+    "p": 0.009,
+    "if_yes": 0.922,
+    "if_no": 0.189
+   },
+   {
+    "id": "C02",
+    "p": 0.013,
+    "if_yes": 0.887,
+    "if_no": 0.186
+   },
+   {
+    "id": "C06",
+    "p": 0.021,
+    "if_yes": 0.812,
+    "if_no": 0.182
+   },
+   {
+    "id": "A05",
+    "p": 0.395,
+    "if_yes": 0.425,
+    "if_no": 0.045
+   },
+   {
+    "id": "C05",
+    "p": 0.276,
+    "if_yes": 0.457,
+    "if_no": 0.095
+   },
+   {
+    "id": "B03",
+    "p": 0.162,
+    "if_yes": 0.494,
+    "if_no": 0.138
+   },
+   {
+    "id": "B04",
+    "p": 0.367,
+    "if_yes": 0.419,
+    "if_no": 0.065
+   },
+   {
+    "id": "B01",
+    "p": 0.383,
+    "if_yes": 0.41,
+    "if_no": 0.062
+   },
+   {
+    "id": "B07",
+    "p": 0.536,
+    "if_yes": 0.352,
+    "if_no": 0.014
+   },
+   {
+    "id": "A07",
+    "p": 0.4,
+    "if_yes": 0.396,
+    "if_no": 0.062
+   },
+   {
+    "id": "B13",
+    "p": 0.09,
+    "if_yes": 0.487,
+    "if_no": 0.166
+   },
+   {
+    "id": "B02",
+    "p": 0.56,
+    "if_yes": 0.336,
+    "if_no": 0.016
+   },
+   {
+    "id": "B08",
+    "p": 0.39,
+    "if_yes": 0.388,
+    "if_no": 0.072
+   },
+   {
+    "id": "C04",
+    "p": 0.339,
+    "if_yes": 0.402,
+    "if_no": 0.089
+   },
+   {
+    "id": "C03",
+    "p": 0.436,
+    "if_yes": 0.372,
+    "if_no": 0.059
+   },
+   {
+    "id": "B15",
+    "p": 0.565,
+    "if_yes": 0.325,
+    "if_no": 0.026
+   },
+   {
+    "id": "A03",
+    "p": 0.565,
+    "if_yes": 0.323,
+    "if_no": 0.029
+   },
+   {
+    "id": "B06",
+    "p": 0.4,
+    "if_yes": 0.37,
+    "if_no": 0.079
+   },
+   {
+    "id": "A02",
+    "p": 0.656,
+    "if_yes": 0.295,
+    "if_no": 0.005
+   },
+   {
+    "id": "A06",
+    "p": 0.586,
+    "if_yes": 0.315,
+    "if_no": 0.025
+   },
+   {
+    "id": "A09",
+    "p": 0.695,
+    "if_yes": 0.275,
+    "if_no": 0.013
+   },
+   {
+    "id": "A08",
+    "p": 0.407,
+    "if_yes": 0.347,
+    "if_no": 0.091
+   },
+   {
+    "id": "A01",
+    "p": 0.67,
+    "if_yes": 0.276,
+    "if_no": 0.031
+   },
+   {
+    "id": "A04",
+    "p": 0.772,
+    "if_yes": 0.251,
+    "if_no": 0.006
+   },
+   {
+    "id": "A10",
+    "p": 0.763,
+    "if_yes": 0.251,
+    "if_no": 0.016
+   },
+   {
+    "id": "A18",
+    "p": 0.854,
+    "if_yes": 0.229,
+    "if_no": 0.0
+   },
+   {
+    "id": "A14",
+    "p": 0.696,
+    "if_yes": 0.262,
+    "if_no": 0.043
+   },
+   {
+    "id": "B09",
+    "p": 0.891,
+    "if_yes": 0.219,
+    "if_no": 0.004
+   },
+   {
+    "id": "B10",
+    "p": 0.954,
+    "if_yes": 0.204,
+    "if_no": 0.0
+   },
+   {
+    "id": "B12",
+    "p": 0.771,
+    "if_yes": 0.239,
+    "if_no": 0.047
+   },
+   {
+    "id": "B14",
+    "p": 0.181,
+    "if_yes": 0.348,
+    "if_no": 0.161
+   },
+   {
+    "id": "A16",
+    "p": 0.627,
+    "if_yes": 0.26,
+    "if_no": 0.087
+   },
+   {
+    "id": "A11",
+    "p": 0.847,
+    "if_yes": 0.218,
+    "if_no": 0.068
+   },
+   {
+    "id": "A15",
+    "p": 0.636,
+    "if_yes": 0.245,
+    "if_no": 0.107
+   },
+   {
+    "id": "A17",
+    "p": 0.413,
+    "if_yes": 0.275,
+    "if_no": 0.139
+   },
+   {
+    "id": "B11",
+    "p": 0.724,
+    "if_yes": 0.232,
+    "if_no": 0.098
+   },
+   {
+    "id": "E06",
+    "p": 0.884,
+    "if_yes": 0.211,
+    "if_no": 0.078
+   },
+   {
+    "id": "A12",
+    "p": 0.721,
+    "if_yes": 0.227,
+    "if_no": 0.113
+   },
+   {
+    "id": "E05",
+    "p": 0.681,
+    "if_yes": 0.229,
+    "if_no": 0.122
+   },
+   {
+    "id": "E04",
+    "p": 0.75,
+    "if_yes": 0.22,
+    "if_no": 0.121
+   },
+   {
+    "id": "A13",
+    "p": 0.737,
+    "if_yes": 0.22,
+    "if_no": 0.125
+   },
+   {
+    "id": "E07",
+    "p": 0.627,
+    "if_yes": 0.228,
+    "if_no": 0.141
+   },
+   {
+    "id": "E03",
+    "p": 0.881,
+    "if_yes": 0.204,
+    "if_no": 0.13
+   }
+  ],
+  "engine": "2026.11b",
+  "approval": {
+   "approve": 31.4,
+   "disapprove": 65.5,
+   "pollsters": 4,
+   "polls": 8,
+   "from": "2026-10-27",
+   "to": "2026-11-25",
+   "year_ago": {
+    "approve": 39.3,
+    "disapprove": 56.4,
+    "pollsters": 14,
+    "polls": 20,
+    "from": "2025-11-01",
+    "to": "2025-11-30"
+   },
+   "midterm": {
+    "approve": 31.1,
+    "disapprove": 66.0,
+    "pollsters": 5,
+    "polls": 9,
+    "from": "2026-10-01",
+    "to": "2026-11-30"
+   }
+  },
+  "states": {
+   "through": "2026-09",
+   "growing": 49,
+   "growing_ev": 525.0,
+   "faster_ev": 414.0
+  },
+  "data_through": {
+   "monthly": "October 2026",
+   "quarterly": "2026 Q3",
+   "prices": "2026-11-24"
+  },
+  "if": [
+   {
+    "what": "recession in 20% of runs",
+    "mean": 0.412,
+    "above_half": 0.222
+   },
+   {
+    "what": "recession in 40% of runs",
+    "mean": 0.376,
+    "above_half": 0.166
+   },
+   {
+    "what": "a rougher nomination season",
+    "mean": 0.379,
+    "above_half": 0.155
+   },
+   {
+    "what": "a smoother nomination season",
+    "mean": 0.404,
+    "above_half": 0.219
+   },
+   {
+    "what": "no chance that disapproval falls below half",
+    "mean": 0.391,
+    "above_half": 0.183
+   },
+   {
+    "what": "an 8% chance that it does",
+    "mean": 0.398,
+    "above_half": 0.211
+   }
+  ]
+ }
+}

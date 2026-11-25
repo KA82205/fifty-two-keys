@@ -22,26 +22,16 @@
   "state indexes",
   "approval polls"
  ],
- "new": [
-  {
-   "series": "DPCERA3M086SBEA",
-   "through": "2026-10",
-   "was": "2026-09"
-  },
-  {
-   "series": "approval polls",
-   "added": 7,
-   "of_all_adults": 3
-  }
- ],
+ "new": [],
  "held": [],
  "failed": [],
  "trusted": [],
- "made": "2026-11-25T17:51:33Z",
- "economy_read": "2026-11-25T17:51:33Z",
+ "made": "2026-11-25T19:00:54Z",
+ "economy_read": "2026-11-25T19:00:54Z",
  "read_on": {
   "economy": "2026-11-25",
   "polls": "2026-11-25"
  },
- "held_names": []
+ "held_names": [],
+ "keys_held": []
 }

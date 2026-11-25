@@ -3,11 +3,14 @@
  "held back": "4f53cda18c2baa0c",
  "data/latest_monthly.csv": "2bbb626b65d8fcc4",
  "data/quarterly.csv": "548802a15fa0bde8",
- "data/latest.json": "a40ea5ee1f697f3c",
+ "data/latest.json": "2ea55bcc669a867b",
  "data/approval_polls.json": "452eb4fdf4c8563a",
  "data/state_index_this_term.csv": "bab5bb3f725151d2",
- "data/outlook.json": "11b373e9ac73afc8",
+ "data/outlook.json": "b90a1f229d35cb49",
  "locked_keys.csv": "0c7c9208e8fdcd94",
- "run_2028.py": "527af5084dc63d21",
- "build.py": "39239e82b11dddfc"
+ "run_2028.py": "82e789d72f14c074",
+ "build.py": "39239e82b11dddfc",
+ "calls.py": "1f98a252908bdce5",
+ "data/congress_seats.csv": "1adbaa892c7657a9",
+ "data/nh_primaries.csv": "5c125165db053c70"
 }
