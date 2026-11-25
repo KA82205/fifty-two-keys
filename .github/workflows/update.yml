@@ -1,0 +1,60 @@
+name: Weekly update
+
+on:
+  schedule:
+    # Mondays. GitHub starts scheduled runs late, sometimes by hours, so the time is only a rough one.
+    - cron: "23 11 * * 1"
+  workflow_dispatch:
+    inputs:
+      trust:
+        description: "Series to accept even though they failed a check, separated by spaces (after looking at them)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy
+
+      - name: Check the locked model, the update checks and the run-ahead
+        run: |
+          python tests/test_model.py
+          python tests/test_update.py
+          python tests/test_engine.py
+
+      - name: Fetch the latest figures, check them, rerun 2028, archive, rebuild the page
+        id: update
+        continue-on-error: true
+        env:
+          TRUST: ${{ inputs.trust }}
+        run: python update.py --trust "$TRUST"
+
+      - name: Save to the repository
+        run: |
+          git config user.name "forecast-bot"
+          git config user.email "forecast-bot@users.noreply.github.com"
+          git add data projection_2028.json archive docs
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Weekly update $(TZ=America/New_York date +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Flag figures that were held back
+        if: steps.update.outcome == 'failure'
+        run: |
+          echo "::error::Some figures were not updated, or the run failed. The page shows the last good figures. Open the update step above."
+          exit 1
