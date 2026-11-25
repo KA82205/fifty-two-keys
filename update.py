@@ -40,9 +40,10 @@ MONTHLY = {
 }
 AVERAGED = ('SP500', 'ICSA')                           # daily and weekly series, averaged by month: only finished months are kept
 QUARTERLY = {
-    'A191RL1Q225SBEA': ((-40, 40), ('points', 45), ('points', 4)),    'A067RL1Q156SBEA': ((-40, 60), ('points', 60), ('points', 6)),
-    'B230RC0Q173SBEA': ((330000, 370000), 0.005, 0.005),               'A939RX0Q048SBEA': ((60000, 90000), 0.12, 0.03),
-    'A229RX0Q048SBEA': ((45000, 70000), 0.15, 0.04),
+    # growth rates, annualised: 2020 and 2021 hold swings of 63 and 67 points from one quarter to the next
+    'A191RL1Q225SBEA': ((-40, 40), ('points', 70), ('points', 4)),    'A067RL1Q156SBEA': ((-40, 65), ('points', 75), ('points', 6)),
+    'B230RC0Q173SBEA': ((320000, 370000), 0.005, 0.005),               'A939RX0Q048SBEA': ((55000, 90000), 0.12, 0.03),
+    'A229RX0Q048SBEA': ((40000, 70000), 0.15, 0.04),
 }
 DAILY = {'sp500': ('SP500', (2000, 20000), 0.30), 'oil': ('DCOILWTICO', (10, 250), 0.45)}
 # the Philadelphia Fed's coincident index for each state (FRED series ALPHCI to WYPHCI). These indexes are re-estimated, so past months move.
@@ -109,20 +110,23 @@ def moved(a, b, limit):
 
 
 def check(series, new, held, rule, step_months):
-    """Check a freshly read series against its limits and against the figures already held. Raises Held with the reason."""
+    """Check a freshly read series against its limits and against the figures already held. Raises Held with the reason.
+    Only figures that are new, or that differ from the one held, are checked: a figure that was accepted before and has not
+    changed is not judged again (the swings of 2020 are real, and they are already in the tables)."""
     (low, high), step, revision = rule
     if not new:
         raise Held(f'{series}: nothing was read')
     dates = [d for d, _ in new]
     if dates != sorted(set(dates)):
         raise Held(f'{series}: the dates are out of order or repeated')
+    fresh = lambda d, v: d not in held or held[d] != v
     for (d0, v0), (d1, v1) in zip(new, new[1:]):
         y0, m0, y1, m1 = int(d0[:4]), int(d0[5:7]), int(d1[:4]), int(d1[5:7])
         gap = (y1 * 12 + m1) - (y0 * 12 + m0)
-        if gap == step_months and moved(v0, v1, step):
+        if gap == step_months and (fresh(d0, v0) or fresh(d1, v1)) and moved(v0, v1, step):
             raise Held(f'{series}: {v0:g} in {d0[:7]} to {v1:g} in {d1[:7]} is a larger change than this series makes')
     for d, v in new:
-        if not low <= v <= high:
+        if fresh(d, v) and not low <= v <= high:
             raise Held(f'{series}: {v:g} for {d[:7]} is outside {low:g} to {high:g}')
         if d in held and moved(held[d], v, revision):
             raise Held(f'{series}: {d[:7]} was {held[d]:g} and now reads {v:g}, a larger revision than this series gets')

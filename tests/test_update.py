@@ -31,6 +31,13 @@ def test_checks():
     assert 'well before' in check(GOOD[:1], dict(GOOD))                                           # a download that stops early
     assert check(GOOD[:2], dict(GOOD)) is None                                                    # one step behind is allowed (a first reading entered by hand)
     assert check([('2026-09-01', 159128.0), ('2026-10-01', 159293.0)], rule=update.MONTHLY['PAYEMS'], name='PAYEMS') is None
+    # a swing that is already held and has not changed is not judged again; the same swing arriving new is
+    gdp = [('2020-01-01', -5.5), ('2020-04-01', -28.0), ('2020-07-01', 34.9), ('2020-10-01', 4.4)]
+    assert check(gdp, dict(gdp), rule=update.QUARTERLY['A191RL1Q225SBEA'], name='GDP') is None
+    tight = ((-40, 40), ('points', 45), ('points', 4))
+    assert check(gdp, dict(gdp), rule=tight, name='GDP') is None
+    assert 'larger change' in held(lambda: update.check('GDP', gdp, dict(gdp[:2]), tight, 3))
+    assert 'larger change' in held(lambda: update.check('GDP', gdp, {}, tight, 3))
     assert 'outside' in check([('2026-10-01', 159.293)], rule=update.MONTHLY['PAYEMS'], name='PAYEMS')       # the same series in other units
 
 
