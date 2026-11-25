@@ -714,7 +714,7 @@
  },
  "outlook_from": {
   "date": "2026-11-16",
-  "source": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Entered by hand when a new survey is out.",
+  "source": "Survey of Professional Forecasters, November 16, 2026; oil from futures and the EIA November outlook. Growth, jobs, unemployment and inflation are read from each new survey as it comes out; the rest is entered by hand.",
   "next_survey_by": "2027-02-25",
   "stale": false
  },

@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install numpy markdown
+      - run: pip install numpy markdown openpyxl
 
       - name: Check the locked model, the update checks and the run-ahead
         run: |
@@ -45,6 +45,7 @@ jobs:
           python tests/test_update.py
           python tests/test_engine.py
           python tests/test_calls.py
+          python tests/test_outlook.py
 
       - name: Read the sources, check them, and rerun 2028 if anything is new
         id: update

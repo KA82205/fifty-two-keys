@@ -403,11 +403,19 @@ reads FRED through its API, which needs a free key. Add it once as a repository 
 (Settings, Secrets and variables, Actions). Without it a run still refreshes the approval polls, reruns,
 archives and rebuilds, keeps the last good economic figures, and ends as failed to say so.
 
-The outlook (the Survey of Professional Forecasters) and the odds for the approval and nomination keys are still typed
-in by hand, in `data/outlook.json`, with the day of the survey in `outlook_date`. Between entries the latest figures are
-carried along the shape of the last outlook. The survey comes out in the middle of February, May, August and November.
-Once the next one should be out and has not been entered, the page says so and the first run of each Monday ends as
-failed, as a reminder.
+The outlook is read, not typed. `outlook.py` reads the Survey of Professional Forecasters' own table of median forecasts
+(Federal Reserve Bank of Philadelphia, out in the middle of February, May, August and November) whenever the economic
+series are read, and lays a later survey into `data/outlook.json`: growth, payroll jobs, unemployment and inflation, quarter
+by quarter. The survey gives five quarters; a quarter beyond them takes the survey's figure for its year, or the last
+quarterly figure where there is none. The outlook is replaced only by a later survey, so reading the same one again changes
+nothing. A survey that cannot be reached or read, or whose figures cannot be a forecast, is not used: the outlook in hand
+stays, the run says so, and once the next survey should be out and is not in, the page says so and the first run of each
+Monday ends as failed.
+
+What the survey does not give stays as entered, with the date it was entered: income, hourly pay, spending, industrial
+production, factory jobs, oil, sentiment, the growth of the population and the 30% share of runs with a recession. So do
+the odds for the approval and nomination keys. Between surveys the latest published figures are carried along the shape
+of the outlook in hand.
 
 ### The calls
 

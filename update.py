@@ -8,6 +8,8 @@ figure the run-ahead reads is new.
 
 What it reads, and when
     VoteHub (api.votehub.com)    polls of presidential approval: on every run
+    Philadelphia Fed             the Survey of Professional Forecasters' table of median forecasts, for the outlook
+                                 (outlook.py): with the economic series. Only a later survey replaces the outlook
     FRED (fred.stlouisfed.org)   twelve monthly series, five quarterly series, the latest S&P 500 and oil price, and the
                                  Philadelphia Fed's coincident index for each of the 50 states: when a release could have
                                  come out (economy_due below), and on the first run of every day
@@ -27,6 +29,9 @@ The rules it keeps
 """
 import csv, datetime, hashlib, io, json, os, subprocess, sys, time, urllib.error, urllib.parse, urllib.request
 from zoneinfo import ZoneInfo
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import outlook as OUT                                  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 D = os.path.join(HERE, 'data')
@@ -82,6 +87,7 @@ class Held(Exception):
 
 
 DOWN = {}                                              # hosts that did not answer in this run: they are not asked again
+SURVEY = OUT.fetch                                     # how the Survey of Professional Forecasters is read (the tests put a file in its place)
 
 
 def get(url, tries=3, wait=2.0, timeout=20):
@@ -437,7 +443,7 @@ def alarm(held, held_before, read_on, today, new_day, force=False, keys_held=(),
     if keys_held and (set(keys_held) - set(keys_held_before) or new_day or force):
         return f"Held: {', '.join(sorted(keys_held))}. The evidence for these keys is late or in dispute; they keep their chance and are not counted as no. See KEYS.md for what each needs."
     if stale and ((new_day and today.weekday() == 0) or force):
-        return 'A newer Survey of Professional Forecasters should be out. data/outlook.json still holds the older one; the run ahead uses it until the new figures are entered.'
+        return 'A newer Survey of Professional Forecasters should be out and has not been read (outlook.py; see the line that starts "The outlook:" above). The run ahead uses the older one until it is.'
     day = datetime.date.fromisoformat
     lost = [k for k in ('economy', 'polls') if read_on.get(k) and (today - day(read_on[k])).days >= OUT_OF_REACH_DAYS]
     if lost and (new_day or force):
@@ -481,6 +487,10 @@ def main(argv):
             refresh_table(os.path.join(D, 'quarterly.csv'), QUARTERLY, today, trust, report, monthly=False); say('quarterly series')
             refresh_prices(latest, today, trust, report); say('prices')
             refresh_states(os.path.join(D, 'state_index_this_term.csv'), trust, report); say('state indexes')
+            state, words = OUT.refresh(today, os.path.join(D, 'outlook.json'), SURVEY)          # the forecasters' outlook: replaced only by a later survey
+            print('The outlook: ' + words, flush=True); report['outlook'] = {'state': state, 'said': words}
+            if state == 'new': report['new'].append({'series': "the forecasters' outlook", 'through': json.load(open(os.path.join(D, 'outlook.json')))['outlook_survey']})
+            if state != 'new' and state != 'same': print('::warning::' + words)
             if not report['failed']: read_on['economy'] = str(today)
         else:
             print(f"The economic series are not read at this hour ({now:%A %H:%M} Eastern); they were last read {log.get('economy_read', 'at the last full run')}.", flush=True)
