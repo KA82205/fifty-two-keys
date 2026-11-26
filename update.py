@@ -189,9 +189,11 @@ def check(series, new, held, rule, step_months):
 # passes without anyone starting a run by hand. A figure the Bureau gives differently, or does not give, stays held.
 # The same is done for consumer sentiment (the University of Michigan's own table), real spending and the quarterly accounts
 # (the Bureau of Economic Analysis's flat files), the price of oil (the Energy Information Administration), jobless claims
-# (the Department of Labor) and share prices (a second copy of the daily closes): SOURCES below. Two series have no second
-# source read here and are still let in by hand after a look: industrial production (the Federal Reserve Board's public
-# table did not give FRED's figures when tried, November 2026) and housing starts (the Census Bureau's service asks for a key).
+# (the Department of Labor), share prices (a second copy of the daily closes), housing starts (the Census Bureau's own
+# workbook, which needs no key) and industrial production (the Federal Reserve Board's own tables): SOURCES below.
+# Every series now has one. A publisher may keep more than one set of figures at a time: after its annual revision the
+# Board's monthly tables stay as last released until the next monthly release, while FRED carries the revised figures at
+# once. So the Board is read in both places, and FRED must match one of them in full.
 BLS = 'https://api.bls.gov/publicAPI/v2/timeseries/data/'
 SECOND = {'UNRATE': 'LNS14000000', 'PAYEMS': 'CES0000000001', 'MANEMP': 'CES3000000001', 'CPIAUCSL': 'CUSR0000SA0', 'CES0600000008': 'CES0600000008'}
 
@@ -289,19 +291,71 @@ def market_closes():
     return by_month((day(ts), float(c)) for ts, c in zip(d['timestamp'], d['indicators']['quote'][0]['close']) if c is not None)
 
 
+def census_starts():
+    """{YYYY-MM-01: thousands} of new privately-owned housing units started, seasonally adjusted at an annual rate, from the
+    Census Bureau's own workbook of the whole series. No key is needed. The sheet is checked for what it says it is."""
+    import openpyxl
+    with urllib.request.urlopen(urllib.request.Request('https://www.census.gov/construction/nrc/xls/starts_cust.xlsx', headers=AGENT), timeout=60) as r:
+        data = r.read(8_000_000)
+    return starts_sheet(openpyxl.load_workbook(io.BytesIO(data), data_only=True, read_only=True))
+
+
+def starts_sheet(book):
+    sheet = next((ws for ws in book.worksheets if ws.title.strip().lower() == 'seasonally adjusted'), None)
+    if sheet is None:
+        raise ValueError('the workbook has no sheet named "Seasonally Adjusted"')
+    rows = list(sheet.iter_rows(values_only=True)); head = ' '.join(str(c) for r in rows[:6] for c in r if c is not None).lower()
+    if 'housing units started' not in head or 'seasonally adjusted annual rate' not in head or not any(r and str(r[0]).strip() == 'Month' and str(r[1]).strip() == 'United States' for r in rows[:6]):
+        raise ValueError('the sheet is not laid out as the housing starts table is')
+    return {r[0].strftime('%Y-%m-01'): float(r[1]) for r in rows if r and isinstance(r[0], (datetime.datetime, datetime.date)) and isinstance(r[1], (int, float))}
+
+
+G17 = 'https://www.federalreserve.gov/releases/g17/'
+
+
+def fed_production():
+    """[{YYYY-MM-01: index}, ...] for total industrial production, seasonally adjusted, from the Federal Reserve Board's own
+    tables: the monthly release, and the tables of its latest annual revision, which for a few weeks each year are the
+    newer of the two. One year a line, twelve months across."""
+    out = []
+    for where in ('ipdisk/ip_sa.txt', 'Revisions/Current/ipdisk/ip_sa.txt'):
+        try:
+            got = production_lines(lines(G17 + where, ('"B50001"',), timeout=180))
+        except urllib.error.HTTPError as err:
+            if err.code == 404 and out: continue            # no revision on file
+            raise
+        if got: out.append(got)
+    if not out:
+        raise ValueError('no line of the total index was found')
+    return out
+
+
+def production_lines(rows):
+    out = {}
+    for line in rows:
+        p = line.split()
+        if len(p) >= 3 and p[0] == '"B50001"' and re.fullmatch(r'(19|20)\d\d', p[1]):
+            for m, v in enumerate(p[2:14], 1):
+                try: out[f'{p[1]}-{m:02d}-01'] = float(v)
+                except ValueError: pass
+    return out
+
+
 # series: (who publishes it, how it is read there, how closely the two must agree as a share of the figure)
 SOURCES = {**{k: ('the Bureau of Labor Statistics', (lambda a, b, v=v: SECOND_SOURCE(v, a, b)), 5e-5) for k, v in SECOND.items()},
            'UMCSENT': ('the University of Michigan', lambda a, b: umich(), 5e-5),
            'DPCERA3M086SBEA': ('the Bureau of Economic Analysis', lambda a, b: bea('DPCERA', False), 2e-4),
            'MCOILWTICO': ('the Energy Information Administration', lambda a, b: eia_oil(), 2e-3), 'ICSA': ('the Department of Labor', dol_claims, 3e-2),      # within 3%: the two average weeks into months a little differently; a real jump is many times that
             'SP500': ('Yahoo Finance (a second copy of the closes)', lambda a, b: market_closes(), 5e-3),
+           'HOUST': ('the Census Bureau', lambda a, b: census_starts(), 5e-4), 'INDPRO': ('the Federal Reserve Board', lambda a, b: fed_production(), 5e-5),
            **{k: ('the Bureau of Economic Analysis', (lambda a, b, c=c: bea(c, True)), 2e-4) for k, c in (('A191RL1Q225SBEA', 'A191RL'), ('A067RL1Q156SBEA', 'A067RL'), ('B230RC0Q173SBEA', 'B230RC'), ('A939RX0Q048SBEA', 'A939RX'), ('A229RX0Q048SBEA', 'A229RX'))}}
 SECOND_SOURCE = bls                                    # the tests put a table in its place
 
 
 def confirmed(series, new):
     """Does the agency that publishes this series give the figures FRED gave? (True or False, and the words for the report.)
-    Every month or quarter read from FRED must be there and equal; one that differs, or is missing, and nothing is confirmed."""
+    Every month or quarter read from FRED must be there and equal; one that differs, or is missing, and nothing is confirmed.
+    A publisher that keeps two sets of figures at once (see fed_production) confirms if either set matches in full."""
     if series not in SOURCES or not new:
         return False, ''
     who, read, close = SOURCES[series]
@@ -309,14 +363,16 @@ def confirmed(series, new):
         own = read(int(new[0][0][:4]), int(new[-1][0][:4]))
     except Exception as err:                            # noqa: BLE001
         return False, f'; {who} was not reached to compare ({type(err).__name__}: {str(err)[:80]})'
-    missing = [d for d, _ in new if d not in own]
-    if missing:
-        return False, f"; {who} has no figure for {missing[-1][:7]} to compare"
-    off = [(d, v, own[d]) for d, v in new if abs(v - own[d]) > close * max(1.0, abs(own[d]))]
-    if off:
-        d, v, o = off[-1]
-        return False, f"; {who} gives {o:g} for {d[:7]}, not {v:g}"
-    return True, f"{who} gives the same {len(new)} figures"
+    words = ''
+    for one in (own if isinstance(own, list) else [own]):
+        missing = [d for d, _ in new if d not in one]
+        if missing:
+            words = words or f"; {who} has no figure for {missing[-1][:7]} to compare"; continue
+        off = [(d, v, one[d]) for d, v in new if abs(v - one[d]) > close * max(1.0, abs(one[d]))]
+        if off:
+            d, v, o = off[-1]; words = f"; {who} gives {o:g} for {d[:7]}, not {v:g}"; continue
+        return True, f"{who} gives the same {len(new)} figures"
+    return False, words
 
 
 def table(path):
@@ -657,7 +713,7 @@ def main(argv):
             if state == 'unreachable': print('::warning::' + words)
             if new_day or force:                           # once a day, so the second sources are known to answer before the day they are needed
                 rows, _ = table(os.path.join(D, 'latest_monthly.csv')); said = []
-                for c in ('UNRATE', 'UMCSENT', 'MCOILWTICO', 'ICSA', 'SP500'):
+                for c in ('UNRATE', 'UMCSENT', 'MCOILWTICO', 'ICSA', 'SP500', 'HOUST', 'INDPRO'):
                     ok, words = confirmed(c, [(r['observation_date'], float(r[c])) for r in rows if r[c] != ''])
                     said.append(f"{c}: {words.lstrip('; ')}")
                 report['second_source'] = said; print('Second sources. ' + ' | '.join(said), flush=True)

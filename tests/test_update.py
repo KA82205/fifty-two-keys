@@ -6,6 +6,7 @@ import copy, json, os, sys, tempfile
 
 HERE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 sys.path.insert(0, HERE)
+import urllib.error
 import update                              # noqa: E402
 
 RULE = update.MONTHLY['UNRATE']
@@ -160,6 +161,40 @@ def test_a_real_shock_passes_when_the_agency_gives_the_same_figure():
         update.lines = lambda url, keep, timeout=120: ['A939RX,2026Q2,"71,212"', 'A939RX,2026Q3,"71,909"'] if 'NipaDataQ' in url else ['DPCERA,2026M09,"127.976"', 'DPCERA,2026M10,"127.932"']
         assert update.bea('A939RX', True) == {'2026-04-01': 71212.0, '2026-07-01': 71909.0} and update.bea('DPCERA', False)['2026-10-01'] == 127.932
         assert update.confirmed('A939RX0Q048SBEA', [('2026-04-01', 71212.0), ('2026-07-01', 71909.0)])[0] and not update.confirmed('A939RX0Q048SBEA', [('2026-07-01', 81909.0)])[0]
+    finally:
+        update.lines = real_lines
+    # housing starts from the Census Bureau's workbook: the sheet is found by name and checked for what it says it is
+    import openpyxl
+    def book(title='Seasonally adjusted annual rate', sheet='Seasonally Adjusted'):
+        wb = openpyxl.Workbook(); wb.active.title = 'Annual'; ws = wb.create_sheet(sheet)
+        for r in (['New Privately-Owned Housing Units Started'], ['(Thousands of units.  Detail may not add to total because of rounding.)'], [title], ['Month', 'United States', None, None, None, 'Northeast'], [None, 'Total', '1 unit'],
+                  [datetime.datetime(2026, 9, 1), 1191, 831, '(S)'], [datetime.datetime(2026, 10, 1), 1309, 864, '(S)'], ['Footnotes:']): ws.append(r)
+        return wb
+    assert update.starts_sheet(book()) == {'2026-09-01': 1191.0, '2026-10-01': 1309.0}
+    for bad in (book(sheet='Something else'), book(title='Not seasonally adjusted')):
+        try: update.starts_sheet(bad); assert False
+        except ValueError: pass
+    real_starts = update.census_starts
+    try:
+        update.census_starts = lambda: update.starts_sheet(book())
+        assert update.confirmed('HOUST', [('2026-09-01', 1191.0), ('2026-10-01', 1309.0)])[0] and 'the Census Bureau gives 1309 for 2026-10, not 1903' in update.confirmed('HOUST', [('2026-10-01', 1903.0)])[1]
+    finally:
+        update.census_starts = real_starts
+    # industrial production from the Federal Reserve Board: the monthly tables and the tables of the annual revision, as they
+    # stood in November 2026, when FRED already carried the revision and the monthly tables did not. FRED must match one in full
+    monthly = ['"B50001: Total index"', '"B50001"        2025     100.0647  101.0993  101.0404  101.1279  100.9655  101.4785  101.8940  101.6247  101.6680  101.2195  101.0344  101.4941', '"B50001"        2026     101.0388  101.9053  101.7336  102.5768  102.6925  102.9673  103.1675  103.0954  103.8458  103.3954']
+    revised = ['"B50001"        2025     100.3001  100.8885  100.9221  100.8063  100.5608  101.0358  101.2766  100.9114  100.9893  100.5732  100.4411  100.7055', '"B50001"        2026     100.3329  101.0208  101.1593  101.6393  101.7781  101.9827  102.2082  102.0644  102.6785  102.2421']
+    assert update.production_lines(monthly)['2026-10-01'] == 103.3954 and len(update.production_lines(monthly)) == 22
+    try:
+        update.lines = lambda url, keep, timeout=120: revised if 'Revisions/Current' in url else monthly
+        assert [t['2026-10-01'] for t in update.fed_production()] == [103.3954, 102.2421]
+        assert update.confirmed('INDPRO', [('2026-09-01', 102.6785), ('2026-10-01', 102.2421)])[0] and update.confirmed('INDPRO', [('2026-09-01', 103.8458), ('2026-10-01', 103.3954)])[0]
+        ok, words = update.confirmed('INDPRO', [('2026-09-01', 103.8458), ('2026-10-01', 102.2421)]); assert not ok and 'the Federal Reserve Board gives' in words        # one month from each set is neither
+        assert not update.confirmed('INDPRO', [('2026-10-01', 112.2421)])[0] and not update.confirmed('INDPRO', [('2026-11-01', 102.0)])[0]
+        def no_revision(url, keep, timeout=120):
+            if 'Revisions/Current' in url: raise urllib.error.HTTPError(url, 404, 'not found', {}, None)
+            return monthly
+        update.lines = no_revision; assert len(update.fed_production()) == 1
     finally:
         update.lines = real_lines
     # the Bureau's answer is read as it is sent: months only, a missing month left out, a refusal an error

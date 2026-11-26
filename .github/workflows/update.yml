@@ -109,7 +109,7 @@ jobs:
             exit 0
           fi
           curl -fsS -X POST \
-            -H "Authorization: Bearer $DISPATCH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Authorization: Bearer $DISPATCH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2026-03-10" \
             https://api.github.com/repos/KA82205/the-margin/dispatches \
             -d '{"event_type":"upstream-updated","client_payload":{"from":"fifty-two-keys"}}' \
             || echo "::warning::The Margin could not be told; its hourly check will pick the change up."
@@ -128,7 +128,7 @@ jobs:
             | python3 -c "import sys,json,datetime as d; r=json.load(sys.stdin)['workflow_runs']; print(int((d.datetime.now(d.timezone.utc)-d.datetime.fromisoformat(r[0]['created_at'].replace('Z','+00:00'))).total_seconds()//60) if r else 9999)" || echo 0)
           echo "The Margin last started a run $mins minutes ago."
           if [ "$mins" -ge 50 ]; then
-            curl -fsS -X POST -H "Authorization: Bearer $DISPATCH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+            curl -fsS -X POST -H "Authorization: Bearer $DISPATCH_TOKEN" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2026-03-10" \
               https://api.github.com/repos/KA82205/the-margin/dispatches -d '{"event_type":"heartbeat","client_payload":{"from":"fifty-two-keys"}}' \
               && echo "Woke The Margin." || echo "::warning::The Margin could not be woken."
           fi

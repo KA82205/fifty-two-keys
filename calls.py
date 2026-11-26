@@ -10,7 +10,7 @@ A key is in one of four states:
                revised, so the call can still change. It is fixed in every run, and it is not the official call yet.
   settled      called yes or no on evidence that will not change: a fact, an election result, or, from the day the
                count is closed, the figures as they stood that day.
-  held         the evidence should be there by now and is not, or two sources disagree. The key keeps its chance in the
+  held         the evidence should be there by now and is not, or two sources contradict each other. The key keeps its chance in the
                run-ahead, it is never counted as no, and the run is flagged until somebody has looked.
 `final` marks a call that is closed: later revisions are written down and do not change it.
 
@@ -147,12 +147,14 @@ MANUAL = {
     'D04': ('One figure in build.py every four years, from the certified result. The 2024 figure is entered.', 'None needed before 2029.'),
     'E01': ('Nothing: the president cannot run again, which is fixed by the Constitution and was recorded when the cycle began.', 'None needed.'),
     'E02': ('None: read from the table of past elections.', 'None needed.'),
-    'E04': ('Nothing: the pledged delegates of each candidate are read from The Green Papers and from Wikipedia (primaries.py), and the two must agree. '
-            'The evidence is the pledged count at the end of the primaries, not the convention roll call. An entry in data/outlook.json is a recovery step for a case the sources cannot settle.',
-            'None needed. If the sources disagree, or nobody holds a majority of pledged delegates by August 1, 2028, the key is left open and the count is closed without it.'),
-    'E05': ('Nothing: each party\'s nominee (formally nominated, or the candidate with a majority of pledged delegates) and the New Hampshire vote are read from The Green Papers, which carries the Secretary of State\'s certified figures, '
-            'and from Wikipedia (primaries.py), and the two must agree. A nominee who withdraws or is replaced before August 1, 2028 is followed. A line in data/nh_primaries.csv is a recovery step for a case the sources cannot settle.',
-            'None needed. If the sources disagree, or a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them.'),
+    'E04': ('Nothing: the pledged delegates of each candidate are read from The Green Papers, the preferred source for that count, and checked against Wikipedia (primaries.py). The Green Papers alone is enough; '
+            'Wikipedia stands in, provisionally, only if The Green Papers cannot be read. The evidence is the pledged count at the end of the primaries, not the convention roll call. '
+            'An entry in data/outlook.json is a recovery step for a case the sources cannot settle.',
+            'None needed. If the sources contradict each other, or nobody holds a majority of pledged delegates by August 1, 2028, the key is left open and the count is closed without it.'),
+    'E05': ('Nothing: the New Hampshire vote is read from the Secretary of State\'s own results workbooks when its site answers, then from The Green Papers, which carries the same certified figures, then from Wikipedia (primaries.py); '
+            'the highest source that has the result is used. Each party\'s nominee is the one its convention\'s roll call nominated, or before that the candidate with a majority of pledged delegates. '
+            'A nominee who withdraws or is replaced before the convention is followed. A line in data/nh_primaries.csv is a recovery step for a case the sources cannot settle.',
+            'None needed. If the sources contradict each other, or a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them.'),
 }
 MANUAL['E06'] = MANUAL['E07'] = MANUAL['E05']
 MANUAL['E03'] = ('Nothing: scored from the June polls that name a third candidate (facts.py).', 'None needed.')
@@ -211,10 +213,10 @@ def registry():
                 row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets',
                            checked='every day in January and February of an odd year, until the new Congress is on the list', fallback='a line entered by hand in data/congress_seats.csv, with its source')
             if i in ('E04', 'E05', 'E06', 'E07'):
-                row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='thegreenpapers.com/P28/ (delegates; the New Hampshire vote as certified by the Secretary of State) and the Wikipedia API (primaries.py)',
-                           stays_open='The primary has not been held, the nominee is not known, the evidence is not all in, a source could not be read, or the two sources disagree. Each is reported apart; none is a no.',
-                           checked='every Monday until 2028, then on the first run of every day', checks='two sources must give the same nominee, the same winner, shares within a point and a half and the same side of two-thirds',
-                           earliest_call='when both sources carry the result and the nominee is known; provisional while the nominee is presumptive or the result is not certified',
+                row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='in order: sos.nh.gov (the New Hampshire Secretary of State\'s results workbooks), thegreenpapers.com/P28/ (pledged delegates, the conventions\' roll calls, the New Hampshire vote as certified) and the Wikipedia API (primaries.py)',
+                           stays_open='The primary has not been held, the nominee is not known, the evidence is not all in, no source could be read, or two sources contradict each other. Each is reported apart; none is a no. A source that has not been updated yet is a delay and holds nothing.',
+                           checked='every Monday until 2028, then on the first run of every day', checks='the highest source that has the figure is used; the others must not give the key a different answer (another winner, another nominee, a delegate count of the same kind on the other side of two-thirds). The state\'s workbooks must add up, county by county',
+                           earliest_call='when one good source carries the result and the nominee is known; provisional while the nominee is presumptive, the result is not certified, or Wikipedia is the only source',
                            fallback='an entry by hand with its source, compared with what the sources give; if the two disagree the key is held')
             if i == 'E03':
                 row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='https://api.pollresults.org/v1.0/politics/results/president (facts.py)', window_closes='June 30, 2028',
@@ -235,7 +237,7 @@ def write_registry():
     L = ['# The 52 keys: what each reads, and when it can be called', '',
          'Written by `calls.py` from the rules in `build.py`. The same list, with every field, is in `data/key_registry.json`.', '',
          'A key is **unresolved** until the figures or the event its rule needs exist; **provisional** once every figure is published and the rule has been applied, while the figures can still be revised; '
-         '**settled** when it is called on evidence that will not change; **held** when the evidence should be there and is not, or two sources disagree. A missing figure never counts as no.', '',
+         '**settled** when it is called on evidence that will not change; **held** when the evidence should be there and is not, or two sources contradict each other. A missing figure never counts as no.', '',
          f"The count is closed on **{registry()[0]['count_closes']}**, on the figures published by then. Every June figure is due before that day: jobs, unemployment and pay on the first Friday of July, "
          "prices and production by the middle of the month, second-quarter growth and income in the last week, June spending with it or a day later, the state indexes in the last days of July. "
          "A figure that comes out late is used as first published, up to August 15, 2028; a key still without evidence then stays open. Nothing is re-weighted: each group keeps all of its keys and its fifth of the count, the line stays at one half, the count is given as the lowest and highest it could be, and the keys make a call only if both fall on the same side of one half. "

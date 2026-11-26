@@ -422,21 +422,40 @@ the latest published figures are carried along the shape of the outlook in hand.
 
 Read by rule, with nothing typed: the economic series (FRED), approval polls (VoteHub), the forecasters' outlook for growth,
 jobs, unemployment and inflation (`outlook.py`), seats in each new Congress (`facts.py`, from the public list of sitting
-members), and polls that name a third candidate (`facts.py`, from PollResults.org). 47 of the 52 keys need nothing done by
-hand; `KEYS.md` lists all 52.
+members), and polls that name a third candidate (`facts.py`, from PollResults.org). All 52 keys need nothing done by hand; `KEYS.md` lists them.
 
-Nothing is entered in 2028. The four nomination keys are read by `primaries.py`: each party's count of pledged delegates and
-the New Hampshire vote from The Green Papers (which carries the New Hampshire Secretary of State's certified figures and
-marks them "Official"), and the same from Wikipedia's election boxes through its API, with the revision of every page
-kept. A figure is used only when the two give it alike: the same nominee, the same winner, shares within a point and a half,
-the same side of two-thirds. Otherwise the key stays open, the reason is written down (the event has not happened; the
-evidence is not all in; the sources disagree; a source could not be read) and the next run looks again. A call that rests
-on a presumptive nominee, or on a result not yet certified, is provisional. The reader gives the locked table's answers for
-2016, 2020 and 2024 (`tests/test_primaries.py`), including 2024, when the nominee was replaced after the primaries.
-`data/primaries.json` holds the latest reading with every source, and `data/primaries_log.jsonl` every change to it. An entry
-by hand (in `data/outlook.json` or `data/nh_primaries.csv`) is a recovery step: if it disagrees with the sources the key
-is held. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without
-them. That the reader works on 2028's pages cannot be shown before those pages have results in them.
+Nothing is entered in 2028. The four nomination keys are read by `primaries.py`, from three sources in order of authority:
+
+1. **The official record.** For New Hampshire, the Secretary of State's own results: the page for each party's presidential
+   primary is found at its usual address or by following the site's links, and its two "Summary By Counties" workbooks
+   (names on the ballot, and write-ins) are read and added together. Each workbook is checked against itself: ten counties
+   in every block, every column adding up to its total. For the nominations, the conventions' roll calls, which neither
+   party publishes in a form a program can find ahead of time, so they are read as The Green Papers records them.
+2. **The Green Papers**, the preferred source for pledged delegates. Its New Hampshire pages carry the Secretary of
+   State's figures and are marked "Official" once certified.
+3. **Wikipedia**'s election boxes, through its API with the revision of every page kept: a check on the other two, and
+   the fallback. Alone, it supports a provisional call only, and only from a page that has stood unchanged for a day.
+
+One good source is enough: a key is called from the highest source that has the figure. A lower source that has not been
+updated is a delay and holds nothing. A lower source that gives the same result on another footing (shares on a different
+total, a box that lists only the leading candidates, a delegate figure that is the roll call or includes unpledged
+delegates) is written down with the evidence and changes nothing. Only a contradiction holds a key open: two sources that
+both have the result and give the key different answers. The Secretary of State's count settles a contradiction about New
+Hampshire, unless both other sources agree against the reading of it, which more likely means its file was misread.
+
+New Hampshire's site turns away most requests from the machines this runs on (HTTP 403). The reader asks politely, once a
+day at most, and does not work around a refusal: it says so and uses The Green Papers' copy of the same certified
+figures. A count that is read is kept in `data/primaries.json` and asked for again only on Mondays.
+
+A call that rests on a presumptive nominee, on a result not yet certified, or on Wikipedia alone is provisional. The reader
+gives the locked table's answers for 2016, 2020 and 2024 (`tests/test_primaries.py`), including 2024, when the nominee was
+replaced before the convention, and reads the state's real 2024 workbooks to the vote (Trump 176,391 of 324,731; Biden
+79,100 write-ins of 123,996). `data/primaries.json` holds the latest reading with every source, and
+`data/primaries_log.jsonl` every change to it. An entry by hand (in `data/outlook.json` or `data/nh_primaries.csv`) is a
+recovery step: if it disagrees with the sources the key is held. If a party has no presumptive nominee by August 1, 2028,
+its keys are left open and the count is closed without them. A nominee replaced after a convention would leave the New
+Hampshire keys open, to be settled by hand. That the reader works on 2028's pages cannot be shown before those pages have
+results in them.
 
 No odds are entered. Until a nomination key is settled its chance is how often it was yes in the record (`record_rates` in
 `run_2028.py`): for the party in office, over the eight elections since 1952 in which the sitting president did not run;
@@ -448,12 +467,17 @@ halfway to the polls once three pollsters name a third candidate. The odds typed
 A second source for a large move. A new figure too large to pass the checks is not used. The run then asks whoever
 publishes the series: the Bureau of Labor Statistics (unemployment, payrolls, factory jobs, consumer prices, hourly pay), the
 Bureau of Economic Analysis (spending and the five quarterly series), the University of Michigan (sentiment), the Energy
-Information Administration (oil), the Department of Labor (jobless claims) and, for share prices, a second copy of the
-daily closes. If that source gives the same figures for every month read, the figure is let in and the run says so. A real
-shock passes without anyone starting a run; a broken download does not. Two series have no second source here and are
-still let in by hand (`trust`) after a look: industrial production (the Federal Reserve Board's public table did not give
-FRED's figures when tried) and housing starts (the Census Bureau's service asks for a key). Once a day the run compares
-one series with each source that answers quickly, so the sources are known to answer before the day they are needed.
+Information Administration (oil), the Department of Labor (jobless claims), the Census Bureau (housing starts, from its
+own workbook of the whole series, which needs no key), the Federal Reserve Board (industrial production) and, for share
+prices, a second copy of the daily closes. If that source gives the same figures for every month read, the figure is let
+in and the run says so. A real shock passes without anyone starting a run; a broken download does not. Every series now
+has a second source. Once a day the run compares one series with each source, so the sources are known to answer before
+the day they are needed.
+
+The Federal Reserve Board keeps two sets of figures for a few weeks each year. After its annual revision (the last was
+on November 24, 2026) FRED carries the revised figures at once, while the Board's monthly tables stay as last released
+until the next monthly release. That is why its table did not match FRED when first tried. The Board is now read in
+both places, and FRED must match one of them in full.
 
 No longer entered: income, hourly pay, spending, industrial production and factory jobs each follow their own pace over
 the last two years; oil and consumer sentiment stay where they last stood; the population grows as it did over the last
