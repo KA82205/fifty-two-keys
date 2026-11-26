@@ -98,14 +98,14 @@ section{padding:72px 0 0;scroll-margin-top:56px}
 @media (max-width:560px){.calls li{grid-template-columns:1fr;gap:2px}}
 /* settled keys */
 .settled-h{margin-top:34px}
-.settled{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:0 44px}
+.settled{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr));gap:0 44px}
 .settled li{display:grid;grid-template-columns:16px 1fr;gap:13px;padding:11px 0;border-bottom:1px solid var(--line)}
 .settled svg{width:13px;height:28.6px;margin-top:1px;stroke-linejoin:round;overflow:visible}
 .settled .t svg{fill:var(--brass-ink);stroke:var(--brass-ink);stroke-width:.6}
 .settled .f svg{fill:none;stroke:var(--ink);stroke-width:1.6;transform:rotate(14deg);transform-origin:50% 18.2%}
 .settled b{font-weight:600;display:block}
 .settled small{display:block;color:var(--muted);font-size:.9rem;margin-top:1px}
-.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px 48px;margin-top:28px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:14px 48px;margin-top:28px}
 .pair p{max-width:none;margin:0}
 
 /* the run ahead */
@@ -247,7 +247,7 @@ section{padding:72px 0 0;scroll-margin-top:56px}
 .key .rule{display:block;color:var(--muted);font-size:.89rem;margin-top:3px;font-weight:400}
 .key .tag{display:inline-block;font-size:.76rem;font-weight:500;border:1px solid var(--line);border-radius:999px;padding:1px 10px;margin-top:7px;color:var(--muted)}
 .key .hist{font-size:.84rem;color:var(--muted)}
-.strip{display:flex;gap:1px;margin:6px 0 5px}
+.strip{display:flex;flex-wrap:wrap;gap:1px;margin:6px 0 5px;max-width:100%}
 .strip i{width:6px;height:6px;border-radius:1px;border:1px solid transparent;flex:none}
 .strip i.t{background:var(--brass-ink);border-color:var(--brass-ink)}
 .strip i.f{border-color:var(--muted)}
@@ -575,7 +575,11 @@ footer a{color:var(--board-ink)}
 .hist-t td:first-child{white-space:nowrap}
 .heat-key i{background:linear-gradient(90deg,var(--miss),var(--band) 50%,var(--board))}
 @media (prefers-color-scheme:dark){.heat-key i{background:linear-gradient(90deg,#e27860,var(--band) 50%,#96cdaf)}}
-@media (min-width:761px){.key .hist,.key .now{grid-row:1 / span 2}.key .kd{grid-column:2;grid-row:2;margin-top:8px}}
+/* Every part of a key has its own place. A cell given a row but no column is placed by the browser ahead of the others,
+   into the first free column: that put the record of past elections under the key's letter. */
+@media (min-width:761px){.key{grid-template-rows:auto 1fr}.key .kd{align-self:start}.key > .id{grid-column:1;grid-row:1}.key > span:nth-child(2){grid-column:2;grid-row:1}.key .hist{grid-column:3;grid-row:1 / span 2}.key .now{grid-column:4;grid-row:1 / span 2}.key .kd{grid-column:2;grid-row:2;margin-top:8px}}
+/* Tablets: the 2028 column goes under the record, so the question keeps a readable width */
+@media (min-width:761px) and (max-width:1023px){.cols-head,.key{grid-template-columns:46px minmax(0,1fr) 170px}.cols-head span:nth-child(4){display:none}.key .hist{grid-row:1}.key .now{grid-column:3;grid-row:2}.key .kd{grid-row:2}}
 @media (max-width:760px){.key .kd{grid-column:2}.lab-board .rail{grid-template-columns:1fr}}
 </style>
 </head>
