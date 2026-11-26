@@ -145,14 +145,14 @@ WAITS = {'A': 'monthly', 'B': 'monthly', 'C': 'approval', 'D': 'seats'}       # 
 MANUAL = {
     'D': ('Nothing: the seats are counted from the public list of sitting members when a new Congress meets (facts.py).', 'None needed.'),
     'D04': ('One figure in build.py every four years, from the certified result. The 2024 figure is entered.', 'None needed before 2029.'),
-    'E01': ('Entered once: the president cannot run again.', 'None needed.'),
+    'E01': ('Nothing: the president cannot run again, which is fixed by the Constitution and was recorded when the cycle began.', 'None needed.'),
     'E02': ('None: read from the table of past elections.', 'None needed.'),
-    'E04': ('One entry in data/outlook.json when the primaries end, in June 2028: the share of pledged delegates won by the candidate with a majority of them, with its source. '
-            'The evidence is the pledged count at the end of the primaries, not the convention roll call, which can come after the count is closed. Delegate counts are published by the parties and by news organisations as pages, not as an open list.',
-            'None found: no free, open and stable list of pledged delegates exists to read. If nobody holds a majority of pledged delegates by August 1, 2028, the key is left open and the count is closed without it.'),
-    'E05': ('One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). '
-            'The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.',
-            'None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them.'),
+    'E04': ('Nothing: the pledged delegates of each candidate are read from The Green Papers and from Wikipedia (primaries.py), and the two must agree. '
+            'The evidence is the pledged count at the end of the primaries, not the convention roll call. An entry in data/outlook.json is a recovery step for a case the sources cannot settle.',
+            'None needed. If the sources disagree, or nobody holds a majority of pledged delegates by August 1, 2028, the key is left open and the count is closed without it.'),
+    'E05': ('Nothing: each party\'s nominee (formally nominated, or the candidate with a majority of pledged delegates) and the New Hampshire vote are read from The Green Papers, which carries the Secretary of State\'s certified figures, '
+            'and from Wikipedia (primaries.py), and the two must agree. A nominee who withdraws or is replaced before August 1, 2028 is followed. A line in data/nh_primaries.csv is a recovery step for a case the sources cannot settle.',
+            'None needed. If the sources disagree, or a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them.'),
 }
 MANUAL['E06'] = MANUAL['E07'] = MANUAL['E05']
 MANUAL['E03'] = ('Nothing: scored from the June polls that name a third candidate (facts.py).', 'None needed.')
@@ -206,10 +206,16 @@ def registry():
                 checked='on every run, from the files in this repository', checks='an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held',
                 if_missing=f"The key stays open and keeps its chance. After {day(datetime.date.fromisoformat(CYCLE['expected'].get(i, CYCLE['expected']['seats'])))} it is held and the run is flagged every day."
                            if i not in ('D04', 'E01', 'E02') else 'Does not arise: the fact is known.',
-                fallback='none', automatic='yes' if i in ('D04', 'E02') else 'no: one entry', by_hand=done, remedy=remedy)
+                fallback='none', automatic='yes' if i in ('D04', 'E01', 'E02') else 'no: one entry', by_hand='nothing' if i == 'E01' else done, remedy=remedy)
             if g == 'D' and i != 'D04':
                 row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='github.com/unitedstates/congress-legislators (facts.py), in the January a new Congress meets',
                            checked='every day in January and February of an odd year, until the new Congress is on the list', fallback='a line entered by hand in data/congress_seats.csv, with its source')
+            if i in ('E04', 'E05', 'E06', 'E07'):
+                row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='thegreenpapers.com/P28/ (delegates; the New Hampshire vote as certified by the Secretary of State) and the Wikipedia API (primaries.py)',
+                           stays_open='The primary has not been held, the nominee is not known, the evidence is not all in, a source could not be read, or the two sources disagree. Each is reported apart; none is a no.',
+                           checked='every Monday until 2028, then on the first run of every day', checks='two sources must give the same nominee, the same winner, shares within a point and a half and the same side of two-thirds',
+                           earliest_call='when both sources carry the result and the nominee is known; provisional while the nominee is presumptive or the result is not certified',
+                           fallback='an entry by hand with its source, compared with what the sources give; if the two disagree the key is held')
             if i == 'E03':
                 row.update(automatic='yes', by_hand='nothing', remedy='none needed', read_through='https://api.pollresults.org/v1.0/politics/results/president (facts.py)', window_closes='June 30, 2028',
                            earliest_call='July 8, 2028: polls finished in June and published by July 7',
@@ -291,13 +297,14 @@ def read_history(path=HISTORY):
     return list(csv.DictReader(open(path))) if os.path.exists(path) else []
 
 
-def evaluate(today, P, QS, LEVEL, approval, states, entered, landed, history=(), held_series=(), root=HERE, third=None):
+def evaluate(today, P, QS, LEVEL, approval, states, entered, landed, history=(), held_series=(), root=HERE, third=None, primaries=None):
     """Every key's state on `today`. `landed`: the economy keys whose series all run through June without a gap (run_2028).
     `states`: what run_2028.state_figures() gives. Returns {id: {status, value, final, basis, evidence, why, next}}."""
     from make_page import detail
     y, closes = CYCLE['year'], datetime.date.fromisoformat(CYCLE['closes'])
     exp = {k: datetime.date.fromisoformat(v) for k, v in CYCLE['expected'].items()}
     d, have = figures(P, QS, LEVEL, approval, entered, root)
+    auto = lambda i: ((primaries or {}).get('keys') or {}).get(i) if (primaries or {}).get('year') == y else None      # what primaries.py read, for this cycle
     keys, raw, _ = B.score_year(d, y)
     if states.get('keys'):
         raw.update(states['final'])
@@ -342,13 +349,20 @@ def evaluate(today, P, QS, LEVEL, approval, states, entered, landed, history=(),
                 c.update(status='settled', value=bool(e['value']), basis='entered', evidence=e.get('why', ''), next='January 2027, when the new Congress meets and its seats are counted')
             else:
                 c.update(why='The midterm result is not entered.', status='held' if today > exp['seats'] else 'unresolved')
-        elif i in ('E05', 'E06', 'E07'):
-            if have['nh']:
-                c.update(status='settled', value=bool(rule), final=True, basis='rule', evidence=detail(i, raw))
-            elif e is not None:
-                c.update(status='settled', value=bool(e['value']), final=True, basis='entered', evidence=e.get('why', ''))
+        elif i in ('E04', 'E05', 'E06', 'E07') and not (i == 'E04' and e is None and auto(i) is None):
+            a = auto(i); read = a is not None and a['state'] in ('settled', 'provisional')
+            by_hand = (bool(rule) if have['nh'] else bool(e['value']) if e is not None else None) if i != 'E04' else (bool(e['value']) if e is not None else None)
+            if by_hand is not None and read and by_hand != bool(a['value']):
+                c.update(status='held', why=f"The entry by hand says {'yes' if by_hand else 'no'} and the sources say {'yes' if a['value'] else 'no'} ({a['evidence']})", basis='entered and read disagree', reading='conflict')
+            elif by_hand is not None:                      # a recovery entry, with its source
+                c.update(status='settled', value=by_hand, final=True, basis='rule' if (have['nh'] and i != 'E04') else 'entered', evidence=detail(i, raw) if (have['nh'] and i != 'E04') else e.get('why', ''))
+            elif read:
+                c.update(status=a['state'], value=bool(a['value']), final=a['state'] == 'settled', basis='rule', evidence=a['evidence'], reading=a['state'])
             else:
-                c.update(why='The nominees are not known, so the New Hampshire result cannot be read for them yet.', next='when both nominees are known, by June 2028', status='held' if today > exp[i] else 'unresolved')
+                state = a['state'] if a else 'not yet'
+                lead = {'not yet': 'The event has not happened. ', 'waiting': 'The evidence is not all in. ', 'conflict': 'The sources disagree. ', 'failed': 'A source could not be read. '}[state]
+                c.update(why=lead + (a['why'] if a else ('The delegates are not chosen yet.' if i == 'E04' else 'The nominees are not known, so the New Hampshire result cannot be read for them yet.')), reading=state,
+                         next='June 2028, when the primaries end' if i == 'E04' else 'when both nominees are known, by June 2028', status='held' if (state == 'conflict' or today > exp.get(i, closes)) else 'unresolved')
         elif i == 'E03' and e is None:                     # scored by rule on the June polls that name a third candidate (facts.py)
             june = (third or {}).get('june') or {}
             if june.get('reading') is not None and today >= datetime.date(y, 7, 8):

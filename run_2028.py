@@ -520,7 +520,7 @@ STATES = state_figures()
 
 # Every key's state today, by the model's own rules on the figures published so far (calls.py). A key that is provisional or
 # settled is the same in every run. A key that is held keeps its last entry if it has one; otherwise it stays open.
-CALLS = CALL.evaluate(TODAY, P, QS, LEVEL, APPROVAL, STATES, ENTERED, LANDED, CALL.read_history(os.path.join(D, 'key_calls.csv')), set(os.environ.get('KEYS_HELD', '').split()), third=THIRD)
+CALLS = CALL.evaluate(TODAY, P, QS, LEVEL, APPROVAL, STATES, ENTERED, LANDED, CALL.read_history(os.path.join(D, 'key_calls.csv')), set(os.environ.get('KEYS_HELD', '').split()), third=THIRD, primaries=(json.load(open(os.path.join(D, 'primaries.json'))) if os.path.exists(os.path.join(D, 'primaries.json')) else None))
 FIXED = {k: bool(c['value']) for k, c in CALLS.items() if c['status'] in ('provisional', 'settled')}
 FIXED.update({k: c['last'] for k, c in CALLS.items() if 'last' in c and k[0] in 'DE'})
 FIXED.update({k: bool(v['value']) for k, v in ENTERED.items() if k not in FIXED})

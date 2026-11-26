@@ -9,9 +9,10 @@
  "data/outlook.json": "04e160b436ac7bf0",
  "data/third_candidates.json": "6b573677d17d880d",
  "locked_keys.csv": "0c7c9208e8fdcd94",
- "run_2028.py": "ce269a418451555c",
+ "run_2028.py": "f4ed08033fdd6a91",
  "build.py": "39239e82b11dddfc",
- "calls.py": "1d2f53ff8f13420a",
+ "calls.py": "cbb656058256c460",
  "data/congress_seats.csv": "1adbaa892c7657a9",
- "data/nh_primaries.csv": "5c125165db053c70"
+ "data/nh_primaries.csv": "5c125165db053c70",
+ "data/primaries.json": "2c449b174f271f45"
 }

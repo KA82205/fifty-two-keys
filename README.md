@@ -249,12 +249,13 @@ These are odds set by judgment from polls and from the 19 elections, and they ar
   days, from VoteHub's listing (32% approve and 65% disapprove on November 22, 2026, from three pollsters). The three keys
   that need half the country on side get a 1% to 3% chance. The three that ask whether approval is rising
   are drawn from what they did in the 19 cycles, with years when the president was not running counted double.
-- **Third candidate.** 88% that none reaches 10% in June polls. One did in 4 of 19 elections.
-- **The nomination.** Rubio and Vance are level nationally (35% and 34%) and Vance leads in New Hampshire (39%
-  to 27%). 68% that the nominee wins New Hampshire; Republican nominees did in 8 of 11 open contests. 75% that
-  the nominee has two-thirds of the delegates.
-- **The challenger.** 63% that the Democratic nominee does not win New Hampshire. The field is split five ways,
-  and the state is in dispute with the national party over its date.
+- **Third candidate.** 78% that none reaches 10% in June polls: none did in 15 of 19 elections.
+  The figure moves halfway to the polls once three pollsters name a third candidate.
+- **The nomination.** No odds are typed in; each is how often the key was yes in the record, with half a yes and half a
+  no added to the count. 72% that the nominee wins New Hampshire (in 6 of the 8 elections in which the sitting
+  president did not run); 79% that he then has two-thirds of the pledged delegates, 17% if he lost it.
+- **The challenger.** 48% that the Democratic nominee does not win New Hampshire (the challenger lost it in 9 of 19
+  elections).
 
 ### The open keys, from least to most likely
 
@@ -424,10 +425,18 @@ jobs, unemployment and inflation (`outlook.py`), seats in each new Congress (`fa
 members), and polls that name a third candidate (`facts.py`, from PollResults.org). 47 of the 52 keys need nothing done by
 hand; `KEYS.md` lists all 52.
 
-Still entered, once each, in 2028: the nominee's share of pledged delegates when the primaries end (E04) and the New
-Hampshire primary line once both parties have a candidate with a majority of pledged delegates (E05 to E07). No free, open
-list of delegates or of New Hampshire's certified results exists to read. If a party has no such candidate by August 1,
-2028, its keys are left open and the count is closed without them.
+Nothing is entered in 2028. The four nomination keys are read by `primaries.py`: each party's count of pledged delegates and
+the New Hampshire vote from The Green Papers (which carries the New Hampshire Secretary of State's certified figures and
+marks them "Official"), and the same from Wikipedia's election boxes through its API, with the revision of every page
+kept. A figure is used only when the two give it alike: the same nominee, the same winner, shares within a point and a half,
+the same side of two-thirds. Otherwise the key stays open, the reason is written down (the event has not happened; the
+evidence is not all in; the sources disagree; a source could not be read) and the next run looks again. A call that rests
+on a presumptive nominee, or on a result not yet certified, is provisional. The reader gives the locked table's answers for
+2016, 2020 and 2024 (`tests/test_primaries.py`), including 2024, when the nominee was replaced after the primaries.
+`data/primaries.json` holds the latest reading with every source, and `data/primaries_log.jsonl` every change to it. An entry
+by hand (in `data/outlook.json` or `data/nh_primaries.csv`) is a recovery step: if it disagrees with the sources the key
+is held. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without
+them. That the reader works on 2028's pages cannot be shown before those pages have results in them.
 
 No odds are entered. Until a nomination key is settled its chance is how often it was yes in the record (`record_rates` in
 `run_2028.py`): for the party in office, over the eight elections since 1952 in which the sitting president did not run;
@@ -436,12 +445,15 @@ elections never gives 0 or 100%. The third-candidate key starts from its own sha
 halfway to the polls once three pollsters name a third candidate. The odds typed in November 2026 are kept in
 `data/outlook.json` and in each run's file for the record, and one line of "what if" shows what they would give.
 
-A second source for a large move. A new figure too large to pass the checks is not used. For the five series the Bureau of
-Labor Statistics publishes (unemployment, payrolls, factory jobs, consumer prices, hourly pay) the run then asks the
-Bureau's own public service; if the Bureau gives the same figures for every month read, the figure is let in and the run
-says so. A real shock passes without anyone starting a run; a broken download does not. The other series have no second
-source that answers without a key and are still let in by hand (`trust`). Once a day the run compares the unemployment
-rate with the Bureau, so the second source is known to answer before the day it is needed.
+A second source for a large move. A new figure too large to pass the checks is not used. The run then asks whoever
+publishes the series: the Bureau of Labor Statistics (unemployment, payrolls, factory jobs, consumer prices, hourly pay), the
+Federal Reserve Board (industrial production), the Bureau of Economic Analysis (spending and the five quarterly series), the
+University of Michigan (sentiment), the Energy Information Administration (oil), the Department of Labor (jobless claims)
+and, for share prices, a second copy of the daily closes. If that source gives the same figures for every month read, the
+figure is let in and the run says so. A real shock passes without anyone starting a run; a broken download does not.
+Housing starts alone have no second source here (the Census Bureau's service asks for a key) and are still let in by hand
+(`trust`). Once a day the run compares one series with each source that answers quickly, so the sources are known to answer
+before the day they are needed.
 
 No longer entered: income, hourly pay, spending, industrial production and factory jobs each follow their own pace over
 the last two years; oil and consumer sentiment stay where they last stood; the population grows as it did over the last
@@ -482,9 +494,8 @@ any key is still without evidence the count is not called complete.
 are revised, and when a call becomes final. Lines are never changed or removed. The record was started on November 25,
 2026, so the eight keys settled before then carry that date. `KEYS.md` and `data/key_registry.json` list, for each of
 the 52 keys, what it compares, the series and source, when each figure comes out, the first day it can be called, what
-happens if a figure is late, and what is still entered by hand: 41 keys need nothing, six are entered once per election
-from the midterm result and the term limit (done for 2028), and five (E03 to E07, the third-candidate, nomination and
-New Hampshire keys) have no open feed and need one entry each in 2028. `KEYS.md` says what would end that.
+happens if a figure is late, and what is done by hand: nothing. All 52 keys are read or worked out by rule (`KEYS.md`); the facts fixed at the start of
+the cycle (the midterm result, the term limit) were recorded once and are checked against what is read later.
 
 `docs/keys.json` carries the whole run for anything that follows the count: every key's state, the chance of each open
 key, the groups, and the spread of the count over the runs (`index_dist`), beside the headline figures it always had.

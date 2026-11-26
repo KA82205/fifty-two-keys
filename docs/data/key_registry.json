@@ -2218,8 +2218,8 @@
    "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
    "if_missing": "Does not arise: the fact is known.",
    "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "Entered once: the president cannot run again.",
+   "automatic": "yes",
+   "by_hand": "nothing",
    "remedy": "None needed."
   },
   {
@@ -2341,21 +2341,21 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "thegreenpapers.com/P28/ (delegates; the New Hampshire vote as certified by the Secretary of State) and the Wikipedia API (primaries.py)",
    "window_closes": "the end of the primaries",
-   "earliest_call": "when the fact is on the public record",
+   "earliest_call": "when both sources carry the result and the nominee is known; provisional while the nominee is presumptive or the result is not certified",
    "count_closes": "August 1, 2028",
    "revisions": "An election result, a primary result and a fact do not change. A mistake in what was entered is corrected in the open: the first entry stays in the record.",
    "called_yes": "The nominee's share of his party's delegates >= two-thirds.",
    "called_no": "The same statement is false.",
-   "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
-   "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
+   "stays_open": "The primary has not been held, the nominee is not known, the evidence is not all in, a source could not be read, or the two sources disagree. Each is reported apart; none is a no.",
+   "checked": "every Monday until 2028, then on the first run of every day",
+   "checks": "two sources must give the same nominee, the same winner, shares within a point and a half and the same side of two-thirds",
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One entry in data/outlook.json when the primaries end, in June 2028: the share of pledged delegates won by the candidate with a majority of them, with its source. The evidence is the pledged count at the end of the primaries, not the convention roll call, which can come after the count is closed. Delegate counts are published by the parties and by news organisations as pages, not as an open list.",
-   "remedy": "None found: no free, open and stable list of pledged delegates exists to read. If nobody holds a majority of pledged delegates by August 1, 2028, the key is left open and the count is closed without it."
+   "fallback": "an entry by hand with its source, compared with what the sources give; if the two disagree the key is held",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "E05",
@@ -2386,21 +2386,21 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "thegreenpapers.com/P28/ (delegates; the New Hampshire vote as certified by the Secretary of State) and the Wikipedia API (primaries.py)",
    "window_closes": "the New Hampshire primary",
-   "earliest_call": "when the fact is on the public record",
+   "earliest_call": "when both sources carry the result and the nominee is known; provisional while the nominee is presumptive or the result is not certified",
    "count_closes": "August 1, 2028",
    "revisions": "An election result, a primary result and a fact do not change. A mistake in what was entered is corrected in the open: the first entry stays in the record.",
    "called_yes": "The party's nominee in its New Hampshire primary is the winner.",
    "called_no": "The same statement is false.",
-   "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
-   "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
+   "stays_open": "The primary has not been held, the nominee is not known, the evidence is not all in, a source could not be read, or the two sources disagree. Each is reported apart; none is a no.",
+   "checked": "every Monday until 2028, then on the first run of every day",
+   "checks": "two sources must give the same nominee, the same winner, shares within a point and a half and the same side of two-thirds",
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.",
-   "remedy": "None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them."
+   "fallback": "an entry by hand with its source, compared with what the sources give; if the two disagree the key is held",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "E06",
@@ -2431,21 +2431,21 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "thegreenpapers.com/P28/ (delegates; the New Hampshire vote as certified by the Secretary of State) and the Wikipedia API (primaries.py)",
    "window_closes": "the New Hampshire primary",
-   "earliest_call": "when the fact is on the public record",
+   "earliest_call": "when both sources carry the result and the nominee is known; provisional while the nominee is presumptive or the result is not certified",
    "count_closes": "August 1, 2028",
    "revisions": "An election result, a primary result and a fact do not change. A mistake in what was entered is corrected in the open: the first entry stays in the record.",
    "called_yes": "The nominee's share of his party's New Hampshire primary > the other party's nominee's share of his.",
    "called_no": "The same statement is false.",
-   "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
-   "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
+   "stays_open": "The primary has not been held, the nominee is not known, the evidence is not all in, a source could not be read, or the two sources disagree. Each is reported apart; none is a no.",
+   "checked": "every Monday until 2028, then on the first run of every day",
+   "checks": "two sources must give the same nominee, the same winner, shares within a point and a half and the same side of two-thirds",
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.",
-   "remedy": "None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them."
+   "fallback": "an entry by hand with its source, compared with what the sources give; if the two disagree the key is held",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   },
   {
    "id": "E07",
@@ -2476,21 +2476,21 @@
      "licence": "public record"
     }
    ],
-   "read_through": "a file in this repository, entered by hand",
+   "read_through": "thegreenpapers.com/P28/ (delegates; the New Hampshire vote as certified by the Secretary of State) and the Wikipedia API (primaries.py)",
    "window_closes": "the New Hampshire primary",
-   "earliest_call": "when the fact is on the public record",
+   "earliest_call": "when both sources carry the result and the nominee is known; provisional while the nominee is presumptive or the result is not certified",
    "count_closes": "August 1, 2028",
    "revisions": "An election result, a primary result and a fact do not change. A mistake in what was entered is corrected in the open: the first entry stays in the record.",
    "called_yes": "The other party's nominee in its New Hampshire primary is not the winner.",
    "called_no": "The same statement is false.",
-   "stays_open": "The result or the event has not happened, or it has not been entered with its source.",
-   "checked": "on every run, from the files in this repository",
-   "checks": "an entry is compared with what the rule gives wherever the rule can be scored from the files; if the two disagree the key is held",
+   "stays_open": "The primary has not been held, the nominee is not known, the evidence is not all in, a source could not be read, or the two sources disagree. Each is reported apart; none is a no.",
+   "checked": "every Monday until 2028, then on the first run of every day",
+   "checks": "two sources must give the same nominee, the same winner, shares within a point and a half and the same side of two-thirds",
    "if_missing": "The key stays open and keeps its chance. After July 15, 2028 it is held and the run is flagged every day.",
-   "fallback": "none",
-   "automatic": "no: one entry",
-   "by_hand": "One line in data/nh_primaries.csv once both parties have a candidate with a majority of pledged delegates (the presumptive nominee; the convention only confirms it). The votes are the certified results of the New Hampshire Secretary of State, which are published as documents. A nominee who withdraws or is replaced before August 1, 2028 is replaced in the line, and the first entry stays in the record.",
-   "remedy": "None found: the certified results are documents with no fixed layout. If a party has no presumptive nominee by August 1, 2028, its keys are left open and the count is closed without them."
+   "fallback": "an entry by hand with its source, compared with what the sources give; if the two disagree the key is held",
+   "automatic": "yes",
+   "by_hand": "nothing",
+   "remedy": "none needed"
   }
  ]
 }

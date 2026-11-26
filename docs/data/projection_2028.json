@@ -1139,29 +1139,33 @@
    "status": "unresolved",
    "value": null,
    "final": false,
-   "why": "The delegates are not chosen yet.",
-   "next": "June 2028, when the primaries end"
+   "why": "The event has not happened. No delegates have been pledged yet.",
+   "next": "June 2028, when the primaries end",
+   "reading": "not yet"
   },
   "E05": {
    "status": "unresolved",
    "value": null,
    "final": false,
-   "why": "The nominees are not known, so the New Hampshire result cannot be read for them yet.",
-   "next": "when both nominees are known, by June 2028"
+   "why": "The event has not happened. no Republican candidate has a majority of pledged delegates in The Green Papers",
+   "next": "when both nominees are known, by June 2028",
+   "reading": "not yet"
   },
   "E06": {
    "status": "unresolved",
    "value": null,
    "final": false,
-   "why": "The nominees are not known, so the New Hampshire result cannot be read for them yet.",
-   "next": "when both nominees are known, by June 2028"
+   "why": "The event has not happened. no Republican candidate has a majority of pledged delegates in The Green Papers no Democratic candidate has a majority of pledged delegates in The Green Papers",
+   "next": "when both nominees are known, by June 2028",
+   "reading": "not yet"
   },
   "E07": {
    "status": "unresolved",
    "value": null,
    "final": false,
-   "why": "The nominees are not known, so the New Hampshire result cannot be read for them yet.",
-   "next": "when both nominees are known, by June 2028"
+   "why": "The event has not happened. no Democratic candidate has a majority of pledged delegates in The Green Papers",
+   "next": "when both nominees are known, by June 2028",
+   "reading": "not yet"
   }
  },
  "count": {

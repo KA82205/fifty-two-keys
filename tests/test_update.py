@@ -106,7 +106,7 @@ def test_a_failed_series_keeps_its_figures():
         update.refresh_table(path, {'UNRATE': update.MONTHLY['UNRATE'], 'PAYEMS': update.MONTHLY['PAYEMS']}, datetime.date(2026, 12, 7), set(), report, monthly=True)
     finally:
         update.fred = real; update.SECOND_SOURCE = second
-    assert 'gives 4.4 for 2026-11, not 44' in report['held'][0] and report['confirmed'] == []
+    assert 'the Bureau of Labor Statistics gives 4.4 for 2026-11, not 44' in report['held'][0] and report['confirmed'] == []
     assert open(path).read() == 'observation_date,UNRATE,PAYEMS\n2026-09-01,4.2,159128\n2026-10-01,4.1,159301\n2026-11-01,,159340\n', open(path).read()
     assert len(report['held']) == 1 and 'UNRATE' in report['held'][0] and report['read'] == ['PAYEMS']
     assert report['new'] == [{'series': 'PAYEMS', 'through': '2026-11', 'was': '2026-10'}]
@@ -120,6 +120,7 @@ def test_a_real_shock_passes_when_the_agency_gives_the_same_figure():
     real, second = update.fred, update.SECOND_SOURCE
     shock = [('2026-09-01', 4.2), ('2026-10-01', 4.1), ('2026-11-01', 14.8)]                    # spring 2020, arriving new
     start = 'observation_date,UNRATE,INDPRO\n2026-09-01,4.2,103\n2026-10-01,4.1,103\n'
+    fed = update.SOURCES['INDPRO']; update.SOURCES['INDPRO'] = (fed[0], lambda a, b: {'2026-09-01': 103.0, '2026-10-01': 103.0, '2026-11-01': 103.2}, fed[2])      # the Board's table says no such fall
     def go(own, fred_unrate=shock):
         path = os.path.join(tempfile.mkdtemp(), 'm.csv'); open(path, 'w').write(start)
         update.fred = lambda series, start, monthly_average=False: fred_unrate if series == 'UNRATE' else [('2026-09-01', 103.0), ('2026-10-01', 103.0), ('2026-11-01', 80.0)]
@@ -136,7 +137,7 @@ def test_a_real_shock_passes_when_the_agency_gives_the_same_figure():
         return report, open(path).read()
     report, text = go({'2026-09-01': 4.2, '2026-10-01': 4.1, '2026-11-01': 14.8})
     assert '2026-11-01,14.8,' in text and len(report['confirmed']) == 1 and 'Let in' in report['confirmed'][0] and 'UNRATE' in report['read']
-    assert len(report['held']) == 1 and report['held'][0].startswith('INDPRO')                    # no second source for this one: held, as before
+    assert len(report['held']) == 1 and report['held'][0].startswith('INDPRO') and 'Federal Reserve Board' in report['held'][0]      # its own second source was asked, and did not confirm
     for own, words in (({'2026-09-01': 4.2, '2026-10-01': 4.1, '2026-11-01': 4.8}, 'gives 4.8 for 2026-11, not 14.8'), ({'2026-09-01': 4.2, '2026-10-01': 4.1}, 'has no figure for 2026-11'),
                        ({'2026-09-01': 4.3, '2026-10-01': 4.1, '2026-11-01': 14.8}, 'gives 4.3 for 2026-09'), (ConnectionError('daily threshold'), 'was not reached')):
         report, text = go(own)
@@ -144,6 +145,27 @@ def test_a_real_shock_passes_when_the_agency_gives_the_same_figure():
     # a failure that is not about size is not the second source's to settle, whatever it says
     report, text = go({'2026-09-01': 4.2, '2026-10-01': 4.1, '2026-11-01': 4.0}, [('2026-10-01', 4.1), ('2026-09-01', 4.2)])
     assert report['confirmed'] == [] and any('out of order' in m for m in report['held'])
+    update.SOURCES['INDPRO'] = fed
+    real_get = update.get
+    try:
+        update.get = lambda url, *a, **k: ("<tr> <td class='B4'>&nbsp;&nbsp;2025</td> <td class='B3'>75.74</td> <td class='B3'>71.53</td> </tr> <tr> <td class='B4'>&nbsp;&nbsp;2026</td> <td class='B3'>60.04</td> <td class='B3'>64.51</td> <td class='B3'>91.38</td> <td class='B3'></td> </tr>" if 'eia.gov' in url
+                                          else json.dumps({'chart': {'result': [{'timestamp': [1795530600, 1795617000, 1798209000], 'indicators': {'quote': [{'close': [7500.0, 7520.0, None]}]}}]}}))
+        assert update.eia_oil() == {'2025-01-01': 75.74, '2025-02-01': 71.53, '2026-01-01': 60.04, '2026-02-01': 64.51, '2026-03-01': 91.38}
+        assert update.market_closes() == {'2026-11-01': 7510.0}
+        assert update.confirmed('MCOILWTICO', [('2026-02-01', 64.51), ('2026-03-01', 91.38)])[0] and 'Energy Information Administration gives 91.38' in update.confirmed('MCOILWTICO', [('2026-03-01', 191.38)])[1]
+        assert update.by_month([('2025-01-04', 206000.0), ('2025-01-11', 219000.0), ('2025-02-01', 220000.0)]) == {'2025-01-01': 212500.0, '2025-02-01': 220000.0}
+    finally:
+        update.get = real_get
+    # the other agencies' tables are read as they are sent
+    real_lines = update.lines
+    try:
+        update.lines = lambda url, keep, timeout=120: ['"B50001"        2026     101.0388  101.9053  101.7336  102.5768  102.6925  102.9673  103.1675  103.0954  103.8458  103.3954'] if 'g17' in url else \
+            ['A939RX,2026Q2,"71,212"', 'A939RX,2026Q3,"71,909"'] if 'NipaDataQ' in url else ['DPCERA,2026M09,"127.976"', 'DPCERA,2026M10,"127.932"']
+        assert update.fed_g17()['2026-10-01'] == 103.3954 and len(update.fed_g17()) == 10
+        assert update.bea('A939RX', True) == {'2026-04-01': 71212.0, '2026-07-01': 71909.0} and update.bea('DPCERA', False)['2026-10-01'] == 127.932
+        assert update.confirmed('A939RX0Q048SBEA', [('2026-04-01', 71212.0), ('2026-07-01', 71909.0)])[0] and not update.confirmed('A939RX0Q048SBEA', [('2026-07-01', 81909.0)])[0]
+    finally:
+        update.lines = real_lines
     # the Bureau's answer is read as it is sent: months only, a missing month left out, a refusal an error
     answer = lambda data, status='REQUEST_SUCCEEDED', sid='LNS14000000': (lambda url, body: json.dumps({'status': status, 'message': ['daily threshold reached'] if status != 'REQUEST_SUCCEEDED' else [], 'Results': {'series': [{'seriesID': sid, 'data': data}]}}))
     rows = [{'year': '2026', 'period': 'M11', 'value': '14.8'}, {'year': '2026', 'period': 'M10', 'value': '-'}, {'year': '2026', 'period': 'M09', 'value': '4.2'}, {'year': '2026', 'period': 'M13', 'value': '5.0'}]

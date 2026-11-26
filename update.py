@@ -38,6 +38,7 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import outlook as OUT                                  # noqa: E402
 import facts as FACTS                                  # noqa: E402
+import primaries as PRIMARIES                          # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 D = os.path.join(HERE, 'data')
@@ -101,6 +102,7 @@ def too_large(words):
 
 DOWN = {}                                              # hosts that did not answer in this run: they are not asked again
 THIRD, SEATS = FACTS.refresh_third, FACTS.refresh_seats   # the tests put files in their place
+NOMINATIONS = PRIMARIES.refresh                        # the nomination keys (E04 to E07): read, not typed. The tests put a stand-in in its place
 SURVEY = OUT.fetch                                     # how the Survey of Professional Forecasters is read (the tests put a file in its place)
 
 
@@ -185,8 +187,10 @@ def check(series, new, held, rule, step_months):
 # own public service gives them without FRED in between. A figure that failed only for its size, and that the Bureau gives
 # as FRED does for every month read, is the published figure: it is let in, and the report says so. This is how a real shock
 # passes without anyone starting a run by hand. A figure the Bureau gives differently, or does not give, stays held.
-# The other series (industrial production, spending, housing starts, sentiment, oil, shares, jobless claims, and the
-# quarterly accounts) have no second source here that answers without a key: for those, --trust after looking.
+# The same is done for industrial production (the Federal Reserve Board's own table), consumer sentiment (the University of
+# Michigan's), real spending and the quarterly accounts (the Bureau of Economic Analysis's flat files), the price of oil (the
+# Energy Information Administration), jobless claims (the Department of Labor) and share prices (a second copy of the daily
+# closes): SOURCES below. Housing starts alone have no second source read here: the Census Bureau's service asks for a key.
 BLS = 'https://api.bls.gov/publicAPI/v2/timeseries/data/'
 SECOND = {'UNRATE': 'LNS14000000', 'PAYEMS': 'CES0000000001', 'MANEMP': 'CES3000000001', 'CPIAUCSL': 'CUSR0000SA0', 'CES0600000008': 'CES0600000008'}
 
@@ -216,26 +220,114 @@ def bls(series, first_year, last_year, post=None):
     return out
 
 
+def lines(url, keep, timeout=120):
+    """The lines of a large public file that start with one of `keep`, read as they arrive."""
+    out = []
+    with urllib.request.urlopen(urllib.request.Request(url, headers=AGENT), timeout=timeout) as r:
+        for raw in r:
+            line = raw.decode('utf-8', 'replace')
+            if line.startswith(keep): out.append(line.rstrip())
+    return out
+
+
+def fed_g17(code='B50001'):
+    """{YYYY-MM-01: value} for a series of the Federal Reserve's industrial production release (G.17), from the Board's own
+    table: one line a year, twelve months across. B50001 is total industrial production, which FRED carries as INDPRO."""
+    out = {}
+    for line in lines('https://www.federalreserve.gov/releases/g17/ipdisk/ip_sa.txt', ('"' + code + '"', code)):
+        p = line.replace('"', '').split()
+        if len(p) >= 3 and p[0] == code and p[1].isdigit():
+            for m, v in enumerate(p[2:14], 1):
+                try: out[f'{int(p[1])}-{m:02d}-01'] = float(v)
+                except ValueError: pass
+    return out
+
+
+def umich():
+    """{YYYY-MM-01: value} for the University of Michigan's index of consumer sentiment, from the survey's own table."""
+    months = {m: i for i, m in enumerate(('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'), 1)}; out = {}
+    for r in csv.reader(io.StringIO(get('https://www.sca.isr.umich.edu/files/tbmics.csv'))):
+        if len(r) >= 3 and r[0].strip() in months and r[1].strip().isdigit():
+            try: out[f'{int(r[1])}-{months[r[0].strip()]:02d}-01'] = float(r[2])
+            except ValueError: pass
+    return out
+
+
+def bea(code, quarterly):
+    """{YYYY-MM-01: value} for one series of the national accounts, from the Bureau of Economic Analysis's own flat files
+    (a quarter is dated by its first month, as FRED dates it). The files are large and are read only when a figure is held."""
+    url = 'https://apps.bea.gov/national/Release/TXT/NipaData' + ('Q' if quarterly else 'M') + '.txt'; out = {}
+    for line in lines(url, (code + ',',), timeout=300):
+        r = next(csv.reader([line]))
+        m = re.fullmatch(r'(\d{4})(Q([1-4])|M(\d\d))', r[1].strip()) if len(r) >= 3 else None
+        if m:
+            try: out[f"{m.group(1)}-{(3 * int(m.group(3)) - 2) if m.group(3) else int(m.group(4)):02d}-01"] = float(r[2].replace(',', ''))
+            except ValueError: pass
+    return out
+
+
+def eia_oil():
+    """{YYYY-MM-01: dollars} for West Texas Intermediate by month, from the Energy Information Administration's own table:
+    one row a year, twelve months across."""
+    page = get('https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=RWTC&f=M'); out = {}
+    for year, rest in re.findall(r"<td class='B4'>(?:&nbsp;)*\s*(\d{4})</td>(.*?)</tr>", page, flags=re.S):
+        for m, v in enumerate(re.findall(r"<td class='B3'>\s*([\d.]*)\s*</td>", rest)[:12], 1):
+            if v: out[f'{year}-{m:02d}-01'] = float(v)
+    return out
+
+
+def by_month(pairs):
+    """{YYYY-MM-01: mean} of dated figures, each counted in the month of its date."""
+    got = {}
+    for d, v in pairs: got.setdefault(d[:7] + '-01', []).append(v)
+    return {k: sum(v) / len(v) for k, v in got.items()}
+
+
+def dol_claims(first_year, last_year):
+    """{YYYY-MM-01: mean} of the weekly initial claims for unemployment insurance, seasonally adjusted, from the Department of
+    Labor's own report, each week counted in the month it ended, as FRED's monthly average counts it."""
+    body = urllib.parse.urlencode({'level': 'us', 'final_yr': last_year, 'strtdate': first_year, 'enddate': last_year, 'filetype': 'xml', 'submit': 'Submit'}).encode()
+    req = urllib.request.Request('https://oui.doleta.gov/unemploy/wkclaims/report.asp', data=body, headers=dict(AGENT, **{'Content-Type': 'application/x-www-form-urlencoded'}))
+    with urllib.request.urlopen(req, timeout=40) as r: page = r.read().decode('utf-8', 'replace')
+    weeks = re.findall(r'<weekEnded>(\d\d)/(\d\d)/(\d{4})</weekEnded>\s*<InitialClaims>.*?<SA>([\d,]+)</SA>', page, flags=re.S)
+    return by_month((f'{y}-{m}-{d}', float(v.replace(',', ''))) for m, d, y, v in weeks)
+
+
+def market_closes():
+    """{YYYY-MM-01: mean} of the S&P 500's daily closes, from Yahoo Finance's chart service. The index's owner offers no free
+    feed, so this is a second copy of the same closes, not the publisher's own: enough to tell a real fall from a broken file."""
+    d = json.loads(get('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=2y&interval=1d'))['chart']['result'][0]
+    day = lambda ts: (datetime.datetime.fromtimestamp(ts, datetime.timezone.utc) - datetime.timedelta(hours=5)).strftime('%Y-%m-%d')
+    return by_month((day(ts), float(c)) for ts, c in zip(d['timestamp'], d['indicators']['quote'][0]['close']) if c is not None)
+
+
+# series: (who publishes it, how it is read there, how closely the two must agree as a share of the figure)
+SOURCES = {**{k: ('the Bureau of Labor Statistics', (lambda a, b, v=v: SECOND_SOURCE(v, a, b)), 5e-5) for k, v in SECOND.items()},
+           'INDPRO': ('the Federal Reserve Board', lambda a, b: fed_g17(), 2e-4), 'UMCSENT': ('the University of Michigan', lambda a, b: umich(), 5e-5),
+           'DPCERA3M086SBEA': ('the Bureau of Economic Analysis', lambda a, b: bea('DPCERA', False), 2e-4),
+           'MCOILWTICO': ('the Energy Information Administration', lambda a, b: eia_oil(), 2e-3), 'ICSA': ('the Department of Labor', dol_claims, 5e-3), 'SP500': ('Yahoo Finance (a second copy of the closes)', lambda a, b: market_closes(), 5e-3),
+           **{k: ('the Bureau of Economic Analysis', (lambda a, b, c=c: bea(c, True)), 2e-4) for k, c in (('A191RL1Q225SBEA', 'A191RL'), ('A067RL1Q156SBEA', 'A067RL'), ('B230RC0Q173SBEA', 'B230RC'), ('A939RX0Q048SBEA', 'A939RX'), ('A229RX0Q048SBEA', 'A229RX'))}}
 SECOND_SOURCE = bls                                    # the tests put a table in its place
 
 
 def confirmed(series, new):
     """Does the agency that publishes this series give the figures FRED gave? (True or False, and the words for the report.)
-    Every month read from FRED must be there and equal; one that differs, or is missing, and nothing is confirmed."""
-    if series not in SECOND or not new:
+    Every month or quarter read from FRED must be there and equal; one that differs, or is missing, and nothing is confirmed."""
+    if series not in SOURCES or not new:
         return False, ''
+    who, read, close = SOURCES[series]
     try:
-        own = SECOND_SOURCE(SECOND[series], int(new[0][0][:4]), int(new[-1][0][:4]))
+        own = read(int(new[0][0][:4]), int(new[-1][0][:4]))
     except Exception as err:                            # noqa: BLE001
-        return False, f'; the Bureau of Labor Statistics was not reached to compare ({type(err).__name__}: {str(err)[:80]})'
+        return False, f'; {who} was not reached to compare ({type(err).__name__}: {str(err)[:80]})'
     missing = [d for d, _ in new if d not in own]
     if missing:
-        return False, f"; the Bureau of Labor Statistics has no figure for {missing[-1][:7]} to compare"
-    off = [(d, v, own[d]) for d, v in new if abs(v - own[d]) > 5e-5 * max(1.0, abs(own[d]))]
+        return False, f"; {who} has no figure for {missing[-1][:7]} to compare"
+    off = [(d, v, own[d]) for d, v in new if abs(v - own[d]) > close * max(1.0, abs(own[d]))]
     if off:
         d, v, o = off[-1]
-        return False, f"; the Bureau of Labor Statistics gives {o:g} for {d[:7]}, not {v:g}"
-    return True, f"the Bureau of Labor Statistics gives the same {len(new)} figures (its series {SECOND[series]})"
+        return False, f"; {who} gives {o:g} for {d[:7]}, not {v:g}"
+    return True, f"{who} gives the same {len(new)} figures"
 
 
 def table(path):
@@ -258,7 +350,7 @@ def refresh_table(path, rules, today, trust, report, monthly):
                 try:
                     check(c, new, held[c], rules[c], step)
                 except Held as err:
-                    ok, words = confirmed(c, new) if monthly and err.size else (False, '')
+                    ok, words = confirmed(c, new) if err.size else (False, '')
                     if not ok:
                         raise Held(str(err) + words) from None
                     report.setdefault('confirmed', []).append(f'{err}. Let in: {words}')
@@ -374,7 +466,7 @@ def sha(path):
 
 
 INPUTS = ['data/latest_monthly.csv', 'data/quarterly.csv', 'data/latest.json', 'data/approval_polls.json', 'data/state_index_this_term.csv', 'data/outlook.json', 'data/third_candidates.json', 'locked_keys.csv',
-          'run_2028.py', 'build.py', 'calls.py', 'data/congress_seats.csv', 'data/nh_primaries.csv']
+          'run_2028.py', 'build.py', 'calls.py', 'data/congress_seats.csv', 'data/nh_primaries.csv', 'data/primaries.json']
 
 
 def vote(index):
@@ -502,7 +594,9 @@ def fingerprint(day, held):
     for p in INPUTS:
         full = os.path.join(HERE, p)
         if not os.path.exists(full): fp[p] = ''; continue
-        if p.endswith(('latest.json', 'approval_polls.json', 'third_candidates.json')):
+        if p.endswith('primaries.json'):                 # what was read, not when: the nominees and the four keys
+            x = json.load(open(full)); fp[p] = h({'nominees': x.get('nominees'), 'keys': x.get('keys')})
+        elif p.endswith(('latest.json', 'approval_polls.json', 'third_candidates.json')):
             x = json.load(open(full)); x.pop('as_of', None); x.pop('fetched', None); fp[p] = h(x)
         else:
             fp[p] = sha(full)
@@ -572,10 +666,12 @@ def main(argv):
             state, words = SEATS(today); print('Seats in Congress: ' + words, flush=True)            # counted once, in the January a new Congress meets
             if state == 'new': report['new'].append({'series': 'seats in the new Congress'})
             if state == 'unreachable': print('::warning::' + words)
-            if new_day or force:                           # once a day, so the second source is known to answer before the day it is needed
-                rows, _ = table(os.path.join(D, 'latest_monthly.csv'))
-                ok, words = confirmed('UNRATE', [(r['observation_date'], float(r['UNRATE'])) for r in rows if r['UNRATE'] != ''])
-                report['second_source'] = {'agrees': ok, 'said': words.lstrip('; ')}; print('Second source, the unemployment rate: ' + words.lstrip('; '), flush=True)
+            if new_day or force:                           # once a day, so the second sources are known to answer before the day they are needed
+                rows, _ = table(os.path.join(D, 'latest_monthly.csv')); said = []
+                for c in ('UNRATE', 'INDPRO', 'UMCSENT', 'MCOILWTICO', 'ICSA', 'SP500'):
+                    ok, words = confirmed(c, [(r['observation_date'], float(r[c])) for r in rows if r[c] != ''])
+                    said.append(f"{c}: {words.lstrip('; ')}")
+                report['second_source'] = said; print('Second sources. ' + ' | '.join(said), flush=True)
             if not report['failed']: read_on['economy'] = str(today)
         else:
             print(f"The economic series are not read at this hour ({now:%A %H:%M} Eastern); they were last read {log.get('economy_read', 'at the last full run')}.", flush=True)
@@ -584,6 +680,13 @@ def main(argv):
         state, words = THIRD(today); print('Third candidates: ' + words, flush=True)      # polls that name a third candidate (key E03): on every run
         if state == 'new': report['new'].append({'series': 'polls naming a third candidate'})
         if state == 'unreachable': print('::warning::' + words)
+        import calls as CALL
+        cy = CALL.CYCLE; closes = datetime.date.fromisoformat(cy['last_day'])
+        if (new_day or force) and today <= closes and (today.year >= cy['year'] or today.weekday() == 0 or force):      # every Monday until the election year, then daily
+            state, words = NOMINATIONS(today, cy['year'], cy['party'], closes=datetime.date.fromisoformat(cy['closes'])); print('Nominations: ' + words, flush=True)
+            if state == 'new': report['new'].append({'series': 'the nomination keys'})
+            if state == 'unreachable': print('::warning::' + words)
+            report['nominations'] = {'state': state, 'said': words}
         if len(report['failed']) == n: read_on['polls'] = str(today)
         latest['as_of'] = str(today)
         json.dump(latest, open(latest_path, 'w'), indent=1)
