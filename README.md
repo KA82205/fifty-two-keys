@@ -447,13 +447,13 @@ halfway to the polls once three pollsters name a third candidate. The odds typed
 
 A second source for a large move. A new figure too large to pass the checks is not used. The run then asks whoever
 publishes the series: the Bureau of Labor Statistics (unemployment, payrolls, factory jobs, consumer prices, hourly pay), the
-Federal Reserve Board (industrial production), the Bureau of Economic Analysis (spending and the five quarterly series), the
-University of Michigan (sentiment), the Energy Information Administration (oil), the Department of Labor (jobless claims)
-and, for share prices, a second copy of the daily closes. If that source gives the same figures for every month read, the
-figure is let in and the run says so. A real shock passes without anyone starting a run; a broken download does not.
-Housing starts alone have no second source here (the Census Bureau's service asks for a key) and are still let in by hand
-(`trust`). Once a day the run compares one series with each source that answers quickly, so the sources are known to answer
-before the day they are needed.
+Bureau of Economic Analysis (spending and the five quarterly series), the University of Michigan (sentiment), the Energy
+Information Administration (oil), the Department of Labor (jobless claims) and, for share prices, a second copy of the
+daily closes. If that source gives the same figures for every month read, the figure is let in and the run says so. A real
+shock passes without anyone starting a run; a broken download does not. Two series have no second source here and are
+still let in by hand (`trust`) after a look: industrial production (the Federal Reserve Board's public table did not give
+FRED's figures when tried) and housing starts (the Census Bureau's service asks for a key). Once a day the run compares
+one series with each source that answers quickly, so the sources are known to answer before the day they are needed.
 
 No longer entered: income, hourly pay, spending, industrial production and factory jobs each follow their own pace over
 the last two years; oil and consumer sentiment stay where they last stood; the population grows as it did over the last

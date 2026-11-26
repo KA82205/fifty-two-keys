@@ -187,10 +187,11 @@ def check(series, new, held, rule, step_months):
 # own public service gives them without FRED in between. A figure that failed only for its size, and that the Bureau gives
 # as FRED does for every month read, is the published figure: it is let in, and the report says so. This is how a real shock
 # passes without anyone starting a run by hand. A figure the Bureau gives differently, or does not give, stays held.
-# The same is done for industrial production (the Federal Reserve Board's own table), consumer sentiment (the University of
-# Michigan's), real spending and the quarterly accounts (the Bureau of Economic Analysis's flat files), the price of oil (the
-# Energy Information Administration), jobless claims (the Department of Labor) and share prices (a second copy of the daily
-# closes): SOURCES below. Housing starts alone have no second source read here: the Census Bureau's service asks for a key.
+# The same is done for consumer sentiment (the University of Michigan's own table), real spending and the quarterly accounts
+# (the Bureau of Economic Analysis's flat files), the price of oil (the Energy Information Administration), jobless claims
+# (the Department of Labor) and share prices (a second copy of the daily closes): SOURCES below. Two series have no second
+# source read here and are still let in by hand after a look: industrial production (the Federal Reserve Board's public
+# table did not give FRED's figures when tried, November 2026) and housing starts (the Census Bureau's service asks for a key).
 BLS = 'https://api.bls.gov/publicAPI/v2/timeseries/data/'
 SECOND = {'UNRATE': 'LNS14000000', 'PAYEMS': 'CES0000000001', 'MANEMP': 'CES3000000001', 'CPIAUCSL': 'CUSR0000SA0', 'CES0600000008': 'CES0600000008'}
 
@@ -227,19 +228,6 @@ def lines(url, keep, timeout=120):
         for raw in r:
             line = raw.decode('utf-8', 'replace')
             if line.startswith(keep): out.append(line.rstrip())
-    return out
-
-
-def fed_g17(code='B50001'):
-    """{YYYY-MM-01: value} for a series of the Federal Reserve's industrial production release (G.17), from the Board's own
-    table: one line a year, twelve months across. B50001 is total industrial production, which FRED carries as INDPRO."""
-    out = {}
-    for line in lines('https://www.federalreserve.gov/releases/g17/ipdisk/ip_sa.txt', ('"' + code + '"', code)):
-        p = line.replace('"', '').split()
-        if len(p) >= 3 and p[0] == code and p[1].isdigit():
-            for m, v in enumerate(p[2:14], 1):
-                try: out[f'{int(p[1])}-{m:02d}-01'] = float(v)
-                except ValueError: pass
     return out
 
 
@@ -303,9 +291,10 @@ def market_closes():
 
 # series: (who publishes it, how it is read there, how closely the two must agree as a share of the figure)
 SOURCES = {**{k: ('the Bureau of Labor Statistics', (lambda a, b, v=v: SECOND_SOURCE(v, a, b)), 5e-5) for k, v in SECOND.items()},
-           'INDPRO': ('the Federal Reserve Board', lambda a, b: fed_g17(), 2e-4), 'UMCSENT': ('the University of Michigan', lambda a, b: umich(), 5e-5),
+           'UMCSENT': ('the University of Michigan', lambda a, b: umich(), 5e-5),
            'DPCERA3M086SBEA': ('the Bureau of Economic Analysis', lambda a, b: bea('DPCERA', False), 2e-4),
-           'MCOILWTICO': ('the Energy Information Administration', lambda a, b: eia_oil(), 2e-3), 'ICSA': ('the Department of Labor', dol_claims, 5e-3), 'SP500': ('Yahoo Finance (a second copy of the closes)', lambda a, b: market_closes(), 5e-3),
+           'MCOILWTICO': ('the Energy Information Administration', lambda a, b: eia_oil(), 2e-3), 'ICSA': ('the Department of Labor', dol_claims, 3e-2),      # within 3%: the two average weeks into months a little differently; a real jump is many times that
+            'SP500': ('Yahoo Finance (a second copy of the closes)', lambda a, b: market_closes(), 5e-3),
            **{k: ('the Bureau of Economic Analysis', (lambda a, b, c=c: bea(c, True)), 2e-4) for k, c in (('A191RL1Q225SBEA', 'A191RL'), ('A067RL1Q156SBEA', 'A067RL'), ('B230RC0Q173SBEA', 'B230RC'), ('A939RX0Q048SBEA', 'A939RX'), ('A229RX0Q048SBEA', 'A229RX'))}}
 SECOND_SOURCE = bls                                    # the tests put a table in its place
 
@@ -668,7 +657,7 @@ def main(argv):
             if state == 'unreachable': print('::warning::' + words)
             if new_day or force:                           # once a day, so the second sources are known to answer before the day they are needed
                 rows, _ = table(os.path.join(D, 'latest_monthly.csv')); said = []
-                for c in ('UNRATE', 'INDPRO', 'UMCSENT', 'MCOILWTICO', 'ICSA', 'SP500'):
+                for c in ('UNRATE', 'UMCSENT', 'MCOILWTICO', 'ICSA', 'SP500'):
                     ok, words = confirmed(c, [(r['observation_date'], float(r[c])) for r in rows if r[c] != ''])
                     said.append(f"{c}: {words.lstrip('; ')}")
                 report['second_source'] = said; print('Second sources. ' + ' | '.join(said), flush=True)
