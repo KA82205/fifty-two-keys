@@ -31,12 +31,20 @@
   "state": "same",
   "said": "the survey of 2026 Q4 is the one the outlook already holds; read by rule it would give jobs_a_month [90, 90, 65, 65, 65, 49, 49, 49, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51] (entered: [90, 90, 65, 65, 65, 49, 49, 49, 51, 51, 51, 51, 51, 51, 50, 50, 50, 50, 50, 50])"
  },
- "second_source": {
-  "agrees": true,
-  "said": "the Bureau of Labor Statistics gives the same 11 figures (its series LNS14000000)"
+ "second_source": [
+  "UNRATE: the Bureau of Labor Statistics gives the same 11 figures",
+  "INDPRO: the Federal Reserve Board gives 103.395 for 2026-10, not 102.242",
+  "UMCSENT: the University of Michigan gives the same 12 figures",
+  "MCOILWTICO: the Energy Information Administration gives the same 11 figures",
+  "ICSA: the Department of Labor gives 197000 for 2026-10, not 195800",
+  "SP500: Yahoo Finance (a second copy of the closes) gives the same 11 figures"
+ ],
+ "nominations": {
+  "state": "same",
+  "said": "the nomination keys: E04 not yet, E05 not yet, E07 not yet, E06 not yet"
  },
- "made": "2026-11-25T23:28:21Z",
- "economy_read": "2026-11-25T23:28:21Z",
+ "made": "2026-11-26T02:46:41Z",
+ "economy_read": "2026-11-26T02:46:41Z",
  "read_on": {
   "economy": "2026-11-25",
   "polls": "2026-11-25"

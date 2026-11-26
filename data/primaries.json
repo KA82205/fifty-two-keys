@@ -1,7 +1,7 @@
 {
  "year": 2028,
  "party_in_office": "Republican",
- "read": "2026-11-26T00:17Z",
+ "read": "2026-11-26T02:47Z",
  "checked": "2026-11-25",
  "nominees": {
   "Republican": {
@@ -45,28 +45,28 @@
   {
    "source": "Wikipedia",
    "what": "2028 Republican Party presidential primaries",
-   "url": "https://en.wikipedia.org/w/index.php?oldid=1387848521",
-   "revision": 1387848521,
-   "edited": "2026-11-25T19:03:12Z",
-   "retrieved": "2026-11-26T00:17Z",
+   "url": "https://en.wikipedia.org/w/index.php?oldid=1387913683",
+   "revision": 1387913683,
+   "edited": "2026-11-26T00:16:04Z",
+   "retrieved": "2026-11-26T02:47Z",
    "licence": "CC BY-SA 4.0"
   },
   {
    "source": "Wikipedia",
    "what": "2028 Democratic Party presidential primaries",
-   "url": "https://en.wikipedia.org/w/index.php?oldid=1387855307",
-   "revision": 1387855307,
-   "edited": "2026-11-25T19:30:29Z",
-   "retrieved": "2026-11-26T00:17Z",
+   "url": "https://en.wikipedia.org/w/index.php?oldid=1387913643",
+   "revision": 1387913643,
+   "edited": "2026-11-26T00:15:50Z",
+   "retrieved": "2026-11-26T02:47Z",
    "licence": "CC BY-SA 4.0"
   },
   {
    "source": "Wikipedia",
-   "what": "2028 United States presidential election",
-   "url": "https://en.wikipedia.org/w/index.php?oldid=1387881461",
-   "revision": 1387881461,
-   "edited": "2026-11-25T21:28:33Z",
-   "retrieved": "2026-11-26T00:17Z",
+   "what": "2028 New Hampshire Republican presidential primary",
+   "url": "https://en.wikipedia.org/w/index.php?oldid=1387915277",
+   "revision": 1387915277,
+   "edited": "2026-11-26T00:26:30Z",
+   "retrieved": "2026-11-26T02:47Z",
    "licence": "CC BY-SA 4.0"
   }
  ],
