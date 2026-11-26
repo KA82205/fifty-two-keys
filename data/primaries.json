@@ -1,8 +1,8 @@
 {
  "year": 2028,
  "party_in_office": "Republican",
- "read": "2026-11-26T02:47Z",
- "checked": "2026-11-25",
+ "read": "2026-11-26T05:06Z",
+ "checked": "2026-11-26",
  "nominees": {
   "Republican": {
    "name": null,
@@ -25,19 +25,19 @@
   "E05": {
    "state": "not yet",
    "value": null,
-   "why": "no Republican candidate has a majority of pledged delegates in The Green Papers",
+   "why": "No Republican candidate has a majority of pledged delegates in The Green Papers.",
    "evidence": ""
   },
   "E07": {
    "state": "not yet",
    "value": null,
-   "why": "no Democratic candidate has a majority of pledged delegates in The Green Papers",
+   "why": "No Democratic candidate has a majority of pledged delegates in The Green Papers.",
    "evidence": ""
   },
   "E06": {
    "state": "not yet",
    "value": null,
-   "why": "no Republican candidate has a majority of pledged delegates in The Green Papers no Democratic candidate has a majority of pledged delegates in The Green Papers",
+   "why": "No Republican candidate has a majority of pledged delegates in The Green Papers. No Democratic candidate has a majority of pledged delegates in The Green Papers.",
    "evidence": ""
   }
  },
@@ -45,10 +45,10 @@
   {
    "source": "Wikipedia",
    "what": "2028 Republican Party presidential primaries",
-   "url": "https://en.wikipedia.org/w/index.php?oldid=1387913683",
-   "revision": 1387913683,
-   "edited": "2026-11-26T00:16:04Z",
-   "retrieved": "2026-11-26T02:47Z",
+   "url": "https://en.wikipedia.org/w/index.php?oldid=1387945413",
+   "revision": 1387945413,
+   "edited": "2026-11-26T03:15:39Z",
+   "retrieved": "2026-11-26T05:06Z",
    "licence": "CC BY-SA 4.0"
   },
   {
@@ -57,7 +57,7 @@
    "url": "https://en.wikipedia.org/w/index.php?oldid=1387913643",
    "revision": 1387913643,
    "edited": "2026-11-26T00:15:50Z",
-   "retrieved": "2026-11-26T02:47Z",
+   "retrieved": "2026-11-26T05:06Z",
    "licence": "CC BY-SA 4.0"
   },
   {
@@ -66,10 +66,12 @@
    "url": "https://en.wikipedia.org/w/index.php?oldid=1387915277",
    "revision": 1387915277,
    "edited": "2026-11-26T00:26:30Z",
-   "retrieved": "2026-11-26T02:47Z",
+   "retrieved": "2026-11-26T05:06Z",
    "licence": "CC BY-SA 4.0"
   }
  ],
  "failed": [],
- "rule": "primaries.py: two sources must agree, or the key stays open"
+ "notes": [],
+ "official": {},
+ "rule": "primaries.py: the highest source that has the figure is used (the official record, then The Green Papers, then Wikipedia); a contradiction between sources holds the key open"
 }

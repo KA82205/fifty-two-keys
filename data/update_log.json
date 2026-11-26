@@ -22,7 +22,11 @@
   "state indexes",
   "approval polls"
  ],
- "new": [],
+ "new": [
+  {
+   "series": "polls naming a third candidate"
+  }
+ ],
  "held": [],
  "failed": [],
  "confirmed": [],
@@ -33,21 +37,22 @@
  },
  "second_source": [
   "UNRATE: the Bureau of Labor Statistics gives the same 11 figures",
-  "INDPRO: the Federal Reserve Board gives 103.395 for 2026-10, not 102.242",
   "UMCSENT: the University of Michigan gives the same 12 figures",
   "MCOILWTICO: the Energy Information Administration gives the same 11 figures",
-  "ICSA: the Department of Labor gives 197000 for 2026-10, not 195800",
-  "SP500: Yahoo Finance (a second copy of the closes) gives the same 11 figures"
+  "ICSA: the Department of Labor gives the same 11 figures",
+  "SP500: Yahoo Finance (a second copy of the closes) gives the same 11 figures",
+  "HOUST: the Census Bureau gives the same 11 figures",
+  "INDPRO: the Federal Reserve Board gives the same 11 figures"
  ],
  "nominations": {
   "state": "same",
   "said": "the nomination keys: E04 not yet, E05 not yet, E07 not yet, E06 not yet"
  },
- "made": "2026-11-26T02:46:41Z",
- "economy_read": "2026-11-26T02:46:41Z",
+ "made": "2026-11-26T05:05:36Z",
+ "economy_read": "2026-11-26T05:05:36Z",
  "read_on": {
-  "economy": "2026-11-25",
-  "polls": "2026-11-25"
+  "economy": "2026-11-26",
+  "polls": "2026-11-26"
  },
  "held_names": [],
  "keys_held": []

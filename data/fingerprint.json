@@ -7,12 +7,12 @@
  "data/approval_polls.json": "452eb4fdf4c8563a",
  "data/state_index_this_term.csv": "bab5bb3f725151d2",
  "data/outlook.json": "04e160b436ac7bf0",
- "data/third_candidates.json": "6b573677d17d880d",
+ "data/third_candidates.json": "983bf276af1dba9f",
  "locked_keys.csv": "0c7c9208e8fdcd94",
  "run_2028.py": "f4ed08033fdd6a91",
  "build.py": "39239e82b11dddfc",
  "calls.py": "4b3973130fea3069",
  "data/congress_seats.csv": "1adbaa892c7657a9",
  "data/nh_primaries.csv": "5c125165db053c70",
- "data/primaries.json": "2c449b174f271f45"
+ "data/primaries.json": "3135f202a4a2a9a6"
 }

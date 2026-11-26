@@ -1,6 +1,6 @@
 {
- "as_of": "November 25, 2026",
- "date": "2026-11-25",
+ "as_of": "November 26, 2026",
+ "date": "2026-11-26",
  "runs": 200000,
  "stretches": {
   "n": 117,
@@ -89,11 +89,11 @@
   ],
   [
    0.19,
-   0.01515
+   0.01516
   ],
   [
    0.2,
-   0.01258
+   0.01259
   ],
   [
    0.21,
@@ -105,7 +105,7 @@
   ],
   [
    0.23,
-   0.02065
+   0.02064
   ],
   [
    0.24,
@@ -113,11 +113,11 @@
   ],
   [
    0.25,
-   0.01803
+   0.01805
   ],
   [
    0.26,
-   0.02438
+   0.02439
   ],
   [
    0.27,
@@ -125,19 +125,19 @@
   ],
   [
    0.28,
-   0.01869
+   0.0187
   ],
   [
    0.29,
-   0.02967
+   0.02966
   ],
   [
    0.3,
-   0.01914
+   0.01913
   ],
   [
    0.31,
-   0.02712
+   0.02713
   ],
   [
    0.32,
@@ -149,7 +149,7 @@
   ],
   [
    0.34,
-   0.02209
+   0.02208
   ],
   [
    0.35,
@@ -157,11 +157,11 @@
   ],
   [
    0.36,
-   0.0251
+   0.02511
   ],
   [
    0.37,
-   0.02763
+   0.02764
   ],
   [
    0.38,
@@ -169,7 +169,7 @@
   ],
   [
    0.39,
-   0.03206
+   0.03204
   ],
   [
    0.4,
@@ -177,15 +177,15 @@
   ],
   [
    0.41,
-   0.03081
+   0.03079
   ],
   [
    0.42,
-   0.02992
+   0.02995
   ],
   [
    0.43,
-   0.032
+   0.03202
   ],
   [
    0.44,
@@ -193,23 +193,23 @@
   ],
   [
    0.45,
-   0.03522
+   0.03523
   ],
   [
    0.46,
-   0.02822
+   0.02819
   ],
   [
    0.47,
-   0.02907
+   0.02908
   ],
   [
    0.48,
-   0.02698
+   0.027
   ],
   [
    0.49,
-   0.02892
+   0.02894
   ],
   [
    0.5,
@@ -225,15 +225,15 @@
   ],
   [
    0.53,
-   0.01784
+   0.01783
   ],
   [
    0.54,
-   0.01453
+   0.01455
   ],
   [
    0.55,
-   0.01777
+   0.01775
   ],
   [
    0.56,
@@ -245,11 +245,11 @@
   ],
   [
    0.58,
-   0.00914
+   0.00915
   ],
   [
    0.59,
-   0.00602
+   0.00601
   ],
   [
    0.6,
@@ -257,7 +257,7 @@
   ],
   [
    0.61,
-   0.00348
+   0.00347
   ],
   [
    0.62,
@@ -363,11 +363,11 @@
   },
   {
    "lo": 55,
-   "share": 0.0419
+   "share": 0.0418
   },
   {
    "lo": 60,
-   "share": 0.0139
+   "share": 0.0138
   },
   {
    "lo": 65,
@@ -1147,7 +1147,7 @@
    "status": "unresolved",
    "value": null,
    "final": false,
-   "why": "The event has not happened. no Republican candidate has a majority of pledged delegates in The Green Papers",
+   "why": "The event has not happened. No Republican candidate has a majority of pledged delegates in The Green Papers.",
    "next": "when both nominees are known, by June 2028",
    "reading": "not yet"
   },
@@ -1155,7 +1155,7 @@
    "status": "unresolved",
    "value": null,
    "final": false,
-   "why": "The event has not happened. no Republican candidate has a majority of pledged delegates in The Green Papers no Democratic candidate has a majority of pledged delegates in The Green Papers",
+   "why": "The event has not happened. No Republican candidate has a majority of pledged delegates in The Green Papers. No Democratic candidate has a majority of pledged delegates in The Green Papers.",
    "next": "when both nominees are known, by June 2028",
    "reading": "not yet"
   },
@@ -1163,7 +1163,7 @@
    "status": "unresolved",
    "value": null,
    "final": false,
-   "why": "The event has not happened. no Democratic candidate has a majority of pledged delegates in The Green Papers",
+   "why": "The event has not happened. No Democratic candidate has a majority of pledged delegates in The Green Papers.",
    "next": "when both nominees are known, by June 2028",
    "reading": "not yet"
   }
@@ -1183,7 +1183,7 @@
   "target": "June 2028",
   "months_left": 20,
   "quarters_left": 7,
-  "days_to_close": 615
+  "days_to_close": 614
  },
  "through": {
   "UNRATE": "October 2026",
@@ -1200,7 +1200,7 @@
   "ICSA": "October 2026",
   "quarterly": "2026 Q3",
   "states": "2026-09",
-  "approval_polls": "2026-11-25"
+  "approval_polls": "2026-11-26"
  },
  "odds_entered": "not entered: counted from the record",
  "outlook_from": {
@@ -1377,13 +1377,13 @@
   {
    "id": "C02",
    "p": 0.029,
-   "if_yes": 0.664,
+   "if_yes": 0.665,
    "if_no": 0.142
   },
   {
    "id": "C06",
    "p": 0.042,
-   "if_yes": 0.598,
+   "if_yes": 0.597,
    "if_no": 0.138
   },
   {
@@ -1408,7 +1408,7 @@
    "id": "B04",
    "p": 0.352,
    "if_yes": 0.358,
-   "if_no": 0.049
+   "if_no": 0.048
   },
   {
    "id": "B01",
@@ -1474,7 +1474,7 @@
    "id": "A02",
    "p": 0.633,
    "if_yes": 0.246,
-   "if_no": 0.004
+   "if_no": 0.003
   },
   {
    "id": "C05",
@@ -1485,7 +1485,7 @@
   {
    "id": "A10",
    "p": 0.608,
-   "if_yes": 0.246,
+   "if_yes": 0.245,
    "if_no": 0.021
   },
   {
@@ -1623,7 +1623,7 @@
   {
    "id": "B13",
    "p": 0.009,
-   "if_yes": 0.216,
+   "if_yes": 0.215,
    "if_no": 0.157
   }
  ],
@@ -1737,8 +1737,8 @@
   "disapprove": 65.5,
   "pollsters": 4,
   "polls": 8,
-  "from": "2026-10-27",
-  "to": "2026-11-25",
+  "from": "2026-10-28",
+  "to": "2026-11-26",
   "year_ago": {
    "approve": 39.3,
    "disapprove": 56.4,
@@ -1786,7 +1786,7 @@
   {
    "what": "a smoother nomination season",
    "mean": 0.387,
-   "above_half": 0.186
+   "above_half": 0.185
   },
   {
    "what": "the nomination odds as typed in November 2026",
@@ -1801,7 +1801,7 @@
   {
    "what": "approval moving twice as much each month",
    "mean": 0.387,
-   "above_half": 0.201
+   "above_half": 0.2
   }
  ]
 }
