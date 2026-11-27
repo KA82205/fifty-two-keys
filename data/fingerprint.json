@@ -1,5 +1,5 @@
 {
- "day": "2026-11-26",
+ "day": "2026-11-27",
  "held back": "4f53cda18c2baa0c",
  "data/latest_monthly.csv": "2bbb626b65d8fcc4",
  "data/quarterly.csv": "548802a15fa0bde8",
@@ -7,7 +7,7 @@
  "data/approval_polls.json": "452eb4fdf4c8563a",
  "data/state_index_this_term.csv": "bab5bb3f725151d2",
  "data/outlook.json": "04e160b436ac7bf0",
- "data/third_candidates.json": "983bf276af1dba9f",
+ "data/third_candidates.json": "9c8336a3b48db443",
  "locked_keys.csv": "0c7c9208e8fdcd94",
  "run_2028.py": "f4ed08033fdd6a91",
  "build.py": "39239e82b11dddfc",

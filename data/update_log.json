@@ -44,15 +44,11 @@
   "HOUST: the Census Bureau gives the same 11 figures",
   "INDPRO: the Federal Reserve Board gives the same 11 figures"
  ],
- "nominations": {
-  "state": "same",
-  "said": "the nomination keys: E04 not yet, E05 not yet, E07 not yet, E06 not yet"
- },
- "made": "2026-11-26T05:05:36Z",
- "economy_read": "2026-11-26T05:05:36Z",
+ "made": "2026-11-27T05:23:36Z",
+ "economy_read": "2026-11-27T05:23:36Z",
  "read_on": {
-  "economy": "2026-11-26",
-  "polls": "2026-11-26"
+  "economy": "2026-11-27",
+  "polls": "2026-11-27"
  },
  "held_names": [],
  "keys_held": []

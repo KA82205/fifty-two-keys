@@ -3,8 +3,8 @@
  "rule": "facts.py",
  "enough_pollsters": 3,
  "now": {
-  "from": "2026-08-29",
-  "to": "2026-11-26",
+  "from": "2026-08-30",
+  "to": "2026-11-27",
   "published_by": null,
   "pollsters": 1,
   "polls": [
@@ -22,5 +22,5 @@
   "reading": null
  },
  "june": null,
- "fetched": "2026-11-26"
+ "fetched": "2026-11-27"
 }
