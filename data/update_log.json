@@ -22,11 +22,7 @@
   "state indexes",
   "approval polls"
  ],
- "new": [
-  {
-   "series": "polls naming a third candidate"
-  }
- ],
+ "new": [],
  "held": [],
  "failed": [],
  "confirmed": [],
@@ -35,17 +31,8 @@
   "state": "same",
   "said": "the survey of 2026 Q4 is the one the outlook already holds; read by rule it would give jobs_a_month [90, 90, 65, 65, 65, 49, 49, 49, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51, 51] (entered: [90, 90, 65, 65, 65, 49, 49, 49, 51, 51, 51, 51, 51, 51, 50, 50, 50, 50, 50, 50])"
  },
- "second_source": [
-  "UNRATE: the Bureau of Labor Statistics gives the same 11 figures",
-  "UMCSENT: the University of Michigan gives the same 12 figures",
-  "MCOILWTICO: the Energy Information Administration gives the same 11 figures",
-  "ICSA: the Department of Labor gives the same 11 figures",
-  "SP500: Yahoo Finance (a second copy of the closes) gives the same 11 figures",
-  "HOUST: the Census Bureau gives the same 11 figures",
-  "INDPRO: the Federal Reserve Board gives the same 11 figures"
- ],
- "made": "2026-11-27T05:23:36Z",
- "economy_read": "2026-11-27T05:23:36Z",
+ "made": "2026-11-27T16:24:18Z",
+ "economy_read": "2026-11-27T16:24:18Z",
  "read_on": {
   "economy": "2026-11-27",
   "polls": "2026-11-27"
